@@ -9,5 +9,7 @@ If the error is in Card Count the red marking will be removed when fixed otherwi
 <img src="https://i.imgur.com/oWBs57j.png">
 It will still let you submit with errors but depending on the error the data you get may be for a different card or the total price calculation will be incorrect.
 The view that you see is what will be submitted.
-<img src="https://i.imgur.com/YLdg25l.png">
+<img src="https://i.imgur.com/wfFfWIT.png">
 The table will provide price data and totals adjusted for card count along with its page link. The card image can also be seen by hovering over the card name. This data can be exported to CSV in the same format as the table.
+<img src="https://i.imgur.com/gHtKHzC.png">
+After getting price data specific rows can be filtered out of the total pricing calculations.
