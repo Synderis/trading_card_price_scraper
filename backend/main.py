@@ -25,6 +25,8 @@ class RowData(BaseModel):
     reverse_holo: bool
     first_edition: bool
     card_count: int
+    variant: bool
+    variant_type: Optional[str]
 
 class CardInput(BaseModel):
     cards: List[RowData]
@@ -57,7 +59,9 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
             "holo": row.holo,
             "reverse_holo": row.reverse_holo,
             "first_edition": row.first_edition,
-            "card_count": row.card_count
+            "card_count": row.card_count,
+            "variant": row.variant,
+            "variant_type": row.variant_type
         }
         data.append(card_data)
 

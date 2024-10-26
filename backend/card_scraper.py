@@ -1,14 +1,37 @@
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+import re
 
-def find_hyperlink_text(card_var, id_var, holo_var, reverse_holo_var, first_edition_var, soup):
+def remove_card_and_id(text, card_var, id_var):
+    # Create a case-insensitive pattern that matches the card name and ID
+    # It will remove the card name and ID, while preserving text before and after them
+    pattern = re.compile(
+        r"([A-Za-z']*)\s*" + re.escape(card_var) + r"\s*([\[\]A-Za-z\s]*)\s*#" + re.escape(id_var), 
+        re.IGNORECASE
+    )
+    
+    # Perform the substitution to remove the card name and ID, keeping the desired parts
+    match = pattern.search(text)
+    if match:
+        # Get the prefix (if any) and the text in square brackets (if any)
+        prefix = match.group(1).strip()  # The text before the card name
+        suffix = match.group(2).strip()  # The text in square brackets or after the card name
+        # Return the appropriate part: either the prefix or suffix depending on which is present
+        return prefix if prefix else suffix
+    else:
+        # If no match is found, return the original text as is
+        return text.strip()
+
+def find_hyperlink_text(card_var, id_var, holo_var, reverse_holo_var, first_edition_var, variant, variant_type, soup):
     card_var = card_var.replace(' ', '-')  # Normalize card name
     print(f"Searching for: {card_var} with ID: {id_var}")
 
     # Construct potential search texts based on conditions
     search_texts = []
 
+    if variant_type:
+        search_texts.append(f"{card_var}-{variant_type}-{id_var}")
     if holo_var:
         search_texts.append(f"{card_var}-holo-{id_var}")
         search_texts.append(f"{card_var}-foil")
@@ -21,11 +44,15 @@ def find_hyperlink_text(card_var, id_var, holo_var, reverse_holo_var, first_edit
     search_texts.append(f"{card_var}-{id_var}")
     search_texts.append(f"{card_var}")
 
-    # Search for matching link text in order of priority
-    for search_text in search_texts:
-        result = find_link(search_text, soup)
-        if result:
+    if variant:
+        result = grab_all_links(card_var, id_var, soup)
+        if not result.empty:
             return result
+    else:
+        for search_text in search_texts:
+            result = find_link(search_text, soup)
+            if result:
+                return result
 
     print("No matching link text found")
     return None
@@ -41,12 +68,31 @@ def find_link(search_text, soup):
     return None
 
 
+def grab_all_links(card_var, id_var, soup):
+    links = soup.find_all('a')
+    data = []  # List to hold dictionary entries
+
+    for link in links:
+        href = link.get('href')
+        text = link.get_text(strip=True).lower()
+        if text == '' or href is None: 
+            continue
+        
+        if card_var in href.split('/')[-1].split('-') and id_var in href.split('/')[-1]:
+            if card_var in text and id_var in text:
+                bracket_text = text.replace(card_var, '').replace(id_var, '').strip()
+                data.append({'names': bracket_text, 'links': href})  # Append to list
+
+    # Convert list of dictionaries to DataFrame if data is not empty
+    return pd.DataFrame(data) if data else None
+
+
 
 # Function to extract table data and convert it to a dictionary
-def extract_table_to_dict(final_link, card, card_id, card_count):
+def extract_table_to_dict(final_link, card, card_id, card_count, variant_type):
     # Define standard labels
     standard_labels = [
-        'card', 'id', 'Ungraded', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4',
+        'card', 'id', 'Ungraded', 'variant_type', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4',
         'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9',
         'Grade 9.5', 'SGC 10', 'CGC 10', 'PSA 10', 'BGS 10',
         'BGS 10 Black', 'CGC 10 Pristine', 'final_link', 'card_count', 'img_link'
@@ -78,6 +124,7 @@ def extract_table_to_dict(final_link, card, card_id, card_count):
         table_data['card'] = card
         table_data['id'] = card_id
         table_data['card_count'] = card_count
+        table_data['variant_type'] = variant_type
         return table_data
     except Exception as e:
         print(f"Failed to extract table, setting all prices to 'not_available'. Error: {e}")
@@ -103,28 +150,52 @@ def card_finder(source_df):
         reverse_holo = source_df.iloc[i, 3]
         first_edition = source_df.iloc[i, 4]
         card_count = source_df.iloc[i, 5]
+        variant = source_df.iloc[i, 6]
+        variant_type = source_df.iloc[i, 7]
         
         if 'game' in response.url:
             final_link = response.url
-            df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count)
+            df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, variant_type)
         else:
-            matching_link = find_hyperlink_text(card, card_id, holo, reverse_holo, first_edition, soup)
-            if matching_link:
-                final_link = matching_link
-                df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count)
+            if variant:
+                matching_links = find_hyperlink_text(card, card_id, holo, reverse_holo, first_edition, variant, variant_type, soup)
+                if not matching_links.empty:
+                    for index, row in matching_links.iterrows():
+                        final_link = row['links']
+                        variant_type = row['names']
+                        df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, variant_type)
+                        new_rows.append(df_new_rows)
+                else:
+                    final_link = 'N/A'
+                    df_new_rows = {label: 'N/A' for label in [
+                        'card', 'id', 'card_count', 'variant_type', 'Ungraded',
+                        'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4',
+                        'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9',
+                        'Grade 9.5', 'SGC 10', 'CGC 10', 'PSA 10', 'BGS 10',
+                        'BGS 10 Black', 'CGC 10 Pristine', 'final_link', 'img_link']}
+                    df_new_rows['card'] = card
+                    df_new_rows['id'] = card_id
+                    df_new_rows['card_count'] = card_count
+                    df_new_rows['variant_type'] = variant_type
+                    new_rows.append(df_new_rows)
             else:
-                final_link = 'not_available'
-                df_new_rows = {label: 'not_available' for label in [
-                    'card', 'id', 'card_count', 'Ungraded', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4',
-                    'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9',
-                    'Grade 9.5', 'SGC 10', 'CGC 10', 'PSA 10', 'BGS 10',
-                    'BGS 10 Black', 'CGC 10 Pristine', 'final_link', 'img_link']}
-                df_new_rows['card'] = card
-                df_new_rows['id'] = card_id
-                df_new_rows['card_count'] = card_count
-
-        # Append the new row data to the new_rows list
-        new_rows.append(df_new_rows)
+                matching_link = find_hyperlink_text(card, card_id, holo, reverse_holo, first_edition, variant, variant_type, soup)
+                if matching_link:
+                    final_link = matching_link
+                    df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, variant_type)
+                else:
+                    final_link = 'N/A'
+                    df_new_rows = {label: 'N/A' for label in [
+                        'card', 'id', 'card_count', 'variant_type', 'Ungraded',
+                        'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4',
+                        'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9',
+                        'Grade 9.5', 'SGC 10', 'CGC 10', 'PSA 10', 'BGS 10',
+                        'BGS 10 Black', 'CGC 10 Pristine', 'final_link', 'img_link']}
+                    df_new_rows['card'] = card
+                    df_new_rows['id'] = card_id
+                    df_new_rows['card_count'] = card_count
+        if not variant:
+            new_rows.append(df_new_rows)
 
     # Create a DataFrame from the collected new rows
     df_new_rows = pd.DataFrame(new_rows)

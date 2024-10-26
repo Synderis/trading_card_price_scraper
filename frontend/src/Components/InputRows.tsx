@@ -9,15 +9,20 @@ type Row = {
   holo: boolean;
   reverse_holo: boolean;
   first_edition: boolean;
-  card_count: number | null; // Allow card_count to be null
+  card_count: number | null;
+  variant: boolean;
+  variant_type: string | null;
   isInvalid?: boolean;
 };
 
 const InputRows: React.FC = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [toggleVariants, setToggleVariants] = useState(false);
   const [loading, setLoading] = useState(false); // Loading state
   const [loadingProgress, setLoadingProgress] = useState(0); // Loading progress
+
 
   const initialRowState = Array.from({ length: 10 }, () => ({
     cardName: '',
@@ -25,11 +30,17 @@ const InputRows: React.FC = () => {
     holo: false,
     reverse_holo: false,
     first_edition: false,
-    card_count: 1, // Initialize as null
+    card_count: 1,
+    variant: false,
+    variant_type: null,
     isInvalid: false, // Initialize isInvalid
   }));
 
   const [rows, setRows] = useState<Row[]>(initialRowState);
+
+  const toggleAdvancedFields = () => {
+    setShowAdvanced(!showAdvanced);
+  };
 
   const checkInvalidRows = (updatedRows: Row[]) => {
     return updatedRows.map(row => ({
@@ -45,9 +56,9 @@ const InputRows: React.FC = () => {
   const handleChange = (index: number, field: keyof Row, value: string | boolean | number) => {
     const newRows = [...rows];
 
-    if (field === 'cardName' || field === 'cardId') {
+    if (field === 'cardName' || field === 'cardId' || field === 'variant_type') {
       newRows[index][field] = value as string;
-    } else if (field === 'holo' || field === 'reverse_holo' || field === 'first_edition') {
+    } else if (field === 'holo' || field === 'reverse_holo' || field === 'first_edition' || field === 'variant') {
       newRows[index][field] = value as boolean;
     } else if (field === 'card_count') {
       newRows[index][field] = value === '' ? 1 : Number(value); // Set to null if input is empty
@@ -66,6 +77,8 @@ const InputRows: React.FC = () => {
       reverse_holo: false,
       first_edition: false,
       card_count: 1,
+      variant: false,
+      variant_type: null,
       isInvalid: false, // Initialize isInvalid
     }));
     setRows(prevRows => [...prevRows, ...newRowsToAdd]);
@@ -80,6 +93,8 @@ const InputRows: React.FC = () => {
       reverse_holo: false,
       first_edition: false,
       card_count: 1,
+      variant: false,
+      variant_type: null,
       isInvalid: false, // Reset isInvalid
     };
     setRows(newRows);
@@ -90,6 +105,12 @@ const InputRows: React.FC = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = ''; // Reset file input
     }
+  };
+
+  const handleToggleVariants = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = e.target.checked;
+    setToggleVariants(isChecked);
+    setRows(prevRows => prevRows.map(row => ({ ...row, variant: isChecked })));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -127,6 +148,8 @@ const InputRows: React.FC = () => {
           reverse_holo: row.reverse_holo,
           first_edition: row.first_edition,
           card_count: row.card_count,
+          variant: row.variant,
+          variant_type: row.variant_type,
         })),
       };
 
@@ -175,6 +198,8 @@ const InputRows: React.FC = () => {
               first_edition: row.first_edition === 'true' || row.first_edition === true || row.first_edition === 1,
               // Set card_count to 1 if it's null or empty
               card_count: row.card_count === null || row.card_count === '' ? 1 : row.card_count,
+              variant: row.variant === 'true' || row.variant === true || row.variant === 1,
+              variant_type: row.variant_type || '',
               isInvalid,
             };
           });
@@ -189,8 +214,8 @@ const InputRows: React.FC = () => {
 
   const downloadCSVTemplate = () => {
     const csvContent = "data:text/csv;charset=utf-8," + 
-      "cardName,cardId,holo,reverse_holo,first_edition,card_count\n" +
-      ",,,,,"; // One empty line for a row
+      "cardName,cardId,holo,reverse_holo,first_edition,card_count,variant,variant_type\n" +
+      ",,,,,,,"; // One empty line for a row
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
@@ -224,7 +249,19 @@ const InputRows: React.FC = () => {
               First Edition:
               <input type="checkbox" checked={row.first_edition} onChange={e => handleChange(index, 'first_edition', e.target.checked)} />
             </label>
-            <input type="number" value={row.card_count === null ? '' : row.card_count} onChange={e => handleChange(index, 'card_count', e.target.value)} placeholder="Card Count" />
+            <label>
+              Card Count:
+              <input type="number" value={row.card_count === null ? '' : row.card_count} onChange={e => handleChange(index, 'card_count', e.target.value)} placeholder="Card Count" />
+            </label>
+            {showAdvanced && (
+              <>
+                <label>
+                  Variant:
+                  <input type="checkbox" checked={row.variant} onChange={e => handleChange(index, 'variant', e.target.checked)} />
+                </label>
+                <input type="text" value={row.variant_type || ''} onChange={e => handleChange(index, 'variant_type', e.target.value)} placeholder="Variant Type" />
+              </>
+            )}
             <button type="button" className="clear-btn" onClick={() => handleClearRow(index)}>Clear</button>
           </span>
         ))}
@@ -234,6 +271,19 @@ const InputRows: React.FC = () => {
           <button type="submit" className="submit-btn">Submit</button>
         </div>
       </form>
+      <div style={{ marginTop: '10px' }}>
+        <button type="button" onClick={toggleAdvancedFields}>
+          {showAdvanced ? 'Hide Advanced Types' : 'Show Advanced Types'}
+        </button>
+        <label style={{ marginLeft: '10px' }}>
+          Toggle All Variants:
+          <input
+            type="checkbox"
+            checked={toggleVariants}
+            onChange={handleToggleVariants}
+          />
+        </label>
+      </div>
 
       {loading && (
       <>

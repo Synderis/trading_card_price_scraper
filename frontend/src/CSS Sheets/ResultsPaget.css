@@ -1,0 +1,82 @@
+table {
+    width: 100%;
+    border-collapse: collapse; /* Ensures no double borders */
+}
+
+th, td {
+    padding: 10px; /* Adds space around text in cells */
+    text-align: left; /* Aligns text to the left */
+    border: 1px solid #ddd; /* Adds a light border to cells */
+}
+
+th {
+    background-color: #f2f2f2; /* Light grey background for headers */
+}
+
+.dark-mode table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dark-mode th, .dark-mode td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.dark-mode th {
+    background-color: #1f1f1f; /* Darker background for headers */
+    color: #ffffff; /* Light text for headers */
+}
+
+.dark-mode tr:nth-child(even) {
+    background-color: #1a1a1a; /* Darker row for even rows */
+}
+
+.dark-mode tr:nth-child(odd) {
+    background-color: #121212; /* Slightly lighter for odd rows */
+}
+
+.download-button {
+    margin-bottom: 20px; /* Add some space below the button */
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.download-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+.img-hover-link {
+    position: relative;
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+}
+
+.img-hover-link:hover .img-hover-tooltip {
+    display: block;
+}
+
+.img-hover-tooltip {
+    display: none;
+    position: absolute;
+    top: 0;  /* Aligns the image vertically with the link */
+    left: 110%;  /* Moves the image to the right of the link, adjust percentage if needed */
+    z-index: 10;
+    width: 200px;  /* Adjust width as needed */
+    height: auto;
+    border: 1px solid #ccc;
+    background-color: white;
+    padding: 5px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+}
+
+.img-hover-tooltip img {
+    width: 100%;
+    height: auto;
+}
