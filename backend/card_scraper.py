@@ -80,7 +80,7 @@ def grab_all_links(card_var, id_var, soup):
         
         if card_var in href.split('/')[-1].split('-') and id_var in href.split('/')[-1]:
             if card_var in text and id_var in text:
-                bracket_text = text.replace(card_var, '').replace(id_var, '').strip()
+                bracket_text = text.replace(card_var, '').replace(f'#{id_var}', '').strip()
                 data.append({'names': bracket_text, 'links': href})  # Append to list
 
     # Convert list of dictionaries to DataFrame if data is not empty

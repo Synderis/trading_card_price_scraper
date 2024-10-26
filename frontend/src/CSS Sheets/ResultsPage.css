@@ -1,6 +1,7 @@
 table {
     width: 100%;
     border-collapse: collapse; /* Ensures no double borders */
+    /* border-radius: 16px; */
 }
 
 th, td {
@@ -17,11 +18,13 @@ th {
     width: 100%;
     border-radius: 16px;
     border-collapse: collapse;
+    border-end-start-radius: 20px;
 }
 
 .dark-mode th, .dark-mode td {
     border: 1px solid rgba(255, 255, 255, 0.3);
     /* border-radius: 16px; */
+    /* border-end-start-radius: 20px; */
     padding: 8px;
 }
 
@@ -370,6 +373,8 @@ table {
     overflow: hidden;
     border: none;
     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    border-style: hidden;
+    /* border-radius: 20px; */
     /* background: white; */
 }
 
@@ -419,7 +424,7 @@ tr:hover td {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 8px 30px rgba(0,0,0,0.15);
     border-radius: 12px;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .img-hover-link:hover .img-hover-tooltip {
@@ -487,6 +492,11 @@ tr:hover td {
     box-shadow: 0 10px 40px rgba(0,0,0,0.1);
 }
 
+.table-wrapper {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .results-container {
@@ -497,6 +507,9 @@ tr:hover td {
     table {
         display: block;
         overflow-x: auto;
+        /* overflow: hidden; */
         white-space: nowrap;
+        border-style: hidden;
+        /* border-radius: 20px; */
     }
 }
