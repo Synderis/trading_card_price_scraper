@@ -36,9 +36,9 @@ const ResultsPage: React.FC = () => {
     useEffect(() => {
         const fetchResults = async () => {
             try {
-                // const apiUrl = 'https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/results';
+                const apiUrl = 'https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/results';
                 // local testing API URL
-                const apiUrl = `http://localhost:8000/results`;
+                // const apiUrl = `http://localhost:8000/results`;
                 const response = await fetch(apiUrl);
                 if (!response.ok) {
                     throw new Error('Failed to fetch results');
@@ -127,8 +127,9 @@ const ResultsPage: React.FC = () => {
     };
 
     const downloadCSV = () => {
+        const nonExcludedResults = results.filter(item => !item.isExcluded);
         const totals = calculateTotals(results);
-        const csvData = convertToCSV(results, totals);
+        const csvData = convertToCSV(nonExcludedResults, totals);
         const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
@@ -189,7 +190,7 @@ const ResultsPage: React.FC = () => {
             const newSelectedRows = new Set(selectedRows);
             
             for (let i = start; i <= end; i++) {
-                newResults[i].isExcluded = !newResults[lastClickedIndex].isExcluded;
+                newResults[i].isExcluded = newResults[lastClickedIndex].isExcluded;
                 if (newResults[i].isExcluded) {
                     newSelectedRows.add(i);
                 } else {

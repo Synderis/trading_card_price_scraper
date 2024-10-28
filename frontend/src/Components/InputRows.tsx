@@ -20,8 +20,8 @@ const InputRows: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [toggleVariants, setToggleVariants] = useState(true);
-  const [loading, setLoading] = useState(false); // Loading state
-  const [loadingProgress, setLoadingProgress] = useState(0); // Loading progress
+  const [loading, setLoading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [magicCardChecked, setMagicCardChecked] = useState(false);
 
 
@@ -35,7 +35,7 @@ const InputRows: React.FC = () => {
     card_count: 1,
     variant: true,
     variant_type: null,
-    isInvalid: false, // Initialize isInvalid
+    isInvalid: false,
   }));
 
   const [rows, setRows] = useState<Row[]>(initialRowState);
@@ -44,32 +44,29 @@ const InputRows: React.FC = () => {
     setShowAdvanced(!showAdvanced);
   };
 
-  const checkInvalidRows = (updatedRows: Row[]) => {
-    return updatedRows.map(row => ({
-      ...row,
-      isInvalid: magicCardChecked && !row.cardId ? false :
-        (row.cardName ? 
-          !row.cardName || !row.cardId || 
-          (row.card_count !== null && row.card_count <= 0)
-          : false), // Check if card_count is null or greater than 0
-    }));
+  const checkInvalidRow = (row: Row): boolean => {
+    return magicCardChecked && !row.cardId ? false :
+      (row.cardName ? 
+        !row.cardName || !row.cardId || 
+        (row.card_count !== null && row.card_count <= 0)
+        : false);
   };
   
-
   const handleChange = (index: number, field: keyof Row, value: string | boolean | number) => {
     const newRows = [...rows];
-
+  
     if (field === 'cardName' || field === 'cardId' || field === 'variant_type') {
       newRows[index][field] = value as string;
     } else if (field === 'holo' || field === 'reverse_holo' || field === 'first_edition' || field === 'variant') {
       newRows[index][field] = value as boolean;
     } else if (field === 'card_count') {
-      newRows[index][field] = value === '' ? 1 : Number(value); // Set to null if input is empty
+      newRows[index][field] = value === '' ? 1 : Number(value);
     }
-
-    // Check for invalid rows after the change
-    const updatedRows = checkInvalidRows(newRows);
-    setRows(updatedRows);
+  
+    // Check only the specific row for invalid data
+    newRows[index].isInvalid = checkInvalidRow(newRows[index]);
+  
+    setRows(newRows);
   };
 
   const handleAddRows = () => {
@@ -98,7 +95,7 @@ const InputRows: React.FC = () => {
       card_count: 1,
       variant: true,
       variant_type: null,
-      isInvalid: false, // Reset isInvalid
+      isInvalid: false,
     };
     setRows(newRows);
   };
@@ -106,7 +103,7 @@ const InputRows: React.FC = () => {
   const handleClearAllRows = () => {
     setRows(initialRowState);
     if (fileInputRef.current) {
-      fileInputRef.current.value = ''; // Reset file input
+      fileInputRef.current.value = '';
     }
   };
 
@@ -127,7 +124,7 @@ const InputRows: React.FC = () => {
     }
 
     const totalCards = rows.reduce((acc, row) => acc + (row.card_count || 0), 0);
-    const estimatedTime = 550 * totalCards + 250; // Calculate loading time
+    const estimatedTime = 550 * totalCards + 250;
 
     // Log the total cards and estimated loading time
     console.log(`Total Cards: ${totalCards}`);
@@ -157,10 +154,10 @@ const InputRows: React.FC = () => {
       };
 
       // Constructing the API URL using window.location
-      // const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/submit`;
+      const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/submit`;
 
       // local testing API URL
-      const apiUrl = `http://localhost:8000/submit`;
+      // const apiUrl = `http://localhost:8000/submit`;
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -182,6 +179,14 @@ const InputRows: React.FC = () => {
     }
   };
 
+  const truth_values = (value: any): boolean => {
+      return ['true', true, 1, 'y', 'Y', 't', 'T', 'True', 'TRUE'].includes(value);
+  };
+
+  const false_values = (value: any): boolean => {
+      return ['false', false, 0, 'n', 'N', 'f', 'F', 'False', 'FALSE', null].includes(value);
+  };
+
   const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -191,20 +196,18 @@ const InputRows: React.FC = () => {
         complete: (results) => {
           const parsedRows: Row[] = results.data.map((row: any) => {
             const isInvalid =
-              !(row.holo === 'true' || row.holo === true || row.holo === 1 || row.holo === 'false' || row.holo === false || row.holo === 0 || row.holo === null) ||
-              !(row.reverse_holo === 'true' || row.reverse_holo === true || row.reverse_holo === 1 || row.reverse_holo === 'false' || row.reverse_holo === false || row.reverse_holo === 0 || row.reverse_holo === null) ||
-              !(row.first_edition === 'true' || row.first_edition === true || row.first_edition === 1 || row.first_edition === 'false' || row.first_edition === false || row.first_edition === 0 || row.first_edition === null) ||
-              !(row.card_count === null || row.card_count > 0); // Validate card_count
-
+              !((truth_values(row.holo)) || false_values(row.holo)) ||
+              !((truth_values(row.reverse_holo)) || false_values(row.reverse_holo)) ||
+              !((truth_values(row.first_edition)) || false_values(row.first_edition)) ||
+              !(row.card_count === null || row.card_count > 0);
             return {
               cardName: row.cardName || '',
               cardId: row.cardId || '',
-              holo: row.holo === 'true' || row.holo === true || row.holo === 1,
-              reverse_holo: row.reverse_holo === 'true' || row.reverse_holo === true || row.reverse_holo === 1,
-              first_edition: row.first_edition === 'true' || row.first_edition === true || row.first_edition === 1,
-              // Set card_count to 1 if it's null or empty
+              holo: truth_values(row.holo),
+              reverse_holo: truth_values(row.reverse_holo),
+              first_edition: truth_values(row.first_edition),
               card_count: row.card_count === null || row.card_count === '' ? 1 : row.card_count,
-              variant: row.variant === 'true' || row.variant === true || row.variant === 1,
+              variant: truth_values(row.variant),
               variant_type: row.variant_type || '',
               isInvalid,
             };
