@@ -1,0 +1,75 @@
+.how-to-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.how-to-container h1 {
+    font-size: 2.5rem;
+    margin: 30px;
+    padding: 10px;
+}
+
+.how-to-container h2 {
+    font-size: 1.8rem;
+    margin-top: 20px;
+    padding: 10px;
+}
+
+.how-to-container p {
+    font-size: 1.2rem;
+    margin: 30px;
+    padding: 10px;
+}
+
+.how-to-container ul {
+    font-size: 1rem;
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.how-to-container ul li {
+    margin-bottom: 10px;
+}
+
+.how-to-table {
+    width: 80%;
+    margin: 30px;
+    padding: 10px;
+}
+
+.how-to-table th {
+    text-transform: lowercase;
+}
+
+.input-label {
+    font-weight: bold;
+    /* margin: 5px; */
+    /* padding: 5px; */
+}
+
+.example-block {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+}   
+
+.valid-inputs {
+    color: green;
+}
+
+.invalid-inputs {
+    color: red;
+}
+
+.example-image-box {
+    display: flex;
+    margin: 20px;
+}
+
+.grade-description {
+    width: 70%;
+    font-size: 0.9rem;
+    margin: 5px;
+    padding: 5px;
+}

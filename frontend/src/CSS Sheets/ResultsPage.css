@@ -11,7 +11,7 @@ th, td {
     border-right: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-th {
+.table-wrapper th {
     background: #2196f3; /* Blue background for headers */
     color: white; /* White text for headers */
     font-weight: 500;

@@ -71,10 +71,8 @@ input[type="checkbox"]:checked::after {
 }
 
 label {
-  display: inline-block; /* Allow vertical alignment */
-  /* vertical-align: middle; Align label vertically with input */
-  /* line-height: 4px; */
-  margin-right: 8px; /* Space between label and input */
+  display: inline-block;
+  margin-right: 8px;
   margin-left: 8px;
 }
 

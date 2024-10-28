@@ -4,8 +4,8 @@ import Papa from 'papaparse';
 import '../CSS Sheets/InputRows.css';
 
 type Row = {
-  cardName: string;
-  cardId: string;
+  card_name: string;
+  card_id: string;
   holo: boolean;
   reverse_holo: boolean;
   first_edition: boolean;
@@ -27,8 +27,8 @@ const InputRows: React.FC = () => {
 
 
   const initialRowState = Array.from({ length: 10 }, () => ({
-    cardName: '',
-    cardId: '',
+    card_name: '',
+    card_id: '',
     holo: false,
     reverse_holo: false,
     first_edition: false,
@@ -45,9 +45,9 @@ const InputRows: React.FC = () => {
   };
 
   const checkInvalidRow = (row: Row): boolean => {
-    return magicCardChecked && !row.cardId ? false :
-      (row.cardName ? 
-        !row.cardName || !row.cardId || 
+    return magicCardChecked && !row.card_id ? false :
+      (row.card_name ? 
+        !row.card_name || !row.card_id || 
         (row.card_count !== null && row.card_count <= 0)
         : false);
   };
@@ -55,7 +55,7 @@ const InputRows: React.FC = () => {
   const handleChange = (index: number, field: keyof Row, value: string | boolean | number) => {
     const newRows = [...rows];
   
-    if (field === 'cardName' || field === 'cardId' || field === 'variant_type') {
+    if (field === 'card_name' || field === 'card_id' || field === 'variant_type') {
       newRows[index][field] = value as string;
     } else if (field === 'holo' || field === 'reverse_holo' || field === 'first_edition' || field === 'variant') {
       newRows[index][field] = value as boolean;
@@ -71,8 +71,8 @@ const InputRows: React.FC = () => {
 
   const handleAddRows = () => {
     const newRowsToAdd: Row[] = Array.from({ length: 10 }, () => ({
-      cardName: '',
-      cardId: '',
+      card_name: '',
+      card_id: '',
       holo: false,
       reverse_holo: false,
       first_edition: false,
@@ -87,8 +87,8 @@ const InputRows: React.FC = () => {
   const handleClearRow = (index: number) => {
     const newRows = [...rows];
     newRows[index] = {
-      cardName: '',
-      cardId: '',
+      card_name: '',
+      card_id: '',
       holo: false,
       reverse_holo: false,
       first_edition: false,
@@ -142,8 +142,8 @@ const InputRows: React.FC = () => {
 
       const payload = {
         cards: rows.map(row => ({
-          card_name: row.cardName,
-          card_id: String(row.cardId),
+          card_name: row.card_name,
+          card_id: String(row.card_id),
           holo: row.holo,
           reverse_holo: row.reverse_holo,
           first_edition: row.first_edition,
@@ -201,8 +201,8 @@ const InputRows: React.FC = () => {
               !((truth_values(row.first_edition)) || false_values(row.first_edition)) ||
               !(row.card_count === null || row.card_count > 0);
             return {
-              cardName: row.cardName || '',
-              cardId: row.cardId || '',
+              card_name: row.card_name || '',
+              card_id: row.card_id || '',
               holo: truth_values(row.holo),
               reverse_holo: truth_values(row.reverse_holo),
               first_edition: truth_values(row.first_edition),
@@ -223,7 +223,7 @@ const InputRows: React.FC = () => {
 
   const downloadCSVTemplate = () => {
     const csvContent = "data:text/csv;charset=utf-8," + 
-      "cardName,cardId,holo,reverse_holo,first_edition,card_count,variant,variant_type\n" +
+      "card_name,card_id,holo,reverse_holo,first_edition,card_count,variant,variant_type\n" +
       ",,,,,,,"; // One empty line for a row
 
     const encodedUri = encodeURI(csvContent);
@@ -244,8 +244,8 @@ const InputRows: React.FC = () => {
       <form onSubmit={handleSubmit}>
         {rows.map((row, index) => (
           <span key={index} className={`row ${row.isInvalid ? 'invalid-row' : ''}`}>
-            <input type="text" value={row.cardName} onChange={e => handleChange(index, 'cardName', e.target.value)} placeholder="Card Name" />
-            <input type="text" value={row.cardId} onChange={e => handleChange(index, 'cardId', e.target.value)} placeholder={magicCardChecked ? 'Card ID (Optional)' : 'Card ID'} />
+            <input type="text" value={row.card_name} onChange={e => handleChange(index, 'card_name', e.target.value)} placeholder="Card Name" />
+            <input type="text" value={row.card_id} onChange={e => handleChange(index, 'card_id', e.target.value)} placeholder={magicCardChecked ? 'Card ID (Optional)' : 'Card ID'} />
             <label>
               {magicCardChecked ? 'Foil' : 'Holo'}:
               <input type="checkbox" checked={row.holo} onChange={e => handleChange(index, 'holo', e.target.checked)} />
