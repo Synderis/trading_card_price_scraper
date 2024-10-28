@@ -7,6 +7,7 @@ import numpy as np
 
 import card_scraper
 
+# Uvicorn start command for production: uvicorn main:app --reload
 
 app = FastAPI()
 
@@ -44,7 +45,8 @@ async def health_check():
 
 @app.post("/submit")
 async def submit_cards(card_input: CardInput, request: Request):  # Accept card_input and request
-    valid_rows = [row for row in card_input.cards if row.card_name.strip() and row.card_id.strip()]
+    # valid_rows = [row for row in card_input.cards if row.card_name.strip() and row.card_id.strip()]
+    valid_rows = [row for row in card_input.cards if row.card_name.strip()]
 
     if not valid_rows:
         raise HTTPException(status_code=400, detail="No valid rows to submit")

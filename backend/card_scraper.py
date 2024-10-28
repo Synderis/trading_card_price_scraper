@@ -1,51 +1,24 @@
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-import re
 
-def remove_card_and_id(text, card_var, id_var):
-    # Create a case-insensitive pattern that matches the card name and ID
-    # It will remove the card name and ID, while preserving text before and after them
-    pattern = re.compile(
-        r"([A-Za-z']*)\s*" + re.escape(card_var) + r"\s*([\[\]A-Za-z\s]*)\s*#" + re.escape(id_var), 
-        re.IGNORECASE
-    )
-    
-    # Perform the substitution to remove the card name and ID, keeping the desired parts
-    match = pattern.search(text)
-    if match:
-        # Get the prefix (if any) and the text in square brackets (if any)
-        prefix = match.group(1).strip()  # The text before the card name
-        suffix = match.group(2).strip()  # The text in square brackets or after the card name
-        # Return the appropriate part: either the prefix or suffix depending on which is present
-        return prefix if prefix else suffix
-    else:
-        # If no match is found, return the original text as is
-        return text.strip()
 
-def find_hyperlink_text(card_var, id_var, holo_var, reverse_holo_var, first_edition_var, variant, variant_type, soup):
+def find_hyperlink_text(card_var, id_var, card_type, variant, soup):
     card_var = card_var.replace(' ', '-')  # Normalize card name
     print(f"Searching for: {card_var} with ID: {id_var}")
 
     # Construct potential search texts based on conditions
     search_texts = []
-
-    if variant_type:
-        search_texts.append(f"{card_var}-{variant_type}-{id_var}")
-    if holo_var:
-        search_texts.append(f"{card_var}-holo-{id_var}")
-        search_texts.append(f"{card_var}-foil")
-    if first_edition_var:
-        search_texts.append(f"{card_var}-1st-edition-{id_var}") 
-    if reverse_holo_var:
-        search_texts.append(f"{card_var}-reverse-holo-{id_var}")
-    
-    # General search terms for fallback
-    search_texts.append(f"{card_var}-{id_var}")
-    search_texts.append(f"{card_var}")
-
+    if id_var == '':
+        if card_type == '':
+            search_texts.append(f"{card_var}")
+        else:
+            search_texts.append(f"{card_var}-{card_type}")
+    else:
+        search_texts.append(f"{card_var}-{card_type}-{id_var}")
+        search_texts.append(f"{card_var}-{id_var}")
     if variant:
-        result = grab_all_links(card_var, id_var, soup)
+        result = grab_all_links(card_var, id_var, card_type, soup)
         if not result.empty:
             return result
     else:
@@ -68,21 +41,32 @@ def find_link(search_text, soup):
     return None
 
 
-def grab_all_links(card_var, id_var, soup):
+def grab_all_links(card_var, id_var, card_type, soup):
     links = soup.find_all('a')
     data = []  # List to hold dictionary entries
+    card_var_text = card_var.replace('-', ' ')
 
     for link in links:
         href = link.get('href')
         text = link.get_text(strip=True).lower()
-        if text == '' or href is None: 
+        if text == '' or href is None or 'game' not in href: 
             continue
-        
-        if card_var in href.split('/')[-1].split('-') and id_var in href.split('/')[-1]:
-            if card_var in text and id_var in text:
-                bracket_text = text.replace(card_var, '').replace(f'#{id_var}', '').strip()
-                data.append({'names': bracket_text, 'links': href})  # Append to list
-
+        if id_var == '':
+            if '/magic-' not in href:
+                continue
+            if card_type == '' or card_type is None:
+                if card_var in href.split('/')[-1]:
+                    bracket_text = text.replace(card_var_text, '').strip()
+                    data.append({'names': bracket_text, 'links': href})  # Append to list
+            else:
+                if card_var in href.split('/')[-1] and card_type in href.split('/')[-1].split('-')[-1]:
+                    bracket_text = text.replace(card_var_text, '').strip()
+                    data.append({'names': bracket_text, 'links': href})  # Append to list
+        else:
+            if card_var in href.split('/')[-1].split('-') and id_var in href.split('/')[-1]:
+                if card_var in text and id_var in text:
+                    bracket_text = text.replace(card_var_text, '').replace(f'#{id_var}', '').strip()
+                    data.append({'names': bracket_text, 'links': href})  # Append to list
     # Convert list of dictionaries to DataFrame if data is not empty
     return pd.DataFrame(data) if data else None
 
@@ -104,7 +88,7 @@ def extract_table_to_dict(final_link, card, card_id, card_count, variant_type):
         table = soup.find(id='full-prices')
         rows = table.find_all('tr') if table else []
 
-        table_data = {label: 'not_available' for label in standard_labels}
+        table_data = {label: 'N/A' for label in standard_labels}
 
         # Extract data from rows
         for row in rows:
@@ -116,7 +100,7 @@ def extract_table_to_dict(final_link, card, card_id, card_count, variant_type):
 
         # Get the img_link from the img src property
         img_element = soup.find_all('img', {'itemprop': 'image'})[0]
-        img_link = img_element['src'] if img_element else 'not_available'
+        img_link = img_element['src'] if img_element else 'N/A'
         table_data['img_link'] = img_link
 
         # Set the final link, card, number, and card count
@@ -127,8 +111,8 @@ def extract_table_to_dict(final_link, card, card_id, card_count, variant_type):
         table_data['variant_type'] = variant_type
         return table_data
     except Exception as e:
-        print(f"Failed to extract table, setting all prices to 'not_available'. Error: {e}")
-        return {label: 'not_available' for label in standard_labels}
+        print(f"Failed to extract table, setting all prices to 'N/A'. Error: {e}")
+        return {label: 'N/A' for label in standard_labels}
 
 # Iterate through each row in the source DataFrame
 def card_finder(source_df):
@@ -152,18 +136,29 @@ def card_finder(source_df):
         card_count = source_df.iloc[i, 5]
         variant = source_df.iloc[i, 6]
         variant_type = source_df.iloc[i, 7]
+        card_type = ''
+        card_types = {'holo': holo, 'reverse-holo': reverse_holo, '1st-edition': first_edition, 'variant': variant}
+        
+        for type_value in card_types.keys():
+            if card_id == '' or card_id is None and type_value == 'holo' and card_types[type_value] == True:
+                card_type = 'foil'
+            elif type_value == 'variant' and variant_type != '':
+                card_type = variant_type
+            else:
+                if card_types[type_value] == True:
+                    card_type = type_value
         
         if 'game' in response.url:
             final_link = response.url
-            df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, variant_type)
+            df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, card_type)
         else:
             if variant:
-                matching_links = find_hyperlink_text(card, card_id, holo, reverse_holo, first_edition, variant, variant_type, soup)
+                matching_links = find_hyperlink_text(card, card_id, card_type, variant, soup)
                 if not matching_links.empty:
                     for index, row in matching_links.iterrows():
                         final_link = row['links']
-                        variant_type = row['names']
-                        df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, variant_type)
+                        card_type = row['names']
+                        df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, card_type)
                         new_rows.append(df_new_rows)
                 else:
                     final_link = 'N/A'
@@ -179,10 +174,10 @@ def card_finder(source_df):
                     df_new_rows['variant_type'] = variant_type
                     new_rows.append(df_new_rows)
             else:
-                matching_link = find_hyperlink_text(card, card_id, holo, reverse_holo, first_edition, variant, variant_type, soup)
+                matching_link = find_hyperlink_text(card, card_id, card_type, variant, soup)
                 if matching_link:
                     final_link = matching_link
-                    df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, variant_type)
+                    df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, card_type)
                 else:
                     final_link = 'N/A'
                     df_new_rows = {label: 'N/A' for label in [

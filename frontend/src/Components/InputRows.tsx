@@ -19,9 +19,11 @@ const InputRows: React.FC = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [toggleVariants, setToggleVariants] = useState(false);
+  const [toggleVariants, setToggleVariants] = useState(true);
   const [loading, setLoading] = useState(false); // Loading state
   const [loadingProgress, setLoadingProgress] = useState(0); // Loading progress
+  const [magicCardChecked, setMagicCardChecked] = useState(false);
+
 
 
   const initialRowState = Array.from({ length: 10 }, () => ({
@@ -31,7 +33,7 @@ const InputRows: React.FC = () => {
     reverse_holo: false,
     first_edition: false,
     card_count: 1,
-    variant: false,
+    variant: true,
     variant_type: null,
     isInvalid: false, // Initialize isInvalid
   }));
@@ -45,13 +47,14 @@ const InputRows: React.FC = () => {
   const checkInvalidRows = (updatedRows: Row[]) => {
     return updatedRows.map(row => ({
       ...row,
-      isInvalid: 
-        (row.cardName || row.cardId) ?
-        !row.cardName || 
-        !row.cardId || 
-        (row.card_count !== null && row.card_count <= 0): false, // Check if card_count is null or greater than 0
+      isInvalid: magicCardChecked && !row.cardId ? false :
+        (row.cardName ? 
+          !row.cardName || !row.cardId || 
+          (row.card_count !== null && row.card_count <= 0)
+          : false), // Check if card_count is null or greater than 0
     }));
   };
+  
 
   const handleChange = (index: number, field: keyof Row, value: string | boolean | number) => {
     const newRows = [...rows];
@@ -77,7 +80,7 @@ const InputRows: React.FC = () => {
       reverse_holo: false,
       first_edition: false,
       card_count: 1,
-      variant: false,
+      variant: true,
       variant_type: null,
       isInvalid: false, // Initialize isInvalid
     }));
@@ -93,7 +96,7 @@ const InputRows: React.FC = () => {
       reverse_holo: false,
       first_edition: false,
       card_count: 1,
-      variant: false,
+      variant: true,
       variant_type: null,
       isInvalid: false, // Reset isInvalid
     };
@@ -154,7 +157,10 @@ const InputRows: React.FC = () => {
       };
 
       // Constructing the API URL using window.location
-      const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/submit`; // Adjust the path as necessary
+      // const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/submit`;
+
+      // local testing API URL
+      const apiUrl = `http://localhost:8000/submit`;
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -236,19 +242,23 @@ const InputRows: React.FC = () => {
         {rows.map((row, index) => (
           <span key={index} className={`row ${row.isInvalid ? 'invalid-row' : ''}`}>
             <input type="text" value={row.cardName} onChange={e => handleChange(index, 'cardName', e.target.value)} placeholder="Card Name" />
-            <input type="text" value={row.cardId} onChange={e => handleChange(index, 'cardId', e.target.value)} placeholder="Card ID" />
+            <input type="text" value={row.cardId} onChange={e => handleChange(index, 'cardId', e.target.value)} placeholder={magicCardChecked ? 'Card ID (Optional)' : 'Card ID'} />
             <label>
-              Holo:
+              {magicCardChecked ? 'Foil' : 'Holo'}:
               <input type="checkbox" checked={row.holo} onChange={e => handleChange(index, 'holo', e.target.checked)} />
             </label>
-            <label>
-              Reverse Holo:
-              <input type="checkbox" checked={row.reverse_holo} onChange={e => handleChange(index, 'reverse_holo', e.target.checked)} />
-            </label>
-            <label>
-              First Edition:
-              <input type="checkbox" checked={row.first_edition} onChange={e => handleChange(index, 'first_edition', e.target.checked)} />
-            </label>
+            {!magicCardChecked && (
+              <>
+                <label>
+                  Reverse Holo:
+                  <input type="checkbox" checked={row.reverse_holo} onChange={e => handleChange(index, 'reverse_holo', e.target.checked)} />
+                </label>
+                <label>
+                  First Edition:
+                  <input type="checkbox" checked={row.first_edition} onChange={e => handleChange(index, 'first_edition', e.target.checked)} />
+                </label>
+              </>
+            )}
             <label>
               Card Count:
               <input type="number" value={row.card_count === null ? '' : row.card_count} onChange={e => handleChange(index, 'card_count', e.target.value)} placeholder="Card Count" />
@@ -276,15 +286,22 @@ const InputRows: React.FC = () => {
           {showAdvanced ? 'Hide Advanced Types' : 'Show Advanced Types'}
         </button>
         <label style={{ marginLeft: '10px' }}>
-          Toggle All Variants:
+          Toggle All Prints:
           <input
             type="checkbox"
             checked={toggleVariants}
             onChange={handleToggleVariants}
           />
         </label>
+        <label style={{ marginLeft: '10px' }}>
+          Toggle Magic Card Input:
+          <input
+            type="checkbox"
+            checked={magicCardChecked}
+            onChange={(e) => setMagicCardChecked(e.target.checked)}
+          />
+        </label>
       </div>
-
       {loading && (
       <>
         <p>Loading Please wait...</p>

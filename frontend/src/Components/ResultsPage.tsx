@@ -30,11 +30,16 @@ const ResultsPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [lastClickedIndex, setLastClickedIndex] = useState<number | null>(null);
     const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+    const [mousePosition, setMousePosition] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
 
     useEffect(() => {
         const fetchResults = async () => {
             try {
-                const response = await fetch(`https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/results`);
+                // const apiUrl = 'https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/results';
+                // local testing API URL
+                const apiUrl = `http://localhost:8000/results`;
+                const response = await fetch(apiUrl);
                 if (!response.ok) {
                     throw new Error('Failed to fetch results');
                 }
@@ -78,6 +83,19 @@ const ResultsPage: React.FC = () => {
 
         fetchResults();
     }, []);
+
+    const handleMouseEnter = (index: number, event: React.MouseEvent) => {
+        setHoveredIndex(index); 
+        setMousePosition({ x: event.clientX, y: event.clientY }); 
+    };
+
+    const handleMouseLeave = () => {
+        setHoveredIndex(null); 
+    };
+
+    const handleMouseMove = (event: React.MouseEvent) => {
+        setMousePosition({ x: event.clientX, y: event.clientY });
+    };
 
     const convertToCSV = (data: ResultData[], totals: any) => {
         const header = [
@@ -245,13 +263,11 @@ const ResultsPage: React.FC = () => {
                                         ${selectedRows.has(index) ? 'row-selected' : ''}
                                     `}
                                 >
-                                    <td>
-                                        <span className="img-hover-link">
-                                            {item.card}
-                                            <span className="img-hover-tooltip">
-                                                <img src={item.img_link} alt="Card" />
-                                            </span>
-                                        </span>
+                                    <td
+                                        onMouseEnter={(e) => handleMouseEnter(index, e)}
+                                        onMouseLeave={handleMouseLeave}
+                                        onMouseMove={handleMouseMove}>
+                                        <a className='img-hover-link' href={item.img_link} target="_blank" rel="noopener noreferrer">{item.card}</a>
                                     </td>
                                     <td>{item.id}</td>
                                     <td>{item.card_count}</td>
@@ -262,6 +278,28 @@ const ResultsPage: React.FC = () => {
                                         <a href={item.final_link} target="_blank" rel="noopener noreferrer">{item.variant_type || 'View'}</a>
                                     </td>
                                 </tr>
+                                {hoveredIndex === index && (
+                                    <div
+                                        style={{
+                                            position: 'fixed',
+                                            top: mousePosition.y - 200,  // Adjust the offset as needed
+                                            left: mousePosition.x + 10,  // Adjust the offset as needed
+                                            zIndex: 1000,
+                                        }}
+                                    >
+                                        <img
+                                            src={item.img_link}
+                                            alt="Card"
+                                            style={{
+                                                width: '200px',
+                                                border: '1px solid #ccc',
+                                                backgroundColor: '#fff',
+                                                padding: '5px',
+                                                borderRadius: '4px',
+                                            }}
+                                        />
+                                    </div>
+                                )}
                             </React.Fragment>
                         ))}
                         <tr className="totals-row">
