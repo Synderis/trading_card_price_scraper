@@ -31,6 +31,7 @@ const VariantInfo: React.FC = () => {
                 </div>
             </div>
             <h4 className='variation-header'>Uncommon/Rare Card Types</h4>
+            <p>These can be entered in the variant_type field of the input page after clicking show advanced types.</p>
             <div className='variation-container'>
                 <p>shadowless - For these there is no shadow present on the right side of the card artwork frame it is only present in older cards afaik.</p>
                 <div className='example-image-box'>

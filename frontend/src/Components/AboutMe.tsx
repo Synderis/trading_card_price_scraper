@@ -14,7 +14,7 @@ const AboutMe: React.FC = () => {
 
             <h2>Technologies Used</h2>
             <ul>
-                <li>React with TypeScript for frontend development.</li>
+                <li>Built with React for frontend development.</li>
                 <li>FastAPI for backend API development.</li>
                 <li>Requests and BeautifulSoup for web scraping.</li>
                 <li>Papa Parse for CSV data handling in the browser.</li>
