@@ -10,7 +10,8 @@ def find_hyperlink_text(card_var, id_var, card_type, variant, soup):
     # Construct potential search texts based on conditions
     search_texts = []
     if id_var == '':
-        if card_type == '':
+        print(card_type, type(card_type), flush=True)
+        if card_type in ['', None]:
             search_texts.append(f"{card_var}")
         else:
             search_texts.append(f"{card_var}-{card_type}")
@@ -140,9 +141,9 @@ def card_finder(source_df):
         card_types = {'holo': holo, 'reverse-holo': reverse_holo, '1st-edition': first_edition, 'variant': variant}
         
         for type_value in card_types.keys():
-            if card_id == '' or card_id is None and type_value == 'holo' and card_types[type_value] == True:
+            if (card_id == '' or card_id is None) and type_value == 'holo' and card_types[type_value] == True:
                 card_type = 'foil'
-            elif type_value == 'variant' and variant_type != '':
+            elif type_value == 'variant' and variant_type in ['', None]:
                 card_type = variant_type
             else:
                 if card_types[type_value] == True:

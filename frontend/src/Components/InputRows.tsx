@@ -41,7 +41,7 @@ const InputRows: React.FC = () => {
     first_edition: false,
     card_count: 1,
     variant: true,
-    variant_type: null,
+    variant_type: '',
     card_name_id_invalid: false,
     holo_invalid: false,
     reverse_holo_invalid: false,
@@ -104,7 +104,7 @@ const InputRows: React.FC = () => {
   
     // Check and update invalid states
     const row = newRows[index];
-    row.card_name_id_invalid = !magicCardChecked && row.card_name !== null && row.card_id === null;
+    row.card_name_id_invalid = !magicCardChecked && row.card_name !== null && (row.card_id === null || row.card_id === '');
     row.holo_invalid = !(row.holo === true || row.holo === false);
     row.reverse_holo_invalid = !(row.reverse_holo === true || row.reverse_holo === false);
     row.first_edition_invalid = !(row.first_edition === true || row.first_edition === false);
@@ -126,7 +126,7 @@ const InputRows: React.FC = () => {
       first_edition: false,
       card_count: 1,
       variant: true,
-      variant_type: null,
+      variant_type: '',
       card_name_id_invalid: false,
       holo_invalid: false,
       reverse_holo_invalid: false,
@@ -147,7 +147,7 @@ const InputRows: React.FC = () => {
       first_edition: false,
       card_count: 1,
       variant: true,
-      variant_type: null,
+      variant_type: '',
       card_name_id_invalid: false,
       holo_invalid: false,
       reverse_holo_invalid: false,
@@ -213,10 +213,10 @@ const InputRows: React.FC = () => {
       };
 
       // Constructing the API URL using window.location
-      const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/submit`;
+      // const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/submit`;
 
       // local testing API URL
-      // const apiUrl = `http://localhost:8000/submit`;
+      const apiUrl = `http://localhost:8000/submit`;
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -259,7 +259,7 @@ const InputRows: React.FC = () => {
         dynamicTyping: true,
         complete: (results) => {
           const parsedRows: Row[] = results.data.map((row: any) => {
-            const card_name_id_invalid = !magicCardChecked && row.card_name !== null && row.card_id === null;
+            const card_name_id_invalid = !magicCardChecked && row.card_name !== null && (row.card_id === null || row.card_id === '');
             const holo_invalid = !((truth_values(row.holo)) || false_values(row.holo));
             const reverse_holo_invalid = !((truth_values(row.reverse_holo)) || false_values(row.reverse_holo));
             const first_edition_invalid = !((truth_values(row.first_edition)) || false_values(row.first_edition));
