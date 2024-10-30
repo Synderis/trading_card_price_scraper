@@ -1,3 +1,4 @@
+// import React, { useState, useRef, useEffect } from 'react';
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
@@ -12,6 +13,11 @@ type Row = {
   card_count: number | null;
   variant: boolean;
   variant_type: string | null;
+  card_name_id_invalid?: boolean;
+  holo_invalid?: boolean;
+  reverse_holo_invalid?: boolean;
+  first_edition_invalid?: boolean;
+  card_count_invalid?: boolean;
   isInvalid?: boolean;
 };
 
@@ -23,6 +29,7 @@ const InputRows: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [magicCardChecked, setMagicCardChecked] = useState(false);
+  const [fileName, setFileName] = useState('No file chosen');
 
 
 
@@ -35,6 +42,11 @@ const InputRows: React.FC = () => {
     card_count: 1,
     variant: true,
     variant_type: null,
+    card_name_id_invalid: false,
+    holo_invalid: false,
+    reverse_holo_invalid: false,
+    first_edition_invalid: false,
+    card_count_invalid: false,
     isInvalid: false,
   }));
 
@@ -43,15 +55,42 @@ const InputRows: React.FC = () => {
   const toggleAdvancedFields = () => {
     setShowAdvanced(!showAdvanced);
   };
-
-  const checkInvalidRow = (row: Row): boolean => {
-    return magicCardChecked && !row.card_id ? false :
-      (row.card_name ? 
-        !row.card_name || !row.card_id || 
-        (row.card_count !== null && row.card_count <= 0)
-        : false);
-  };
   
+  // const handleChange = (index: number, field: keyof Row, value: string | boolean | number) => {
+  //   const newRows = [...rows];
+  
+  //   if (field === 'card_name' || field === 'card_id' || field === 'variant_type') {
+  //     newRows[index][field] = value as string;
+  //   } else if (field === 'holo' || field === 'reverse_holo' || field === 'first_edition' || field === 'variant') {
+  //     newRows[index][field] = value as boolean;
+  //   } else if (field === 'card_count') {
+  //     newRows[index][field] = value === '' ? 1 : Number(value);
+  //   }
+  
+  //   // Check only the specific row for invalid data
+  //   newRows[index].isInvalid = checkInvalidRow(newRows[index]);
+
+  
+  //   setRows(newRows);
+  // };
+
+  // useEffect(() => {
+  //   const revalidateRows = rows.map(row => ({
+  //     ...row,
+  //     card_name_id_invalid: !magicCardChecked && row.card_name !== null && row.card_id === null,
+  //     holo_invalid: !(row.holo === true || row.holo === false),
+  //     reverse_holo_invalid: !(row.reverse_holo === true || row.reverse_holo === false),
+  //     first_edition_invalid: !(row.first_edition === true || row.first_edition === false),
+  //     card_count_invalid: !(row.card_count === null || row.card_count > 0),
+  //     isInvalid: (!magicCardChecked && row.card_name !== null && row.card_id === null) ||
+  //           !(row.holo === true || row.holo === false) ||
+  //           !(row.reverse_holo === true || row.reverse_holo === false) ||
+  //           !(row.first_edition === true || row.first_edition === false) ||
+  //           !(row.card_count === null || row.card_count > 0)
+  //   }));
+  //   setRows(revalidateRows);
+  // }, [magicCardChecked, rows]);
+
   const handleChange = (index: number, field: keyof Row, value: string | boolean | number) => {
     const newRows = [...rows];
   
@@ -63,11 +102,20 @@ const InputRows: React.FC = () => {
       newRows[index][field] = value === '' ? 1 : Number(value);
     }
   
-    // Check only the specific row for invalid data
-    newRows[index].isInvalid = checkInvalidRow(newRows[index]);
+    // Check and update invalid states
+    const row = newRows[index];
+    row.card_name_id_invalid = !magicCardChecked && row.card_name !== null && row.card_id === null;
+    row.holo_invalid = !(row.holo === true || row.holo === false);
+    row.reverse_holo_invalid = !(row.reverse_holo === true || row.reverse_holo === false);
+    row.first_edition_invalid = !(row.first_edition === true || row.first_edition === false);
+    row.card_count_invalid = !(row.card_count === null || row.card_count > 0);
+  
+    // Update isInvalid based on all invalid flags
+    row.isInvalid = row.card_name_id_invalid || row.holo_invalid || row.reverse_holo_invalid || row.first_edition_invalid || row.card_count_invalid;
   
     setRows(newRows);
   };
+  
 
   const handleAddRows = () => {
     const newRowsToAdd: Row[] = Array.from({ length: 10 }, () => ({
@@ -79,6 +127,11 @@ const InputRows: React.FC = () => {
       card_count: 1,
       variant: true,
       variant_type: null,
+      card_name_id_invalid: false,
+      holo_invalid: false,
+      reverse_holo_invalid: false,
+      first_edition_invalid: false,
+      card_count_invalid: false,
       isInvalid: false, // Initialize isInvalid
     }));
     setRows(prevRows => [...prevRows, ...newRowsToAdd]);
@@ -95,6 +148,11 @@ const InputRows: React.FC = () => {
       card_count: 1,
       variant: true,
       variant_type: null,
+      card_name_id_invalid: false,
+      holo_invalid: false,
+      reverse_holo_invalid: false,
+      first_edition_invalid: false,
+      card_count_invalid: false,
       isInvalid: false,
     };
     setRows(newRows);
@@ -105,6 +163,7 @@ const InputRows: React.FC = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+    setFileName('No file chosen');
   };
 
   const handleToggleVariants = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -187,19 +246,38 @@ const InputRows: React.FC = () => {
       return ['false', false, 0, 'n', 'N', 'f', 'F', 'False', 'FALSE', null].includes(value);
   };
 
+  const handleMagicCardToggle = () => {
+    setMagicCardChecked(prev => !prev);
+  };
+
   const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setFileName(file.name);
       Papa.parse(file, {
         header: true,
         dynamicTyping: true,
         complete: (results) => {
           const parsedRows: Row[] = results.data.map((row: any) => {
+            const card_name_id_invalid = !magicCardChecked && row.card_name !== null && row.card_id === null;
+            const holo_invalid = !((truth_values(row.holo)) || false_values(row.holo));
+            const reverse_holo_invalid = !((truth_values(row.reverse_holo)) || false_values(row.reverse_holo));
+            const first_edition_invalid = !((truth_values(row.first_edition)) || false_values(row.first_edition));
+            const card_count_invalid = !(row.card_count === null || row.card_count > 0);
             const isInvalid =
               !((truth_values(row.holo)) || false_values(row.holo)) ||
               !((truth_values(row.reverse_holo)) || false_values(row.reverse_holo)) ||
               !((truth_values(row.first_edition)) || false_values(row.first_edition)) ||
               !(row.card_count === null || row.card_count > 0);
+            
+            console.log(
+              card_name_id_invalid,
+              holo_invalid,
+              reverse_holo_invalid,
+              first_edition_invalid,
+              card_count_invalid,
+              isInvalid
+            )
             return {
               card_name: row.card_name || '',
               card_id: row.card_id || '',
@@ -209,6 +287,11 @@ const InputRows: React.FC = () => {
               card_count: row.card_count === null || row.card_count === '' ? 1 : row.card_count,
               variant: truth_values(row.variant),
               variant_type: row.variant_type || '',
+              card_name_id_invalid,
+              holo_invalid,
+              reverse_holo_invalid,
+              first_edition_invalid,
+              card_count_invalid,
               isInvalid,
             };
           });
@@ -218,6 +301,8 @@ const InputRows: React.FC = () => {
           console.error('CSV parsing error:', error);
         }
       });
+    } else {
+      setFileName('No file chosen');
     }
   };
 
@@ -239,33 +324,48 @@ const InputRows: React.FC = () => {
     <div className="container">
       <h1>Card Input Rows</h1>
       <button className='download-template-btn' onClick={downloadCSVTemplate}>Download CSV Template</button>
-      <input type="file" accept=".csv" ref={fileInputRef} style={{ marginBottom: '10px' }} onChange={handleCSVUpload} />
+      <input id="csv-file-upload" type="file" accept=".csv" ref={fileInputRef} onChange={handleCSVUpload} hidden/>
+      <label htmlFor="csv-file-upload" className='upload-btn'>Upload CSV File</label>
+      <span id="file-chosen" style={{marginTop: '10px'}}>{fileName}</span>
       <h4>Enter the data for each row or upload a CSV file. Rows with potentially invalid CSV data will be marked red.</h4>
       <form onSubmit={handleSubmit}>
         {rows.map((row, index) => (
           <span key={index} className={`row ${row.isInvalid ? 'invalid-row' : ''}`}>
-            <input type="text" value={row.card_name} onChange={e => handleChange(index, 'card_name', e.target.value)} placeholder="Card Name" />
-            <input type="text" value={row.card_id} onChange={e => handleChange(index, 'card_id', e.target.value)} placeholder={magicCardChecked ? 'Card ID (Optional)' : 'Card ID'} />
-            <label>
-              {magicCardChecked ? 'Foil' : 'Holo'}:
-              <input type="checkbox" checked={row.holo} onChange={e => handleChange(index, 'holo', e.target.checked)} />
-            </label>
+            <span key={index} className={`row ${row.card_name_id_invalid ? 'invalid-label' : ''}`}>
+              {row.card_name_id_invalid && (
+                <span className="invalid-marker">!</span>
+              )}
+              <input type="text" value={row.card_name} onChange={e => handleChange(index, 'card_name', e.target.value)} placeholder="Card Name" />
+              <input type="text" value={row.card_id} onChange={e => handleChange(index, 'card_id', e.target.value)} placeholder={magicCardChecked ? 'Card ID (Optional)' : 'Card ID'} />
+            </span>
+            <span key={index} className={`row ${row.holo_invalid ? 'invalid-label' : ''}`}>
+              <label>
+                {magicCardChecked ? 'Foil' : 'Holo'}:
+                <input type="checkbox" checked={row.holo} onChange={e => handleChange(index, 'holo', e.target.checked)} />
+              </label>
+            </span>
             {!magicCardChecked && (
               <>
-                <label>
-                  Reverse Holo:
-                  <input type="checkbox" checked={row.reverse_holo} onChange={e => handleChange(index, 'reverse_holo', e.target.checked)} />
-                </label>
-                <label>
-                  First Edition:
-                  <input type="checkbox" checked={row.first_edition} onChange={e => handleChange(index, 'first_edition', e.target.checked)} />
-                </label>
+                <span key={index} className={`row ${row.reverse_holo_invalid ? 'invalid-label' : ''}`}>
+                  <label>
+                    Reverse Holo:
+                    <input type="checkbox" checked={row.reverse_holo} onChange={e => handleChange(index, 'reverse_holo', e.target.checked)} />
+                  </label>
+                </span>
+                <span key={index} className={`row ${row.first_edition_invalid ? 'invalid-label' : ''}`}>
+                  <label>
+                    First Edition:
+                    <input type="checkbox" checked={row.first_edition} onChange={e => handleChange(index, 'first_edition', e.target.checked)} />
+                  </label>
+                </span>
               </>
             )}
-            <label>
-              Card Count:
-              <input type="number" value={row.card_count === null ? '' : row.card_count} onChange={e => handleChange(index, 'card_count', e.target.value)} placeholder="Card Count" />
-            </label>
+            <span key={index} className={`row ${row.card_count_invalid ? 'invalid-label' : ''}`}>
+              <label>
+                Card Count:
+                <input type="number" value={row.card_count === null ? '' : row.card_count} onChange={e => handleChange(index, 'card_count', e.target.value)} placeholder="Card Count" />
+              </label>
+            </span>
             {showAdvanced && (
               <>
                 <label>
@@ -301,7 +401,7 @@ const InputRows: React.FC = () => {
           <input
             type="checkbox"
             checked={magicCardChecked}
-            onChange={(e) => setMagicCardChecked(e.target.checked)}
+            onChange={handleMagicCardToggle}
           />
         </label>
       </div>

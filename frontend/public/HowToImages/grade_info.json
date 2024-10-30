@@ -1,0 +1,52 @@
+[
+    {
+        "grade": 1,
+        "description": "A PSA Poor 1 will exhibit many of the same qualities of a PSA Fair 1.5 but the defects may have advanced to such a serious stage that the eye appeal of the card has nearly vanished in its entirety. A Poor card may be missing one or two small pieces, exhibit major creasing that nearly breaks through all the layers of cardboard or it may contain extreme discoloration or dirtiness throughout that may make it difficult to identify the issue or content of the card on either the front or back. A card of this nature may also show noticeable warping or another type of destructive defect.",
+        "images": ["psa-1-charizard-holo-4-a.jpeg", "psa-1-charizard-holo-4-b.jpeg"]
+    },
+    {
+        "grade": 2,
+        "description": "A PSA Good 2 card’s corners show accelerated rounding and surface wear is starting to become obvious. A good card may have scratching, scuffing, light staining, or chipping of enamel on obverse. There may be several creases. Original gloss may be completely absent. Card may show considerable discoloration. Centering must be 90/10 or better on the front and back.",
+        "images": ["psa-2-charizard-holo-4-a.jpeg", "psa-2-charizard-holo-4-b.jpeg"]
+    },
+    {
+        "grade": 3,
+        "description": "A PSA VG 3 card reveals some rounding of the corners, though not extreme. Some surface wear will be apparent, along with possible light scuffing or light scratches. Focus may be somewhat off-register and edges may exhibit noticeable wear. Much, but not all, of the card’s original gloss will be lost. Borders may be somewhat yellowed and/or discolored. A crease may be visible. Printing defects are possible. Slight stain may show on obverse and wax staining on reverse may be more prominent. Centering must be 90/10 or better on the front and back.",
+        "images": ["psa-3-charizard-holo-4-a.jpeg", "psa-3-charizard-holo-4-b.jpeg"]
+    },
+    {
+        "grade": 4,
+        "description": "A PSA VG-EX 4 card’s corners may be slightly rounded. Surface wear is noticeable but modest. The card may have light scuffing or light scratches. Some original gloss will be retained. Borders may be slightly off-white. A light crease may be visible. Centering must be 85/15 or better on the front and 90/10 or better on the back.",
+        "images": ["psa-4-charizard-holo-4-a.jpeg", "psa-4-charizard-holo-4-b.jpeg"]
+    },
+    {
+        "grade": 5,
+        "description": "On PSA EX 5 cards, very minor rounding of the corners is becoming evident. Surface wear or printing defects are more visible. There may be minor chipping on edges. Loss of original gloss will be more apparent. Focus of picture may be slightly out-of-register. Several light scratches may be visible upon close inspection, but do not detract from the appeal of the card. Card may show some off-whiteness of borders. Centering must be 85/15 or better on the front and 90/10 or better on the back.",
+        "images": ["psa-5-charizard-holo-4-a.jpeg", "psa-5-charizard-holo-4-b.jpeg"]
+    },
+    {
+        "grade": 6,
+        "description": "A PSA EX-MT 6 card may have visible surface wear or a printing defect which does not detract from its overall appeal. A very light scratch may be detected only upon close inspection. Corners may have slightly graduated fraying. Picture focus may be slightly out-of-register. Card may show some loss of original gloss, may have minor wax stain on reverse, may exhibit very slight notching on edges and may also show some off-whiteness on borders. Centering must be 80/20 or better on the front and 90/10 or better on the reverse.",
+        "images": ["psa-6-charizard-holo-4-a.jpeg", "psa-6-charizard-holo-4-b.jpeg"]
+    },
+    {
+        "grade": 7,
+        "description": "A PSA NM 7 is a card with just a slight surface wear visible upon close inspection. There may be slight fraying on some corners. Picture focus may be slightly out-of-register. A minor printing blemish is acceptable. Slight wax staining is acceptable on the back of the card only. Most of the original gloss is retained. Centering must be approximately 70/30 to 75/25 or better on the front and 90/10 or better on the back.",
+        "images": ["psa-7-charizard-holo-4-a.jpeg", "psa-7-charizard-holo-4-b.jpeg"]
+    },
+    {
+        "grade": 8,
+        "description": "A PSA NM-MT 8 is a super high-end card that appears Mint 9 at first glance, but upon closer inspection, the card can exhibit the following: a very slight wax stain on reverse, slightest fraying at one or two corners, a minor printing imperfection, and/or slightly off-white borders. Centering must be approximately 65/35 to 70/30 or better on the front and 90/10 or better on the reverse.",
+        "images": ["psa-8-charizard-holo-4-a.jpeg", "psa-8-charizard-holo-4-b.jpeg"]
+    },
+    {
+        "grade": 9,
+        "description": "A PSA Mint 9 is a superb condition card that exhibits only one of the following minor flaws: a very slight wax stain on reverse, a minor printing imperfection or slightly off-white borders. Centering must be approximately 60/40 to 65/35 or better on the front and 90/10 or better on the reverse.",
+        "images": ["psa-9-charizard-holo-4-a.jpeg", "psa-9-charizard-holo-4-b.jpeg"]
+    },
+    {
+        "grade": 10,
+        "description": "A PSA Gem Mint 10 card is a virtually perfect card. Attributes include four perfectly sharp corners, sharp focus and full original gloss. A PSA Gem Mint 10 card must be free of staining of any kind, but an allowance may be made for a slight printing imperfection, if it doesn’t impair the overall appeal of the card. The image must be centered on the card within a tolerance not to exceed approximately 55/45 to 60/40 percent on the front, and 75/25 percent on the reverse.",
+        "images": ["psa-10-charizard-holo-4-a.jpeg", "psa-10-charizard-holo-4-b.jpeg"]
+    }
+]

@@ -1,0 +1,28 @@
+.grades-section {
+    /* style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }} */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 60px;
+    padding: 10px;
+}
+
+.grade-box {
+    flex: '1 1 calc(50% - 20px)';
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 16px;
+    background: linear-gradient(to bottom right, #3d444d, #0e1a27);
+}
+
+.grade-description {
+    max-width: 45%;
+    padding: 0.5rem;
+    line-height: 1.5;
+}
+
+.grade-image {
+    width: 250px;
+    height: auto;
+    margin-left: 85px;
+}

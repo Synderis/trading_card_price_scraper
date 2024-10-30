@@ -1,0 +1,38 @@
+.variations-section {
+    margin: 60px;
+}
+
+.variation-container {
+    border: 1px solid #ccc; /* Add border */
+    border-radius: 16px; /* Rounded corners */
+    padding: 16px; /* Padding inside the box */
+    margin: 10px 0; /* Margin between boxes */
+    background: linear-gradient(to bottom right, #3d444d, #0e1a27);
+}
+.variation-header {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 30px 0px 0px 60px;
+    padding: 10px;
+}
+
+/* .example-image-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+} */
+
+
+.example-image-box {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 1rem 0;
+}
+
+.example-image-box img {
+    width: 300px;
+    height: auto;
+    /* Optional: add a border or shadow for distinction */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}

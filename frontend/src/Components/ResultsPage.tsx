@@ -14,8 +14,6 @@ interface ResultData {
     img_link: string;
     estimatedGrades?: string[];
     isAdvanced?: boolean;
-    // cardVariants?: CardVariant[];
-    // variant?: boolean;
     variant_type?: string;
     isExcluded?: boolean;
 }

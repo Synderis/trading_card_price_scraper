@@ -17,7 +17,7 @@
 }
 
 .how-to-container p {
-    font-size: 1.2rem;
+    font-size: 1rem;
     margin: 30px;
     padding: 10px;
 }
@@ -33,43 +33,36 @@
 }
 
 .how-to-table {
-    width: 80%;
-    margin: 30px;
-    padding: 10px;
+    overflow: hidden;
 }
 
-.how-to-table th {
-    text-transform: lowercase;
+.how-to-button {
+    background-color: #444; /* Darker button background */
+    color: white; /* White text for buttons */
+    border: none; /* Remove default border */
+    padding: 10px 15px; /* Padding for buttons */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    margin: 10px 10px; /* Margin between buttons */
 }
 
-.input-label {
-    font-weight: bold;
-    /* margin: 5px; */
-    /* padding: 5px; */
+.how-to-button:hover {
+    background-color: #555; /* Change background color on hover */
 }
 
-.example-block {
-    display: flex;
-    flex-direction: column;
-    margin: 20px;
-}   
-
-.valid-inputs {
-    color: green;
+.how-to-button[data-active="true"] {
+    margin-bottom: 20px; /* Add some space below the button */
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    /* border-radius: 25px; */
+    /* cursor: pointer; */
+    color: white;
+    background: linear-gradient(45deg, #2196f3, #1976d2);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    /* transition: transform 0.2s ease, box-shadow 0.2s ease; */
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
 }
 
-.invalid-inputs {
-    color: red;
-}
 
-.example-image-box {
-    display: flex;
-    margin: 20px;
-}
-
-.grade-description {
-    width: 70%;
-    font-size: 0.9rem;
-    margin: 5px;
-    padding: 5px;
-}

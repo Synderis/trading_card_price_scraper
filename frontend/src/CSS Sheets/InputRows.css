@@ -19,9 +19,10 @@
   margin-left: 5px;
 }
 
-.invalid-row label {
-  color: black; /* Change text color to black for labels */
-}
+/* .invalid-row label {
+  color: black; 
+  background-color: red;
+} */
 
 .clear-all-btn {
   margin-left: 10px;
@@ -84,9 +85,33 @@
   background-color: rgb(41, 41, 95);
 }
 
-.invalid-row {
+.upload-btn {
+  margin-left: 10px;
+  padding: 7px 15px;
+  background-color: rgb(14, 131, 34);
+  color: white;
+  border: none;
+  border-radius: 3px;
+  line-height: 1.5; /* Adjust line-height to ensure alignment */
+  cursor: pointer;
+}
+
+.upload-btn:hover {
+  background-color: rgb(41, 95, 41);
+}
+
+.invalid-marker {
+  color: red;
+  font-size: large;
+  font-weight: bold;
+}
+
+
+.invalid-label label {
   background-color: #e2747d;
   border-color: #eb6e7a;
+  border-radius: 4px;
+  color: black; 
 }
 
 input[type="number"] {
@@ -108,3 +133,5 @@ input[type="number"] {
   border-radius: 5px;
   transition: width 0.1s ease-in-out;
 }
+
+
