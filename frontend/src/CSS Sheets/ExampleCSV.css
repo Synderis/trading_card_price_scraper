@@ -2,7 +2,6 @@
     width: 80%;
     margin: 30px;
     padding: 10px;
-    overflow: hidden;
 }
 
 .how-to-table th {
@@ -11,6 +10,7 @@
 
 .how-to-table table {
     border-radius: 16px;
+    overflow: hidden;
 }
 
 .input-label {

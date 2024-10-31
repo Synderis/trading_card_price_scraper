@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import GradedExamples from './GradedExamples';
 import GradeInfo from './GradeInfo';
 import VariantInfo from './VariantInfo';
 import ExampleCSV from './ExampleCSV';
@@ -15,6 +16,8 @@ const HowTo: React.FC = () => {
                 return <ExampleCSV />;
             case 'variantInfo':
                 return <VariantInfo />;
+            case 'gradedExamples':
+                return <GradedExamples />;
             case 'gradeInfo':
                 return <GradeInfo />;
             default:
@@ -41,10 +44,17 @@ const HowTo: React.FC = () => {
                 </button>
                 <button
                     className="how-to-button"
+                    data-active={activeComponent === 'gradedExamples'}
+                    onClick={() => setActiveComponent('gradedExamples')}
+                >
+                    Show Graded Examples
+                </button>
+                <button
+                    className="how-to-button"
                     data-active={activeComponent === 'gradeInfo'}
                     onClick={() => setActiveComponent('gradeInfo')}
                 >
-                    Show Grade Info
+                    Show Grading Info
                 </button>
             </div>
             <div className="component-container">

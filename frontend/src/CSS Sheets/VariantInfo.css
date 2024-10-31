@@ -1,17 +1,25 @@
 .variations-section {
-    margin: 60px;
+    margin: 90px;
 }
 
 .variation-container {
     border: 1px solid #ccc; /* Add border */
     border-radius: 16px; /* Rounded corners */
-    padding: 16px; /* Padding inside the box */
+    padding: 10px; /* Padding inside the box */
     margin: 10px 0; /* Margin between boxes */
     background: linear-gradient(to bottom right, #3d444d, #0e1a27);
 }
+
 .variation-header {
     font-size: 1.5rem;
     font-weight: 700;
+    margin: 30px 0px 0px 30px;
+    padding: 10px;
+}
+
+.variation-description {
+    font-style: italic;
+    font-size: 1rem;
     margin: 30px 0px 0px 60px;
     padding: 10px;
 }

@@ -115,7 +115,6 @@ const InputRows: React.FC = () => {
   
     setRows(newRows);
   };
-  
 
   const handleAddRows = () => {
     const newRowsToAdd: Row[] = Array.from({ length: 10 }, () => ({
@@ -213,10 +212,10 @@ const InputRows: React.FC = () => {
       };
 
       // Constructing the API URL using window.location
-      // const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/submit`;
+      const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/submit`;
 
       // local testing API URL
-      const apiUrl = `http://localhost:8000/submit`;
+      // const apiUrl = `http://localhost:8000/submit`;
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -247,7 +246,28 @@ const InputRows: React.FC = () => {
   };
 
   const handleMagicCardToggle = () => {
-    setMagicCardChecked(prev => !prev);
+    setMagicCardChecked(prev => {
+      const newRows = [...rows];
+      newRows.forEach((row, index) => {
+        if (!prev) {
+          // Run new invalid checks for each row here
+          row.card_name_id_invalid = false;
+          row.holo_invalid = !(row.holo === true || row.holo === false);
+          row.reverse_holo_invalid = false;
+          row.first_edition_invalid = false;
+          row.card_count_invalid = !(row.card_count === null || row.card_count > 0);
+        } else {
+          // Run old invalid checks for each row here
+          row.card_name_id_invalid = row.card_name !== null && (row.card_id === null || row.card_id === '');
+          row.holo_invalid = !(row.holo === true || row.holo === false);
+          row.reverse_holo_invalid = !(row.reverse_holo === true || row.reverse_holo === false);
+          row.first_edition_invalid = !(row.first_edition === true || row.first_edition === false);
+          row.card_count_invalid = !(row.card_count === null || row.card_count > 0);
+        }
+      });
+      setRows(newRows);
+      return !prev;
+    });
   };
 
   const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
