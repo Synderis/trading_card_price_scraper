@@ -395,14 +395,15 @@ const InputRows: React.FC = () => {
           </>
         )}
         <div className={`row-container ${row.source_image ? 'uploaded-image-container' : 'img-upload-container'}`}>
-          <input
-            id="img-file-upload"
-            type="file"
-            accept="image/*"
-            style={{ display: 'none' }}
-            onChange={(event) => handleImageUpload(index, event)}
-          />
-          <label htmlFor="img-file-upload" className='img-upload-btn'><img src="/img_icon_white.png" alt="Upload" className="upload-icon"/></label>
+          <label className="img-upload-btn">
+            <img src="/img_icon_white.png" alt="Upload" className="upload-icon"/>
+            <input
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={(event) => handleImageUpload(index, event)}
+            />
+          </label>
         {row.source_image && (
           <img src={row.source_image} alt={`Uploaded preview for row ${index}`} width="100" />
         )}
