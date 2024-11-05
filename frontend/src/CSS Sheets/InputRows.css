@@ -10,7 +10,7 @@
 .row {
   display: flex;
   align-items: center; /* Ensures vertical centering */
-  /* margin-bottom: 5px; */
+  padding-top: 5px;
 }
 
 .row input[type="text"],
@@ -23,6 +23,10 @@
   color: black; 
   background-color: red;
 } */
+
+.button-group {
+  margin-top: 10px;
+}
 
 .clear-all-btn {
   margin-left: 10px;
@@ -41,7 +45,7 @@
 
 .clear-btn {
   margin-left: 10px;
-  margin-bottom: 10px;
+  margin-top: 6px;
   padding: 4px 15px; /* Padding for buttons */
   border-radius: 4px; /* Rounded corners */
   background-color: red;
@@ -102,9 +106,13 @@
 }
 
 .img-upload-container {
-  margin: 0px 5px 10px 5px;
+  display: flex;
+  align-items: center;
+  margin: 5px 5px 0px 5px;
   background-color: #333;
   border-radius: 4px;
+  /* margin-top: 5px; */
+  /* line-height: 1.5; */
 }
 
 .img-upload-container:hover {
