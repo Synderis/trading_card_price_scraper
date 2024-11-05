@@ -59,7 +59,6 @@ const InputRows: React.FC = () => {
   const toggleAdvancedFields = () => {
     setShowAdvanced(!showAdvanced);
   };
-  
 
   const handleChange = (index: number, field: keyof Row, value: string | boolean | number) => {
     const newRows = [...rows];
@@ -115,7 +114,6 @@ const InputRows: React.FC = () => {
       reader.readAsDataURL(file); // Read the file as a data URL
     }
   };
-  
 
   const handleAddRows = () => {
     const newRowsToAdd: Row[] = Array.from({ length: 10 }, () => ({
@@ -360,15 +358,14 @@ const InputRows: React.FC = () => {
       <form onSubmit={handleSubmit}>
         {rows.map((row, index) => (
           <span key={index} className={`row ${row.isInvalid ? 'invalid-row' : ''}`}>
-            <span key={index} className={`row ${row.card_name_id_invalid ? 'invalid-label' : ''}`}>
-              
+            <span className={`row ${row.card_name_id_invalid ? 'invalid-label' : ''}`}>
               {row.card_name_id_invalid && (
                 <span className="invalid-marker">!</span>
               )}
               <input type="text" value={row.card_name} onChange={e => handleChange(index, 'card_name', e.target.value)} placeholder="Card Name" />
               <input type="text" value={row.card_id} onChange={e => handleChange(index, 'card_id', e.target.value)} placeholder={magicCardChecked ? 'Card ID (Optional)' : 'Card ID'} />
             </span>
-            <span key={index} className={`row ${row.holo_invalid ? 'invalid-label' : ''}`}>
+            <span className={`row ${row.holo_invalid ? 'invalid-label' : ''}`}>
               <label>
                 {magicCardChecked ? 'Foil' : 'Holo'}:
                 <input type="checkbox" checked={row.holo} onChange={e => handleChange(index, 'holo', e.target.checked)} />
@@ -376,13 +373,13 @@ const InputRows: React.FC = () => {
             </span>
             {!magicCardChecked && (
               <>
-                <span key={index} className={`row ${row.reverse_holo_invalid ? 'invalid-label' : ''}`}>
+                <span className={`row ${row.reverse_holo_invalid ? 'invalid-label' : ''}`}>
                   <label>
                     Reverse Holo:
                     <input type="checkbox" checked={row.reverse_holo} onChange={e => handleChange(index, 'reverse_holo', e.target.checked)} />
                   </label>
                 </span>
-                <span key={index} className={`row ${row.first_edition_invalid ? 'invalid-label' : ''}`}>
+                <span className={`row ${row.first_edition_invalid ? 'invalid-label' : ''}`}>
                   <label>
                     First Edition:
                     <input type="checkbox" checked={row.first_edition} onChange={e => handleChange(index, 'first_edition', e.target.checked)} />
@@ -390,7 +387,7 @@ const InputRows: React.FC = () => {
                 </span>
               </>
             )}
-            <span key={index} className={`row ${row.card_count_invalid ? 'invalid-label' : ''}`}>
+            <span className={`row ${row.card_count_invalid ? 'invalid-label' : ''}`}>
               <label>
                 Card Count:
                 <input type="number" value={row.card_count === null ? '' : row.card_count} onChange={e => handleChange(index, 'card_count', e.target.value)} placeholder="Card Count" />
@@ -405,7 +402,7 @@ const InputRows: React.FC = () => {
                 <input type="text" value={row.variant_type || ''} onChange={e => handleChange(index, 'variant_type', e.target.value)} placeholder="Variant Type" />
               </>
             )}
-            <div key={index} className={`row-container ${row.source_image ? 'uploaded-image-container' : 'img-upload-container'}`}>
+            <div className={`row-container ${row.source_image ? 'uploaded-image-container' : 'img-upload-container'}`}>
               <input
                 id="img-file-upload"
                 type="file"
