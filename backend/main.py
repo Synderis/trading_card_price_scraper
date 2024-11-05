@@ -1,5 +1,4 @@
 import pandas as pd
-# import boto3
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
@@ -12,12 +11,6 @@ import ml_card_img_matcher
 # Uvicorn start command for production: uvicorn main:app --reload
 
 app = FastAPI()
-
-# Initialize an S3 client
-# s3_client = boto3.client('s3')
-
-# Your S3 bucket name
-# BUCKET_NAME = 'source-image-holder'
 
 app.add_middleware(
     CORSMiddleware,
@@ -88,6 +81,7 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
         results = results[~results['img_link'].str.contains('no-image-available.png')]
         results_to_remove = ml_card_img_matcher.matching_results(results)
         results = results[~results['img_link'].isin(results_to_remove['img_link'])].reset_index(drop=True)
+    del results['source_image']
     request.app.state.results = results  # Store the results in app.state
     
     # Print the DataFrame to the console
