@@ -13,7 +13,7 @@ type Row = {
   card_count: number | null;
   variant: boolean;
   variant_type: string | null;
-  source_image: string;
+  imageBase64?: string;
   card_name_id_invalid?: boolean;
   holo_invalid?: boolean;
   reverse_holo_invalid?: boolean;
@@ -24,15 +24,13 @@ type Row = {
 
 const InputRows: React.FC = () => {
   const navigate = useNavigate();
-  const csvInputRef = useRef<HTMLInputElement>(null);
-  const imageInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [toggleVariants, setToggleVariants] = useState(true);
   const [loading, setLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [magicCardChecked, setMagicCardChecked] = useState(false);
-  const [csvFileName, setCsvFileName] = useState('No file chosen');
-  const [imgFileNames, setImgFileNames] = useState<string[]>(Array(10).fill('No file chosen'));
+  const [fileName, setFileName] = useState('No file chosen');
 
 
 
@@ -45,7 +43,7 @@ const InputRows: React.FC = () => {
     card_count: 1,
     variant: true,
     variant_type: '',
-    source_image: '',
+    imageBase64: '',
     card_name_id_invalid: false,
     holo_invalid: false,
     reverse_holo_invalid: false,
@@ -60,6 +58,40 @@ const InputRows: React.FC = () => {
     setShowAdvanced(!showAdvanced);
   };
   
+  // const handleChange = (index: number, field: keyof Row, value: string | boolean | number) => {
+  //   const newRows = [...rows];
+  
+  //   if (field === 'card_name' || field === 'card_id' || field === 'variant_type') {
+  //     newRows[index][field] = value as string;
+  //   } else if (field === 'holo' || field === 'reverse_holo' || field === 'first_edition' || field === 'variant') {
+  //     newRows[index][field] = value as boolean;
+  //   } else if (field === 'card_count') {
+  //     newRows[index][field] = value === '' ? 1 : Number(value);
+  //   }
+  
+  //   // Check only the specific row for invalid data
+  //   newRows[index].isInvalid = checkInvalidRow(newRows[index]);
+
+  
+  //   setRows(newRows);
+  // };
+
+  // useEffect(() => {
+  //   const revalidateRows = rows.map(row => ({
+  //     ...row,
+  //     card_name_id_invalid: !magicCardChecked && row.card_name !== null && row.card_id === null,
+  //     holo_invalid: !(row.holo === true || row.holo === false),
+  //     reverse_holo_invalid: !(row.reverse_holo === true || row.reverse_holo === false),
+  //     first_edition_invalid: !(row.first_edition === true || row.first_edition === false),
+  //     card_count_invalid: !(row.card_count === null || row.card_count > 0),
+  //     isInvalid: (!magicCardChecked && row.card_name !== null && row.card_id === null) ||
+  //           !(row.holo === true || row.holo === false) ||
+  //           !(row.reverse_holo === true || row.reverse_holo === false) ||
+  //           !(row.first_edition === true || row.first_edition === false) ||
+  //           !(row.card_count === null || row.card_count > 0)
+  //   }));
+  //   setRows(revalidateRows);
+  // }, [magicCardChecked, rows]);
 
   const handleChange = (index: number, field: keyof Row, value: string | boolean | number) => {
     const newRows = [...rows];
@@ -89,33 +121,16 @@ const InputRows: React.FC = () => {
   const handleImageUpload = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      console.log(index);
       const reader = new FileReader();
-  
-      // Read the file and update the specific row's image when done
       reader.onloadend = () => {
-        setRows((prevRows) => {
-          // Create a copy of the rows and update the specific row
-          const updatedRows = [...prevRows];
-          updatedRows[index] = {
-            ...updatedRows[index],
-            source_image: reader.result as string,
-          };
-          return updatedRows;
-        });
-  
-        // Update the file name for the specific index
-        setImgFileNames((prevFileNames) => {
-          const newFileNames = [...prevFileNames];
-          newFileNames[index] = file.name;
-          return newFileNames;
-        });
+        const base64String = reader.result as string;
+        const updatedRows = [...rows];
+        updatedRows[index].imageBase64 = base64String;
+        setRows(updatedRows);
       };
-  
-      reader.readAsDataURL(file); // Read the file as a data URL
+      reader.readAsDataURL(file); // Read the file as a Base64-encoded string
     }
   };
-  
 
   const handleAddRows = () => {
     const newRowsToAdd: Row[] = Array.from({ length: 10 }, () => ({
@@ -127,7 +142,7 @@ const InputRows: React.FC = () => {
       card_count: 1,
       variant: true,
       variant_type: '',
-      source_image: '',
+      imageBase64: '',
       card_name_id_invalid: false,
       holo_invalid: false,
       reverse_holo_invalid: false,
@@ -149,7 +164,7 @@ const InputRows: React.FC = () => {
       card_count: 1,
       variant: true,
       variant_type: '',
-      source_image: '',
+      imageBase64: '',
       card_name_id_invalid: false,
       holo_invalid: false,
       reverse_holo_invalid: false,
@@ -162,14 +177,10 @@ const InputRows: React.FC = () => {
 
   const handleClearAllRows = () => {
     setRows(initialRowState);
-    if (csvInputRef.current) {
-      csvInputRef.current.value = '';
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
-    // if (imageInputRef.current) {
-    //   imageInputRef.current.value = '';
-    // }
-    // setImgFileNames('No file chosen');
-    setCsvFileName('No file chosen');
+    setFileName('No file chosen');
   };
 
   const handleToggleVariants = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -215,7 +226,7 @@ const InputRows: React.FC = () => {
           card_count: row.card_count,
           variant: row.variant,
           variant_type: row.variant_type,
-          source_image: row.source_image,
+          imageBase64: row.imageBase64,
         })),
       };
 
@@ -281,7 +292,7 @@ const InputRows: React.FC = () => {
   const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setCsvFileName(file.name);
+      setFileName(file.name);
       Papa.parse(file, {
         header: true,
         dynamicTyping: true,
@@ -315,7 +326,6 @@ const InputRows: React.FC = () => {
               card_count: row.card_count === null || row.card_count === '' ? 1 : row.card_count,
               variant: truth_values(row.variant),
               variant_type: row.variant_type || '',
-              source_image: row.source_image || '',
               card_name_id_invalid,
               holo_invalid,
               reverse_holo_invalid,
@@ -331,7 +341,7 @@ const InputRows: React.FC = () => {
         }
       });
     } else {
-      setCsvFileName('No file chosen');
+      setFileName('No file chosen');
     }
   };
 
@@ -353,18 +363,22 @@ const InputRows: React.FC = () => {
     <div className="container">
       <h1>Card Input Rows</h1>
       <button className='download-template-btn' onClick={downloadCSVTemplate}>Download CSV Template</button>
-      <input id="csv-file-upload" type="file" accept=".csv" ref={csvInputRef} onChange={handleCSVUpload} hidden/>
+      <input id="csv-file-upload" type="file" accept=".csv" ref={fileInputRef} onChange={handleCSVUpload} hidden/>
       <label htmlFor="csv-file-upload" className='upload-btn'>Upload CSV File</label>
-      <span id="file-chosen" style={{marginTop: '10px'}}>{csvFileName}</span>
+      <span id="file-chosen" style={{marginTop: '10px'}}>{fileName}</span>
       <h4>Enter the data for each row or upload a CSV file. Rows with potentially invalid CSV data will be marked red.</h4>
       <form onSubmit={handleSubmit}>
         {rows.map((row, index) => (
           <span key={index} className={`row ${row.isInvalid ? 'invalid-row' : ''}`}>
             <span key={index} className={`row ${row.card_name_id_invalid ? 'invalid-label' : ''}`}>
-              
               {row.card_name_id_invalid && (
                 <span className="invalid-marker">!</span>
               )}
+              <input
+            type="file"
+            accept="image/*"
+            onChange={e => handleImageUpload(index, e)}
+            />
               <input type="text" value={row.card_name} onChange={e => handleChange(index, 'card_name', e.target.value)} placeholder="Card Name" />
               <input type="text" value={row.card_id} onChange={e => handleChange(index, 'card_id', e.target.value)} placeholder={magicCardChecked ? 'Card ID (Optional)' : 'Card ID'} />
             </span>
@@ -405,19 +419,6 @@ const InputRows: React.FC = () => {
                 <input type="text" value={row.variant_type || ''} onChange={e => handleChange(index, 'variant_type', e.target.value)} placeholder="Variant Type" />
               </>
             )}
-            <div key={index} className={`row-container ${row.source_image ? 'uploaded-image-container' : 'img-upload-container'}`}>
-              <input
-                id="img-file-upload"
-                type="file"
-                accept="image/*"
-                style={{ display: 'none' }}
-                onChange={(event) => handleImageUpload(index, event)}
-              />
-              <label htmlFor="img-file-upload" className='img-upload-btn'><img src="/img_icon_white.png" alt="Upload" className="upload-icon"/></label>
-            {row.source_image && (
-              <img src={row.source_image} alt={`Uploaded preview for row ${index}`} width="100" />
-            )}
-            </div>
             <button type="button" className="clear-btn" onClick={() => handleClearRow(index)}>Clear</button>
           </span>
         ))}

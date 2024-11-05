@@ -10,7 +10,7 @@
 .row {
   display: flex;
   align-items: center; /* Ensures vertical centering */
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .row input[type="text"],
@@ -41,6 +41,7 @@
 
 .clear-btn {
   margin-left: 10px;
+  margin-bottom: 10px;
   padding: 4px 15px; /* Padding for buttons */
   border-radius: 4px; /* Rounded corners */
   background-color: red;
@@ -98,6 +99,49 @@
 
 .upload-btn:hover {
   background-color: rgb(41, 95, 41);
+}
+
+.img-upload-container {
+  margin: 0px 5px 10px 5px;
+  background-color: #333;
+  border-radius: 4px;
+}
+
+.img-upload-container:hover {
+  background-color: rgb(41, 41, 95);
+}
+
+.uploaded-image-container {
+  margin: 0px 5px 10px 5px;
+  background-color: rgb(14, 14, 131);
+  border-radius: 4px;
+}
+
+.uploaded-image-container:hover {
+  background-color: rgb(41, 41, 95);
+}
+
+.img-upload-button {
+  margin-left: 10px;
+  margin-bottom: 10px;
+  padding: 4px 15px;
+  border-radius: 4px; /* Rounded corners */
+  background-color: #333;
+  color: white;
+  border: none;
+  /* line-height: 1.5; */
+  cursor: pointer;
+  transition: background-color 0.3s; /* Transition effect */
+}
+
+.img-upload-button:hover {
+  background-color: rgb(41, 41, 95);
+}
+
+.upload-icon {
+  width: 20px;
+  height: 20px;
+  margin: 5px 1px 0px 1px;
 }
 
 .invalid-marker {

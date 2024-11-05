@@ -74,10 +74,10 @@ def grab_all_links(card_var, id_var, card_type, soup):
 
 
 # Function to extract table data and convert it to a dictionary
-def extract_table_to_dict(final_link, card, card_id, card_count, variant_type):
+def extract_table_to_dict(final_link, card, card_id, card_count, variant_type, source_image):
     # Define standard labels
     standard_labels = [
-        'card', 'id', 'Ungraded', 'variant_type', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4',
+        'card', 'id', 'source_image', 'Ungraded', 'variant_type', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4',
         'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9',
         'Grade 9.5', 'SGC 10', 'CGC 10', 'PSA 10', 'BGS 10',
         'BGS 10 Black', 'CGC 10 Pristine', 'final_link', 'card_count', 'img_link'
@@ -110,6 +110,7 @@ def extract_table_to_dict(final_link, card, card_id, card_count, variant_type):
         table_data['id'] = card_id
         table_data['card_count'] = card_count
         table_data['variant_type'] = variant_type
+        table_data['source_image'] = source_image
         return table_data
     except Exception as e:
         print(f"Failed to extract table, setting all prices to 'N/A'. Error: {e}")
@@ -137,6 +138,7 @@ def card_finder(source_df):
         card_count = source_df.iloc[i, 5]
         variant = source_df.iloc[i, 6]
         variant_type = source_df.iloc[i, 7]
+        source_image = source_df.iloc[i, 8]
         card_type = ''
         card_types = {'holo': holo, 'reverse-holo': reverse_holo, '1st-edition': first_edition, 'variant': variant}
         
@@ -151,7 +153,7 @@ def card_finder(source_df):
         
         if 'game' in response.url:
             final_link = response.url
-            df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, card_type)
+            df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, card_type, source_image)
         else:
             if variant:
                 matching_links = find_hyperlink_text(card, card_id, card_type, variant, soup)
@@ -159,12 +161,12 @@ def card_finder(source_df):
                     for index, row in matching_links.iterrows():
                         final_link = row['links']
                         card_type = row['names']
-                        df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, card_type)
+                        df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, card_type, source_image)
                         new_rows.append(df_new_rows)
                 else:
                     final_link = 'N/A'
                     df_new_rows = {label: 'N/A' for label in [
-                        'card', 'id', 'card_count', 'variant_type', 'Ungraded',
+                        'card', 'id', 'source_image', 'card_count', 'variant_type', 'Ungraded',
                         'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4',
                         'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9',
                         'Grade 9.5', 'SGC 10', 'CGC 10', 'PSA 10', 'BGS 10',
@@ -178,11 +180,11 @@ def card_finder(source_df):
                 matching_link = find_hyperlink_text(card, card_id, card_type, variant, soup)
                 if matching_link:
                     final_link = matching_link
-                    df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, card_type)
+                    df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, card_type, source_image)
                 else:
                     final_link = 'N/A'
                     df_new_rows = {label: 'N/A' for label in [
-                        'card', 'id', 'card_count', 'variant_type', 'Ungraded',
+                        'card', 'id', 'source_image', 'card_count', 'variant_type', 'Ungraded',
                         'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4',
                         'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9',
                         'Grade 9.5', 'SGC 10', 'CGC 10', 'PSA 10', 'BGS 10',
