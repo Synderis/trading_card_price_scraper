@@ -10,7 +10,7 @@
 .row {
   display: flex;
   align-items: center; /* Ensures vertical centering */
-  margin-bottom: 5px;
+  /* margin-bottom: 5px; */
 }
 
 .row input[type="text"],
