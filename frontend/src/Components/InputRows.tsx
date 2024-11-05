@@ -258,7 +258,7 @@ const InputRows: React.FC = () => {
           row.card_count_invalid = !(row.card_count === null || row.card_count > 0);
         } else {
           // Run old invalid checks for each row here
-          row.card_name_id_invalid = row.card_name !== null && (row.card_id === null || row.card_id === '');
+          row.card_name_id_invalid = (row.card_name !== null && row.card_id === null) || (row.card_name !== '' && row.card_id === '');
           row.holo_invalid = !(row.holo === true || row.holo === false);
           row.reverse_holo_invalid = !(row.reverse_holo === true || row.reverse_holo === false);
           row.first_edition_invalid = !(row.first_edition === true || row.first_edition === false);
