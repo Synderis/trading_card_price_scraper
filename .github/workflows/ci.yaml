@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: '*'
+  pull_request:
+    branches: '*'
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: pip
+        cache-dependency-path: backend/requirements.txt
+
+    - name: install python deps
+      run: pip3 install --quiet --requirement requirements.txt ruff
+
+    - name: ruff
+      run: ruff check --output-format=github .
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        cache: npm
+        cache-dependency-path: frontend/package-lock.json
+
+    - run: npm ci
+
+    - name: eslint
+      run: npx eslint --max-warnings 0 src
