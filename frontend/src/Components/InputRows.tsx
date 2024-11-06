@@ -59,7 +59,6 @@ const InputRows: React.FC = () => {
   const toggleAdvancedFields = () => {
     setShowAdvanced(!showAdvanced);
   };
-  
 
   const handleChange = (index: number, field: keyof Row, value: string | boolean | number) => {
     const newRows = [...rows];
@@ -89,7 +88,6 @@ const InputRows: React.FC = () => {
   const handleImageUpload = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      console.log(index);
       const reader = new FileReader();
   
       // Read the file and update the specific row's image when done
@@ -115,7 +113,6 @@ const InputRows: React.FC = () => {
       reader.readAsDataURL(file); // Read the file as a data URL
     }
   };
-  
 
   const handleAddRows = () => {
     const newRowsToAdd: Row[] = Array.from({ length: 10 }, () => ({
@@ -349,6 +346,73 @@ const InputRows: React.FC = () => {
     document.body.removeChild(link);
   };
 
+  const renderRow = (row: Row, index: number) => {
+    console.log('index', index)
+    return (
+      <span key={index} className={`row ${row.isInvalid ? 'invalid-row' : ''}`}>
+        <span className={`row ${row.card_name_id_invalid ? 'invalid-label' : ''}`}>
+          {row.card_name_id_invalid && (
+            <span className="invalid-marker">!</span>
+          )}
+          <input type="text" value={row.card_name} onChange={e => handleChange(index, 'card_name', e.target.value)} placeholder="Card Name" />
+          <input type="text" value={row.card_id} onChange={e => handleChange(index, 'card_id', e.target.value)} placeholder={magicCardChecked ? 'Card ID (Optional)' : 'Card ID'} />
+        </span>
+        <span className={`row ${row.holo_invalid ? 'invalid-label' : ''}`}>
+          <label>
+            {magicCardChecked ? 'Foil' : 'Holo'}:
+            <input type="checkbox" checked={row.holo} onChange={e => handleChange(index, 'holo', e.target.checked)} />
+          </label>
+        </span>
+        {!magicCardChecked && (
+          <>
+            <span className={`row ${row.reverse_holo_invalid ? 'invalid-label' : ''}`}>
+              <label>
+                Reverse Holo:
+                <input type="checkbox" checked={row.reverse_holo} onChange={e => handleChange(index, 'reverse_holo', e.target.checked)} />
+              </label>
+            </span>
+            <span className={`row ${row.first_edition_invalid ? 'invalid-label' : ''}`}>
+              <label>
+                First Edition:
+                <input type="checkbox" checked={row.first_edition} onChange={e => handleChange(index, 'first_edition', e.target.checked)} />
+              </label>
+            </span>
+          </>
+        )}
+        <span className={`row ${row.card_count_invalid ? 'invalid-label' : ''}`}>
+          <label>
+            Card Count:
+            <input type="number" value={row.card_count === null ? '' : row.card_count} onChange={e => handleChange(index, 'card_count', e.target.value)} placeholder="Card Count" />
+          </label>
+        </span>
+        {showAdvanced && (
+          <>
+            <label>
+              Variant:
+              <input type="checkbox" checked={row.variant} onChange={e => handleChange(index, 'variant', e.target.checked)} />
+            </label>
+            <input type="text" value={row.variant_type || ''} onChange={e => handleChange(index, 'variant_type', e.target.value)} placeholder="Variant Type" />
+          </>
+        )}
+        <div className={`row-container ${row.source_image ? 'uploaded-image-container' : 'img-upload-container'}`}>
+          <label className="img-upload-btn">
+            <img src="/img_icon_white.png" alt="Upload" className="upload-icon"/>
+            <input
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={(event) => handleImageUpload(index, event)}
+            />
+          </label>
+        {row.source_image && (
+          <img src={row.source_image} alt={`Uploaded preview for row ${index}`} width="100" />
+        )}
+        </div>
+        <button type="button" className="clear-btn" onClick={() => handleClearRow(index)}>Clear</button>
+      </span>
+    )
+  };
+
   return (
     <div className="container">
       <h1>Card Input Rows</h1>
@@ -358,69 +422,7 @@ const InputRows: React.FC = () => {
       <span id="file-chosen" style={{marginTop: '10px'}}>{csvFileName}</span>
       <h4>Enter the data for each row or upload a CSV file. Rows with potentially invalid CSV data will be marked red.</h4>
       <form onSubmit={handleSubmit}>
-        {rows.map((row, index) => (
-          <span key={index} className={`row ${row.isInvalid ? 'invalid-row' : ''}`}>
-            <span key={index} className={`row ${row.card_name_id_invalid ? 'invalid-label' : ''}`}>
-              
-              {row.card_name_id_invalid && (
-                <span className="invalid-marker">!</span>
-              )}
-              <input type="text" value={row.card_name} onChange={e => handleChange(index, 'card_name', e.target.value)} placeholder="Card Name" />
-              <input type="text" value={row.card_id} onChange={e => handleChange(index, 'card_id', e.target.value)} placeholder={magicCardChecked ? 'Card ID (Optional)' : 'Card ID'} />
-            </span>
-            <span key={index} className={`row ${row.holo_invalid ? 'invalid-label' : ''}`}>
-              <label>
-                {magicCardChecked ? 'Foil' : 'Holo'}:
-                <input type="checkbox" checked={row.holo} onChange={e => handleChange(index, 'holo', e.target.checked)} />
-              </label>
-            </span>
-            {!magicCardChecked && (
-              <>
-                <span key={index} className={`row ${row.reverse_holo_invalid ? 'invalid-label' : ''}`}>
-                  <label>
-                    Reverse Holo:
-                    <input type="checkbox" checked={row.reverse_holo} onChange={e => handleChange(index, 'reverse_holo', e.target.checked)} />
-                  </label>
-                </span>
-                <span key={index} className={`row ${row.first_edition_invalid ? 'invalid-label' : ''}`}>
-                  <label>
-                    First Edition:
-                    <input type="checkbox" checked={row.first_edition} onChange={e => handleChange(index, 'first_edition', e.target.checked)} />
-                  </label>
-                </span>
-              </>
-            )}
-            <span key={index} className={`row ${row.card_count_invalid ? 'invalid-label' : ''}`}>
-              <label>
-                Card Count:
-                <input type="number" value={row.card_count === null ? '' : row.card_count} onChange={e => handleChange(index, 'card_count', e.target.value)} placeholder="Card Count" />
-              </label>
-            </span>
-            {showAdvanced && (
-              <>
-                <label>
-                  Variant:
-                  <input type="checkbox" checked={row.variant} onChange={e => handleChange(index, 'variant', e.target.checked)} />
-                </label>
-                <input type="text" value={row.variant_type || ''} onChange={e => handleChange(index, 'variant_type', e.target.value)} placeholder="Variant Type" />
-              </>
-            )}
-            <div key={index} className={`row-container ${row.source_image ? 'uploaded-image-container' : 'img-upload-container'}`}>
-              <input
-                id="img-file-upload"
-                type="file"
-                accept="image/*"
-                style={{ display: 'none' }}
-                onChange={(event) => handleImageUpload(index, event)}
-              />
-              <label htmlFor="img-file-upload" className='img-upload-btn'><img src="/img_icon_white.png" alt="Upload" className="upload-icon"/></label>
-            {row.source_image && (
-              <img src={row.source_image} alt={`Uploaded preview for row ${index}`} width="100" />
-            )}
-            </div>
-            <button type="button" className="clear-btn" onClick={() => handleClearRow(index)}>Clear</button>
-          </span>
-        ))}
+        {rows.map(renderRow)}
         <div className="button-group">
           <button type="button" onClick={handleAddRows}>Add 10 Rows</button>
           <button type="button" className="clear-all-btn" onClick={handleClearAllRows}>Clear All Rows</button>
