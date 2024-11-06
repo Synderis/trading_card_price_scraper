@@ -8,7 +8,7 @@ import numpy as np
 import card_scraper
 import ml_card_img_matcher
 import ocr_ml_reader
-import reverse_holo_ml
+# import reverse_holo_ml
 
 # Uvicorn start command for production: uvicorn main:app --reload
 
