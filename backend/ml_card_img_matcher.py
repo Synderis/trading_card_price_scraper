@@ -6,8 +6,7 @@ import requests
 
 def decode_base64_image(base64_str):
     """Decode a base64 image string to a NumPy array."""
-    if base64_str.startswith('data:image/'):
-        base64_str = base64_str.split(',')[1]
+    base64_str = base64_str.split(',')[1]
     
     # Decode the base64 string
     image_data = base64.b64decode(base64_str)
@@ -29,7 +28,7 @@ def decode_base64_image(base64_str):
 
 def read_image_rgb(img_path):
     """Read an image in RGB mode."""
-    if img_path.startswith('data:image/'):
+    if img_path.startswith('data:'):
         img = decode_base64_image(img_path)
     elif img_path.startswith('http://') or img_path.startswith('https://'):
         # If img_path is a URL, fetch the image
@@ -39,15 +38,15 @@ def read_image_rgb(img_path):
             img_array = np.frombuffer(response.content, np.uint8)
             img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
             if img is None:
-                raise ValueError(f"Failed to decode image from URL: {img_path}")
+                raise ValueError(f"Failed to decode image from URL: ")
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         else:
-            raise ValueError(f"Failed to fetch image from URL: {img_path} (status code: {response.status_code})")
+            raise ValueError(f"Failed to fetch image from URL:  (status code: {response.status_code})")
     else:
         # Handle local image paths
         img = cv2.imread(img_path)
         if img is None:
-            raise ValueError(f"Failed to read image at path: {img_path}")
+            raise ValueError(f"Failed to read image at path: ")
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     
     return img
@@ -83,7 +82,7 @@ def matching_results(results):
     results = results[results['source_image'] != '']
     
     # Group results by 'card_name' and 'card_id'
-    print(results.head(2), flush=True)
+    # print(results.head(2), flush=True)
     grouped_results = results.groupby(['card', 'id'])
 
     scores_list = []

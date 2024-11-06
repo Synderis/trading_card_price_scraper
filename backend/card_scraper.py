@@ -139,6 +139,7 @@ def card_finder(source_df):
         variant = source_df.iloc[i, 6]
         variant_type = source_df.iloc[i, 7]
         source_image = source_df.iloc[i, 8]
+        
         card_type = ''
         card_types = {'holo': holo, 'reverse-holo': reverse_holo, '1st-edition': first_edition, 'variant': variant}
         
@@ -154,6 +155,7 @@ def card_finder(source_df):
         if 'game' in response.url:
             final_link = response.url
             df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, card_type, source_image)
+            new_rows.append(df_new_rows)
         else:
             if variant:
                 matching_links = find_hyperlink_text(card, card_id, card_type, variant, soup)
@@ -175,6 +177,7 @@ def card_finder(source_df):
                     df_new_rows['id'] = card_id
                     df_new_rows['card_count'] = card_count
                     df_new_rows['variant_type'] = variant_type
+                    df_new_rows['source_image'] = source_image
                     new_rows.append(df_new_rows)
             else:
                 matching_link = find_hyperlink_text(card, card_id, card_type, variant, soup)
@@ -192,6 +195,8 @@ def card_finder(source_df):
                     df_new_rows['card'] = card
                     df_new_rows['id'] = card_id
                     df_new_rows['card_count'] = card_count
+                    df_new_rows['variant_type'] = variant_type
+                    df_new_rows['source_image'] = source_image
         if not variant:
             new_rows.append(df_new_rows)
 

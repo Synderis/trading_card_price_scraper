@@ -2,6 +2,17 @@ import torch
 import torch.nn as nn
 import cv2
 import numpy as np
+from PIL import Image
+import pillow_heif
+
+pillow_heif.register_heif_opener()
+
+def load_heic_image(heic_path):
+    img = Image.open(heic_path)
+    img = img.convert("RGB")  # Convert to RGB mode if needed
+    open_cv_image = np.array(img)  # Convert to numpy array (RGB)
+    open_cv_image = open_cv_image[:, :, ::-1].copy()  # Convert RGB to BGR for OpenCV
+    return open_cv_image
 
 # Define the same model structure as used during training
 def reverse_holo_test(test_image_path):
@@ -39,7 +50,10 @@ def reverse_holo_test(test_image_path):
     # Function to preprocess and test a single image
     def test_single_image(image_path):
         # Load the image using OpenCV
-        img = cv2.imread(image_path)
+        if image_path.endswith('.heic'):
+            img = load_heic_image(image_path)
+        else:
+            img = cv2.imread(image_path)
         if img is None:
             print("Error: Image not found.")
             return

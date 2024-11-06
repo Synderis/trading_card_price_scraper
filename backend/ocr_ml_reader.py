@@ -1,61 +1,98 @@
-import cv2
+from io import BytesIO
+from PIL import Image, ImageEnhance
+import base64
 from google.cloud import vision
-import io
-import numpy as np
+import pillow_heif
+
+# Register the HEIF opener to enable HEIC format support
+pillow_heif.register_heif_opener()
+
+# def preprocess_image_in_memory(image_path):
+#     """Process the image in memory without saving it."""
+#     # Open the image file
+#     with Image.open(image_path) as img:
+#         # Convert to grayscale
+#         img = img.convert('L')  # 'L' mode is for grayscale  # Adjust this value as needed
+
+#         # Save to a BytesIO object in memory
+#         img_byte_arr = BytesIO()
+#         img.save(img_byte_arr, format='JPEG')
+#         img_byte_arr.seek(0)  # Reset the stream's position to the beginning
+
+#     return img_byte_arr
+
+def decode_base64_image(base64_str):
+    """Decode a base64 image string to an image file in memory."""
+    base64_str = base64_str.split(',')[1]  # Remove the base64 prefix
+    # Decode the base64 string
+    image_data = base64.b64decode(base64_str)
+    image = Image.open(BytesIO(image_data))
+    
+    image = image.convert('L')
+
+    # Enhance brightness (1.0 = original)
+    enhancer = ImageEnhance.Brightness(image)
+    image = enhancer.enhance(1.5)
+    
+    
+
+    # Save the processed image to a BytesIO object
+    temp_image_byte_arr = BytesIO()
+    image.save(temp_image_byte_arr, format='JPEG')
+    temp_image_byte_arr.seek(0)  # Reset the stream's position to the beginning
+
+    return temp_image_byte_arr
 
 def detect_card_details(test_image_path):
-    # Create a Google Vision client
-    # api = open(r"C:\Users\Dylan\Desktop\google_vision_api_key.txt", 'r').read()
+    # Initialize the Vision API client
     client = vision.ImageAnnotatorClient.from_service_account_json(r"C:\Users\Dylan\Downloads\steam-canto-440401-f9-2de1c7608dd0.json")
-
-    # Load image
-    image = cv2.imread(test_image_path)
     
-    # Define bounding box parameters for "name" and "number" regions
-    bounding_boxes = {
-        'name': (0.5, 0.06, 1.0, 0.12),  # x_center, y_center, width, height for the name region
-        'number': (0.5, 0.94, 1.0, 0.12)  # x_center, y_center, width, height for the number region
-    }
+    
+    # Process image without saving to disk
+    img_byte_arr = decode_base64_image(test_image_path)
+    
+    # Create an Image object for Vision API from the byte stream
+    image = vision.Image(content=img_byte_arr.read())
 
-    def get_absolute_bbox(image_shape, bbox_params):
-        img_height, img_width = image_shape[:2]
-        x_center, y_center, width, height = bbox_params
-        x_min = int((x_center - width / 2) * img_width)
-        y_min = int((y_center - height / 2) * img_height)
-        x_max = int((x_center + width / 2) * img_width)
-        y_max = int((y_center + height / 2) * img_height)
-        return x_min, y_min, x_max, y_max
+    # Perform text detection
+    response = client.document_text_detection(image=image)
+    texts = response.text_annotations
 
+    # Check for errors in the response
+    if response.error.message:
+        raise Exception(f"{response.error.message}")
+
+    # Process the detected text
     details = {}
+    
+    if texts:
+        # The first annotation is the full text detected
+        full_text = texts[0].description
+        print(f"Detected text: {full_text}")
 
-    # Process each bounding box
-    for key, bbox in bounding_boxes.items():
-        # Get absolute bounding box coordinates
-        region_coords = get_absolute_bbox(image.shape, bbox)
+        # Split the detected text into lines
+        lines = full_text.splitlines()
         
-        # Crop the region from the image
-        region = image[region_coords[1]:region_coords[3], region_coords[0]:region_coords[2]]
+        # Initialize variables to hold the desired text
+        card_name = None
+        card_id = None
+        test_rows = []
 
-        # Convert cropped region to bytes for Google Vision
-        _, buffer = cv2.imencode('.png', region)
-        image_bytes = buffer.tobytes()
+        # Iterate through the lines to find the rows you need
+        for i in range(len(lines)):
+            line = lines[i]
+            if 'HP' in line and i > 0:
+                card_name = lines[i - 1]  # The row before the one with 'HP'
+            if '/' in line:
+                test_rows.append(line)
 
-        # Use Google Cloud Vision for OCR
-        image = vision.Image(content=image_bytes)
-        response = client.text_detection(image=image)
-        texts = response.text_annotations
-        
-        # Extract text based on the bounding box
-        if texts:
-            if key == 'name':
-                # Assuming the name is the first detected text
-                details['name'] = texts[0].description
-            elif key == 'number':
-                # Assuming the number is the last detected text
-                details['number'] = texts[-1].description.split('/')[0]  # Extracting just the number part
+        if test_rows:
+            card_id = test_rows[-1].split('/')[0].split(' ')[-1]
+        # Print or store the desired details
+        print(f"Card Name: {card_name}")
+        print(f"Card ID: {card_id}")
 
-    return details
+        details['card_name'] = card_name
+        details['card_id'] = card_id
 
-# Example usage
-# card_details = detect_card_details('path/to/card/image.png')
-# print(f"Card Name: {card_details.get('name', 'N/A')}, Card Number: {card_details.get('number', 'N/A')}")
+    return {'name': card_name, 'number': card_id}

@@ -45,7 +45,7 @@
 
 .clear-btn {
   margin-left: 10px;
-  margin-top: 6px;
+  margin-top: 5px;
   padding: 4px 15px; /* Padding for buttons */
   border-radius: 4px; /* Rounded corners */
   background-color: red;
@@ -109,6 +109,7 @@
   display: flex;
   align-items: center;
   margin: 5px 5px 0px 5px;
+  padding-top: 1px;
   background-color: #333;
   border-radius: 4px;
   /* margin-top: 5px; */

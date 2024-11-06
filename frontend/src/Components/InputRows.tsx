@@ -1,4 +1,3 @@
-// import React, { useState, useRef, useEffect } from 'react';
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
@@ -25,13 +24,14 @@ type Row = {
 const InputRows: React.FC = () => {
   const navigate = useNavigate();
   const csvInputRef = useRef<HTMLInputElement>(null);
-  const imageInputRef = useRef<HTMLInputElement>(null);
+  // const imageInputRef = useRef<HTMLInputElement>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [toggleVariants, setToggleVariants] = useState(true);
   const [loading, setLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [magicCardChecked, setMagicCardChecked] = useState(false);
   const [csvFileName, setCsvFileName] = useState('No file chosen');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [imgFileNames, setImgFileNames] = useState<string[]>(Array(10).fill('No file chosen'));
 
 
@@ -87,17 +87,18 @@ const InputRows: React.FC = () => {
 
   const handleImageUpload = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+  
     if (file) {
       const reader = new FileReader();
   
       // Read the file and update the specific row's image when done
       reader.onloadend = () => {
         setRows((prevRows) => {
-          // Create a copy of the rows and update the specific row
+          // Create a copy of the rows and update the specific row with the image
           const updatedRows = [...prevRows];
           updatedRows[index] = {
             ...updatedRows[index],
-            source_image: reader.result as string,
+            source_image: reader.result as string, // Store the Base64 string in the row
           };
           return updatedRows;
         });
@@ -108,11 +109,58 @@ const InputRows: React.FC = () => {
           newFileNames[index] = file.name;
           return newFileNames;
         });
+  
+        // Call img_data after the image data has been successfully set in rows
+        img_data(reader.result as string, index);  // Pass the image data (Base64 string) to img_data
       };
   
-      reader.readAsDataURL(file); // Read the file as a data URL
+      reader.readAsDataURL(file); // Read the file as a data URL (Base64 string)
     }
   };
+  
+  const img_data = async (imgBase64: string, index: number) => {
+    // Prepare the payload with the Base64 image data
+    console.log(imgBase64);
+    console.log(rows);
+    const img_payload = {
+      img_str: imgBase64
+    };
+  
+    // Send the image data to the API for processing
+    const mlUrl = `http://localhost:8000/mlmodel`; // Local testing API URL
+    const response = await fetch(mlUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(img_payload),
+    });
+  
+    if (!response.ok) {
+      throw new Error('Failed to submit rows');
+    }
+  
+    // Process the response from the API and update the rows with card names and IDs
+    const responseData = await response.json();
+  
+    if (responseData && responseData.card_name !== undefined && responseData.card_id !== undefined) {
+      setRows((prevRows) => {
+        const updatedRows = [...prevRows];
+        
+        // Assuming you want to update the first row with the response data
+        updatedRows[index] = {
+          ...updatedRows[index],
+          card_name: responseData.card_name,
+          card_id: responseData.card_id,
+        };
+  
+        return updatedRows;
+      });
+    } else {
+      console.error("Unexpected response data:", responseData);
+    }
+  };
+  
 
   const handleAddRows = () => {
     const newRowsToAdd: Row[] = Array.from({ length: 10 }, () => ({
@@ -130,7 +178,7 @@ const InputRows: React.FC = () => {
       reverse_holo_invalid: false,
       first_edition_invalid: false,
       card_count_invalid: false,
-      isInvalid: false, // Initialize isInvalid
+      isInvalid: false,
     }));
     setRows(prevRows => [...prevRows, ...newRowsToAdd]);
   };
@@ -216,11 +264,10 @@ const InputRows: React.FC = () => {
         })),
       };
 
-      // Constructing the API URL using window.location
-      const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/submit`;
+      // const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/submit`;
 
       // local testing API URL
-      // const apiUrl = `http://localhost:8000/submit`;
+      const apiUrl = `http://localhost:8000/submit`;
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -399,7 +446,7 @@ const InputRows: React.FC = () => {
             <img src="/img_icon_white.png" alt="Upload" className="upload-icon"/>
             <input
               type="file"
-              accept="image/*"
+              // accept="image/*"
               style={{ display: 'none' }}
               onChange={(event) => handleImageUpload(index, event)}
             />
