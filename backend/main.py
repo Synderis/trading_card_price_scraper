@@ -1,9 +1,8 @@
 import pandas as pd
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
-from typing import List, Dict, Any, Optional
+from typing import List, Optional
 from fastapi.middleware.cors import CORSMiddleware
-import numpy as np
 
 import card_scraper
 import ml_card_img_matcher
