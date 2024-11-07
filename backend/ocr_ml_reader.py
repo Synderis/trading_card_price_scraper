@@ -2,11 +2,8 @@ from io import BytesIO
 from PIL import Image, ImageEnhance
 import base64
 from google.cloud import vision
-from google.oauth2 import service_account
 import pillow_heif
 import json
-import os
-from dotenv import load_dotenv
 
 # Register the HEIF opener to enable HEIC format support
 pillow_heif.register_heif_opener()

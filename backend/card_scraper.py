@@ -50,12 +50,12 @@ def grab_all_links(card_var, id_var, card_type, soup):
     for link in links:
         href = link.get('href')
         text = link.get_text(strip=True).lower()
-        if text == '' or href is None or 'game' not in href: 
+        if text == '' or not href or 'game' not in href: 
             continue
         if id_var == '':
             if '/magic-' not in href:
                 continue
-            if card_type == '' or card_type is None:
+            if card_type == '' or not card_type:
                 if card_var in href.split('/')[-1]:
                     bracket_text = text.replace(card_var_text, '').strip()
                     data.append({'names': bracket_text, 'links': href})  # Append to list
@@ -144,12 +144,12 @@ def card_finder(source_df):
         card_types = {'foil': foil, 'reverse-holo': reverse_holo, '1st-edition': first_edition, 'variant': variant}
         
         for type_value in card_types.keys():
-            if card_id and type_value == 'foil' and card_types[type_value] == True:
+            if card_id and type_value == 'foil' and card_types[type_value]:
                 card_type = 'holo'
             elif type_value == 'variant' and variant_type in ['', None]:
                 card_type = variant_type
             else:
-                if card_types[type_value] == True:
+                if card_types[type_value]:
                     card_type = type_value
         
         if 'game' in response.url:

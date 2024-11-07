@@ -3,10 +3,6 @@ from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 from fastapi.middleware.cors import CORSMiddleware
-from google.cloud import vision
-import numpy as np
-import os
-import json
 
 import card_scraper
 import ml_card_img_matcher
@@ -113,7 +109,7 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
     if (results['source_image'] != '').any():
         results = results[~results['img_link'].str.contains('no-image-available.png')]
         results_to_remove = ml_card_img_matcher.matching_results(results)
-        if results_to_remove is not None:
+        if results_to_remove:
             results = results[~results['img_link'].isin(results_to_remove['img_link'])].reset_index(drop=True)
     del results['source_image']
     request.app.state.results = results  # Store the results in app.state
@@ -127,7 +123,7 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
 async def get_results(request: Request):
     results = get_results_from_state(request)
 
-    if results is None or len(results) == 0:
+    if not results or len(results) == 0:
         raise HTTPException(status_code=404, detail="No results found")
 
     return {
