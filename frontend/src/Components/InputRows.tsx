@@ -265,10 +265,10 @@ const InputRows: React.FC = () => {
         })),
       };
 
-      // const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/submit`;
+      const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/submit`;
 
       // local testing API URL
-      const apiUrl = `http://localhost:8000/submit`;
+      // const apiUrl = `http://localhost:8000/submit`;
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
