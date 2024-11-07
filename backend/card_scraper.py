@@ -141,11 +141,11 @@ def card_finder(source_df):
         source_image = source_df.iloc[i, 8]
         
         card_type = ''
-        card_types = {'holo': foil, 'reverse-holo': reverse_holo, '1st-edition': first_edition, 'variant': variant}
+        card_types = {'foil': foil, 'reverse-holo': reverse_holo, '1st-edition': first_edition, 'variant': variant}
         
         for type_value in card_types.keys():
-            if (card_id == '' or card_id is None) and type_value == 'holo' and card_types[type_value] == True:
-                card_type = 'foil'
+            if (card_id != '' or card_id is not None) and type_value == 'foil' and card_types[type_value] == True:
+                card_type = 'holo'
             elif type_value == 'variant' and variant_type in ['', None]:
                 card_type = variant_type
             else:
