@@ -43,10 +43,8 @@ def decode_base64_image(base64_str):
 
     return temp_image_byte_arr
 
-def detect_card_details(test_image_path):
-    # Initialize the Vision API client
-    client = vision.ImageAnnotatorClient.from_service_account_json(r"C:\Users\Dylan\Downloads\steam-canto-440401-f9-2de1c7608dd0.json")
-    
+
+def detect_card_details(test_image_path, client):
     
     # Process image without saving to disk
     img_byte_arr = decode_base64_image(test_image_path)

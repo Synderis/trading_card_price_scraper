@@ -3,7 +3,11 @@ from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 from fastapi.middleware.cors import CORSMiddleware
+from google.cloud import vision
+from google.oauth2 import service_account
 import numpy as np
+import os
+import json
 
 import card_scraper
 import ml_card_img_matcher
@@ -21,6 +25,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+google_credentials_json = os.getenv("GOOGLE_CREDENTIALS_STR")
+
+if google_credentials_json:
+    google_credentials = json.loads(google_credentials_json)
+    google_vision_client = vision.ImageAnnotatorClient(credentials=service_account.Credentials.from_service_account_info(google_credentials))
+else:
+    google_credentials = None
+    google_vision_client = None
+    print("No credentials found")
 
 class RowData(BaseModel):
     card_name: str  # Keep camelCase for compatibility with your React app
@@ -56,10 +70,10 @@ async def card_ml_reader(card_img: img_str):
     # need to pass the index too
     img_str = str(card_img.img_str)
     try:
-        card_info = ocr_ml_reader.detect_card_details(img_str)
+        card_info = ocr_ml_reader.detect_card_details(img_str, google_vision_client)
         card_name = card_info.get('name', '')
         card_id = card_info.get('number', '')
-        # print(card_name, card_id, flush=True)
+        print(card_name, card_id, flush=True)
         return {"card_name": card_name, "card_id": card_id}
     except Exception as e:
         return {"error": "Failed to process image", "details": str(e)}
