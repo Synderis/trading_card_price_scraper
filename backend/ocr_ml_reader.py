@@ -29,8 +29,6 @@ def decode_base64_image(base64_str):
     enhancer = ImageEnhance.Brightness(image)
     image = enhancer.enhance(1.5)
     
-    
-
     # Save the processed image to a BytesIO object
     temp_image_byte_arr = BytesIO()
     image.save(temp_image_byte_arr, format='JPEG')
@@ -72,23 +70,44 @@ def detect_card_details(test_image_path):
         # Initialize variables to hold the desired text
         card_name = None
         card_id = None
-        test_rows = []
-
-        # Iterate through the lines to find the rows you need
+        card_edition = False
+        test_id_rows_1 = []
+        test_id_rows_2 = []
+        
         for i in range(len(lines)):
             line = lines[i]
+            if '1st Edition' in line:
+                card_edition = True
             if 'HP' in line and i > 0:
-                card_name = lines[i - 1]  # The row before the one with 'HP'
-            if '/' in line:
-                test_rows.append(line)
+                card_name = lines[i - 1]
 
-        if test_rows:
-            card_id = test_rows[-1].split('/')[0].split(' ')[-1]
+        if not card_name:
+            card_name = lines[0]
+
+        for i in range(len(lines)):
+            line = lines[i]
+            if '-' in line and i > 0:
+                test_id_rows_1.append(lines[i])
+            if '/' in line and i > 0:
+                test_id_rows_2.append(lines[i])
+
+        if any('[' in item for item in lines):
+            if test_id_rows_1:
+                card_id = test_id_rows_1[-1].strip()
+            else:
+                card_id = None
+        else:
+            if test_id_rows_2:
+                card_id = test_id_rows_2[-1].split('/')[0].split(' ')[-1]
+            else:
+                card_id = None
+
         # Print or store the desired details
         print(f"Card Name: {card_name}")
         print(f"Card ID: {card_id}")
 
         details['card_name'] = card_name
         details['card_id'] = card_id
+        details['edition'] = card_edition
 
-    return {'name': card_name, 'number': card_id}
+    return {'name': card_name, 'number': card_id, 'edition': card_edition}

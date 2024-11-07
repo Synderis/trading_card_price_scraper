@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+// import heic2jpg from 'heic2jpg';
 import Papa from 'papaparse';
 import '../CSS Sheets/InputRows.css';
 
@@ -153,6 +154,7 @@ const InputRows: React.FC = () => {
           ...updatedRows[index],
           card_name: responseData.card_name,
           card_id: responseData.card_id,
+          first_edition: responseData.first_edition !== undefined ? responseData.first_edition : false,
         };
   
         return updatedRows;
@@ -216,6 +218,10 @@ const InputRows: React.FC = () => {
     // }
     // setImgFileNames('No file chosen');
     setCsvFileName('No file chosen');
+  };
+
+  const handleClearAllIds = () => {
+    setRows(initialRowState => initialRowState.map(row => ({ ...row, card_id: '' })));
   };
 
   const handleToggleVariants = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -454,9 +460,9 @@ const InputRows: React.FC = () => {
               onChange={(event) => handleImageUpload(index, event)}
             />
           </label>
-        {row.source_image && (
-          <img src={row.source_image} alt={`Uploaded preview for row ${index}`} width="100" />
-        )}
+          {row.source_image && (
+            <img src={row.source_image} alt={`Uploaded preview for row ${index}`} width="100" />
+          )}
         </div>
         <button type="button" className="clear-btn" onClick={() => handleClearRow(index)}>Clear</button>
       </span>
@@ -499,6 +505,9 @@ const InputRows: React.FC = () => {
             onChange={handleMagicCardToggle}
           />
         </label>
+        {magicCardChecked && (
+            <button type="button" className="clear-all-ids-btn" onClick={handleClearAllIds}>Clear All Ids</button>
+          )}
       </div>
       {loading && (
       <>

@@ -58,8 +58,11 @@ async def card_ml_reader(card_img: img_str):
         card_info = ocr_ml_reader.detect_card_details(img_str)
         card_name = card_info.get('name', '')
         card_id = card_info.get('number', '')
-        print(card_name, card_id, flush=True)
-        return {"card_name": card_name, "card_id": card_id}
+        card_edition = card_info.get('edition', False)
+        if not isinstance(card_edition, bool):
+            card_edition = False
+        print(card_name, card_id, card_edition, flush=True)
+        return {"card_name": card_name, "card_id": card_id, "first_edition": card_edition}
     except Exception as e:
         return {"error": "Failed to process image", "details": str(e)}
     
