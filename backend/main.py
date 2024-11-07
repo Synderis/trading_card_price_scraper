@@ -28,7 +28,7 @@ app.add_middleware(
 class RowData(BaseModel):
     card_name: str 
     card_id: str
-    holo: bool
+    foil: bool
     reverse_holo: bool
     first_edition: bool
     card_count: int
@@ -89,7 +89,7 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
         card_data = {
             "card": row.card_name,
             "id": row.card_id,
-            "holo": row.holo,
+            "foil": row.foil,
             "reverse_holo": row.reverse_holo,
             "first_edition": row.first_edition,
             "card_count": row.card_count,

@@ -132,7 +132,7 @@ def card_finder(source_df):
         response = requests.get(base_url)
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        holo = source_df.iloc[i, 2]
+        foil = source_df.iloc[i, 2]
         reverse_holo = source_df.iloc[i, 3]
         first_edition = source_df.iloc[i, 4]
         card_count = source_df.iloc[i, 5]
@@ -141,7 +141,7 @@ def card_finder(source_df):
         source_image = source_df.iloc[i, 8]
         
         card_type = ''
-        card_types = {'holo': holo, 'reverse-holo': reverse_holo, '1st-edition': first_edition, 'variant': variant}
+        card_types = {'holo': foil, 'reverse-holo': reverse_holo, '1st-edition': first_edition, 'variant': variant}
         
         for type_value in card_types.keys():
             if (card_id == '' or card_id is None) and type_value == 'holo' and card_types[type_value] == True:
