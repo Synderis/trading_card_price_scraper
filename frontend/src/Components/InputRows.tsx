@@ -126,9 +126,9 @@ const InputRows: React.FC = () => {
       img_str: imgBase64
     };
     // Send the image data to the API for processing
-    // const mlUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/submit`;
+    const mlUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/mlmodel`;
     // Local testing API URL
-    const mlUrl = `http://localhost:8000/mlmodel`;
+    // const mlUrl = `http://localhost:8000/mlmodel`;
     const response = await fetch(mlUrl, {
       method: 'POST',
       headers: {

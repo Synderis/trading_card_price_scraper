@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 from fastapi.middleware.cors import CORSMiddleware
 from google.cloud import vision
-from google.oauth2 import service_account
 import numpy as np
 import os
 import json
@@ -26,19 +25,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-google_credentials_json = os.getenv("GOOGLE_CREDENTIALS_STR")
-
-if google_credentials_json:
-    google_credentials = json.loads(google_credentials_json)
-    google_vision_client = vision.ImageAnnotatorClient(credentials=service_account.Credentials.from_service_account_info(google_credentials))
-else:
-    google_credentials = None
-    google_vision_client = None
-    print("No credentials found")
-
 class RowData(BaseModel):
-    card_name: str  # Keep camelCase for compatibility with your React app
-    card_id: str    # Keep camelCase for compatibility with your React app
+    card_name: str 
+    card_id: str
     holo: bool
     reverse_holo: bool
     first_edition: bool
@@ -56,10 +45,6 @@ class img_str(BaseModel):
 def get_results_from_state(request: Request):
     return request.app.state.results
 
-# @app.get("/")
-# async def read_root():
-#     return {"message": "Hello, World!"}
-
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
@@ -70,7 +55,7 @@ async def card_ml_reader(card_img: img_str):
     # need to pass the index too
     img_str = str(card_img.img_str)
     try:
-        card_info = ocr_ml_reader.detect_card_details(img_str, google_vision_client)
+        card_info = ocr_ml_reader.detect_card_details(img_str)
         card_name = card_info.get('name', '')
         card_id = card_info.get('number', '')
         print(card_name, card_id, flush=True)
@@ -92,7 +77,6 @@ async def card_ml_reader(card_img: img_str):
 
 @app.post("/submit")
 async def submit_cards(card_input: CardInput, request: Request):  # Accept card_input and request
-    # valid_rows = [row for row in card_input.cards if row.card_name.strip() and row.card_id.strip()]
     valid_rows = [row for row in card_input.cards if row.card_name.strip()]
 
     if not valid_rows:
@@ -139,17 +123,9 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
 @app.get("/results")
 async def get_results(request: Request):
     results = get_results_from_state(request)
-    # card_totals = get_card_totals_from_state(request)
-
-    # Debugging: Log the results and card_totals
-    # print("Results from get_results_from_state:", results)
-    # print("Original card_totals:", card_totals)
 
     if results is None or len(results) == 0:
         raise HTTPException(status_code=404, detail="No results found")
-
-    # print("Final card_totals to return:", totals_dict)  # Log the final totals to be returned
-    # print("Final results to return:", results)
 
     return {
         "results": results,

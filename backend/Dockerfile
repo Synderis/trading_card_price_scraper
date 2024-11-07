@@ -21,6 +21,8 @@ ENV PYTHONUNBUFFERED=1
 # Set the working directory in the container
 WORKDIR /var/task
 
+COPY google_info.json /var/task/google_info.json
+
 # Copy the requirements file first for better caching
 COPY requirements.txt .
 

@@ -2,24 +2,19 @@ from io import BytesIO
 from PIL import Image, ImageEnhance
 import base64
 from google.cloud import vision
+from google.oauth2 import service_account
 import pillow_heif
+import json
+import os
+from dotenv import load_dotenv
 
 # Register the HEIF opener to enable HEIC format support
 pillow_heif.register_heif_opener()
 
-# def preprocess_image_in_memory(image_path):
-#     """Process the image in memory without saving it."""
-#     # Open the image file
-#     with Image.open(image_path) as img:
-#         # Convert to grayscale
-#         img = img.convert('L')  # 'L' mode is for grayscale  # Adjust this value as needed
-
-#         # Save to a BytesIO object in memory
-#         img_byte_arr = BytesIO()
-#         img.save(img_byte_arr, format='JPEG')
-#         img_byte_arr.seek(0)  # Reset the stream's position to the beginning
-
-#     return img_byte_arr
+def read_google_credentials():
+    with open('google_info.json', 'r') as file:
+        google_credentials = json.load(file)
+    return google_credentials
 
 def decode_base64_image(base64_str):
     """Decode a base64 image string to an image file in memory."""
@@ -44,7 +39,10 @@ def decode_base64_image(base64_str):
     return temp_image_byte_arr
 
 
-def detect_card_details(test_image_path, client):
+def detect_card_details(test_image_path):
+    
+    google_credentials_info = read_google_credentials()
+    google_vision_client = vision.ImageAnnotatorClient.from_service_account_info(google_credentials_info)
     
     # Process image without saving to disk
     img_byte_arr = decode_base64_image(test_image_path)
@@ -53,7 +51,7 @@ def detect_card_details(test_image_path, client):
     image = vision.Image(content=img_byte_arr.read())
 
     # Perform text detection
-    response = client.document_text_detection(image=image)
+    response = google_vision_client.document_text_detection(image=image)
     texts = response.text_annotations
 
     # Check for errors in the response

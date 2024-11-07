@@ -5,7 +5,3 @@ services:
     container_name: backend
     ports:
       - "8000:8000"  # Expose FastAPI on port 8000
-    env_file:
-      - ./backend/.env  # Load environment variables from the .env file (includes Google credentials)
-    environment:
-      - GOOGLE_CREDENTIALS_STR=${GOOGLE_CREDENTIALS_STR}
