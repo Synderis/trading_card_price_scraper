@@ -18,7 +18,7 @@ def load_heic_image(heic_path):
 def reverse_holo_test(test_image_path):
     class CNNModel(nn.Module):
         def __init__(self):
-            super(CNNModel, self).__init__()
+            super().__init__()
             self.conv_layers = nn.Sequential(
                 nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
                 nn.ReLU(),
@@ -28,13 +28,13 @@ def reverse_holo_test(test_image_path):
                 nn.MaxPool2d(kernel_size=2, stride=2),
                 nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
                 nn.ReLU(),
-                nn.MaxPool2d(kernel_size=2, stride=2)
+                nn.MaxPool2d(kernel_size=2, stride=2),
             )
             self.fc_layers = nn.Sequential(
                 nn.Flatten(),
                 nn.Linear(128 * 16 * 16, 128),
                 nn.ReLU(),
-                nn.Linear(128, 2)  # Binary classification: reverse holo or not reverse holo
+                nn.Linear(128, 2),  # Binary classification: reverse holo or not reverse holo
             )
 
         def forward(self, x):
