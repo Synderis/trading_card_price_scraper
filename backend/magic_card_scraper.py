@@ -31,19 +31,26 @@ def card_finder(source_df):
         response = requests.get(base_url)
         if response.status_code == 200:
             response_json = response.json()
-            for i in range(response_json['total_cards']):
-                response_json = response_json['data'][i]
+            card_total = int(response_json['total_cards'])
+            for i in range(card_total):
+                data_set = response_json['data'][i]
                 
                 print(response_json, flush=True)
+                if foil:
+                    usd_amt = data_set['prices']['usd_foil']
+                else:
+                    usd_amt = data_set['prices']['usd']
+                if not usd_amt:
+                    usd_amt = '0'
                 card_response_dict = {'card': card,
                                     'id': card_id,
-                                    'set': response_json['set'],
+                                    'set': data_set['set'],
                                     'card_count': card_count,
                                     'source_image': source_image,
-                                    'Usd': response_json['prices']['usd_foil'],
+                                    'Usd': usd_amt,
                                     # 'Usd': response_json['prices']['usd_foil'] if foil else response_json['prices']['usd'],
-                                    'img_link': response_json['image_uris']['png'],
-                                    'final_link': response_json['scryfall_uri'],
+                                    'img_link': data_set['image_uris']['png'],
+                                    'final_link': data_set['scryfall_uri'],
                                     }
                 new_rows.append(card_response_dict)
         else:
