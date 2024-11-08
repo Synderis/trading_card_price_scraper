@@ -51,7 +51,7 @@ def detect_card_details(test_image_path):
 
     # Check for errors in the response
     if response.error.message:
-        raise Exception(f"{response.error.message}")
+        raise Exception(f'{response.error.message}')
 
     # Process the detected text
     details = {}
@@ -59,7 +59,7 @@ def detect_card_details(test_image_path):
     if texts:
         # The first annotation is the full text detected
         full_text = texts[0].description
-        print(f"Detected text: {full_text}")
+        print(f'Detected text: {full_text}')
 
         # Split the detected text into lines
         lines = full_text.splitlines()
@@ -100,8 +100,8 @@ def detect_card_details(test_image_path):
                 card_id = None
 
         # Print or store the desired details
-        print(f"Card Name: {card_name}")
-        print(f"Card ID: {card_id}")
+        print(f'Card Name: {card_name}')
+        print(f'Card ID: {card_id}')
 
         details['card_name'] = card_name
         details['card_id'] = card_id

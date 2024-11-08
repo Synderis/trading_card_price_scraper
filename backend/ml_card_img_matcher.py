@@ -19,7 +19,7 @@ def decode_base64_image(base64_str):
     
     # Check if the image was successfully decoded
     if img is None:
-        raise ValueError("Decoded image is None. The base64 string might be invalid.")
+        raise ValueError('Decoded image is None. The base64 string might be invalid.')
     
     # Convert BGR to RGB
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -38,15 +38,15 @@ def read_image_rgb(img_path):
             img_array = np.frombuffer(response.content, np.uint8)
             img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
             if img is None:
-                raise ValueError("Failed to decode image from URL: ")
+                raise ValueError('Failed to decode image from URL: ')
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         else:
-            raise ValueError(f"Failed to fetch image from URL:  (status code: {response.status_code})")
+            raise ValueError(f'Failed to fetch image from URL:  (status code: {response.status_code})')
     else:
         # Handle local image paths
         img = cv2.imread(img_path)
         if img is None:
-            raise ValueError("Failed to read image at path: ")
+            raise ValueError('Failed to read image at path: ')
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     
     return img
@@ -112,11 +112,11 @@ def matching_results(results):
 
             except ValueError as e:
                 # Skip known problematic image paths
-                if "/images/no-image-available.png" in str(e):
-                    print(f"Skipping image due to error: {e}")
+                if '/images/no-image-available.png' in str(e):
+                    print(f'Skipping image due to error: {e}')
                     continue
                 else:
-                    print(f"Error reading target image from link {img_link}: {e}")
+                    print(f'Error reading target image from link {img_link}: {e}')
 
     # Create a DataFrame from the scores list
     scores_df = pd.DataFrame(scores_list, columns=['card', 'id', 'img_link', 'similarity_score'])
