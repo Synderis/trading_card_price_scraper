@@ -144,12 +144,14 @@ def card_finder(source_df):
         card_types = {'foil': foil, 'reverse-holo': reverse_holo, '1st-edition': first_edition, 'variant': variant}
         
         for type_value in card_types.keys():
-            if (card_id == '' or card_id is None) and type_value == 'holo' and card_types[type_value] is True:
+            if (card_id == '' or not card_id) and type_value == 'holo' and card_types[type_value]:
                 card_type = 'foil'
             elif type_value == 'variant' and variant_type in ['', None]:
                 card_type = variant_type
             else:
-                if card_types[type_value] is True:
+                if card_types[type_value]:
+                    card_type = type_value
+
             if card_id and type_value == 'foil' and card_types[type_value]:
                 card_type = 'holo'
             elif type_value == 'variant' and variant_type in ['', None]:
