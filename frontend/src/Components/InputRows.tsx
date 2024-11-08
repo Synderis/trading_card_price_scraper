@@ -476,10 +476,12 @@ const InputRows: React.FC = () => {
   return (
     <div className="container">
       <h1>Card Input Rows</h1>
-      <button className='download-template-btn' onClick={downloadCSVTemplate}>Download CSV Template</button>
-      <input id="csv-file-upload" type="file" accept=".csv" ref={csvInputRef} onChange={handleCSVUpload} hidden/>
-      <label htmlFor="csv-file-upload" className='upload-btn'>Upload CSV File</label>
-      <span id="file-chosen" style={{marginTop: '10px'}}>{csvFileName}</span>
+      <div>
+        <button className='download-template-btn' onClick={downloadCSVTemplate}>Download CSV Template</button>
+        <input id="csv-file-upload" type="file" accept=".csv" ref={csvInputRef} onChange={handleCSVUpload} hidden/>
+        <label htmlFor="csv-file-upload" className='upload-btn'>Upload CSV File</label>
+        <span id="file-chosen" style={{marginTop: '10px'}}>{csvFileName}</span>
+      </div>
       <h4>Enter the data for each row or upload a CSV file. Rows with potentially invalid CSV data will be marked red.</h4>
       <form onSubmit={handleSubmit}>
         {rows.map(renderRow)}
