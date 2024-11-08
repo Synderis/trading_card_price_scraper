@@ -31,19 +31,21 @@ def card_finder(source_df):
         response = requests.get(base_url)
         if response.status_code == 200:
             response_json = response.json()
-            response_json = response_json['data'][0]
-            print(response_json, flush=True)
-            card_response_dict = {'card': card,
-                                'id': card_id,
-                                'set': response_json['set'],
-                                'card_count': card_count,
-                                'source_image': source_image,
-                                'Usd': response_json['prices']['usd_foil'],
-                                # 'Usd': response_json['prices']['usd_foil'] if foil else response_json['prices']['usd'],
-                                'img_link': response_json['image_uris']['png'],
-                                'final_link': response_json['scryfall_uri'],
-                                }
-            new_rows.append(card_response_dict)
+            for i in range(response_json['total_cards']):
+                response_json = response_json['data'][i]
+                
+                print(response_json, flush=True)
+                card_response_dict = {'card': card,
+                                    'id': card_id,
+                                    'set': response_json['set'],
+                                    'card_count': card_count,
+                                    'source_image': source_image,
+                                    'Usd': response_json['prices']['usd_foil'],
+                                    # 'Usd': response_json['prices']['usd_foil'] if foil else response_json['prices']['usd'],
+                                    'img_link': response_json['image_uris']['png'],
+                                    'final_link': response_json['scryfall_uri'],
+                                    }
+                new_rows.append(card_response_dict)
         else:
             df_new_rows = {label: 'N/A' for label in [
                         'card', 'id', 'source_image', 'card_count', 'set', 'Usd', 'final_link', 'img_link']}
