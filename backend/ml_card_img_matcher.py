@@ -38,7 +38,7 @@ def read_image_rgb(img_path):
             img_array = np.frombuffer(response.content, np.uint8)
             img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
             if img is None:
-                raise ValueError(f"Failed to decode image from URL: ")
+                raise ValueError("Failed to decode image from URL: ")
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         else:
             raise ValueError(f"Failed to fetch image from URL:  (status code: {response.status_code})")
@@ -46,7 +46,7 @@ def read_image_rgb(img_path):
         # Handle local image paths
         img = cv2.imread(img_path)
         if img is None:
-            raise ValueError(f"Failed to read image at path: ")
+            raise ValueError("Failed to read image at path: ")
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     
     return img
