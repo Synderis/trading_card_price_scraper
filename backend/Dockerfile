@@ -21,6 +21,8 @@ ENV PYTHONUNBUFFERED=1
 # Set the working directory in the container
 WORKDIR /var/task
 
+COPY google_info.json /var/task/google_info.json
+
 # Copy the requirements file first for better caching
 COPY requirements.txt .
 
@@ -29,7 +31,7 @@ RUN python -m pip install --no-cache-dir --upgrade pip && \
     python -m pip install --no-cache-dir -r requirements.txt
 
 # Copy the FastAPI application code (ensure all necessary Python files are present)
-COPY main.py card_scraper.py ml_card_img_matcher.py ./
+COPY main.py card_scraper.py ml_card_img_matcher.py ocr_ml_reader.py ./
 
 # Command to run the application using Uvicorn with the AWS Lambda Web Adapter
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

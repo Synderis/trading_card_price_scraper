@@ -22,9 +22,9 @@ app.add_middleware(
 )
 
 class RowData(BaseModel):
-    card_name: str  # Keep camelCase for compatibility with your React app
-    card_id: str    # Keep camelCase for compatibility with your React app
-    holo: bool
+    card_name: str 
+    card_id: str
+    foil: bool
     reverse_holo: bool
     first_edition: bool
     card_count: int
@@ -41,10 +41,6 @@ class img_str(BaseModel):
 def get_results_from_state(request: Request):
     return request.app.state.results
 
-# @app.get("/")
-# async def read_root():
-#     return {"message": "Hello, World!"}
-
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
@@ -58,8 +54,11 @@ async def card_ml_reader(card_img: img_str):
         card_info = ocr_ml_reader.detect_card_details(img_str)
         card_name = card_info.get('name', '')
         card_id = card_info.get('number', '')
-        # print(card_name, card_id, flush=True)
-        return {"card_name": card_name, "card_id": card_id}
+        card_edition = card_info.get('edition', False)
+        if not isinstance(card_edition, bool):
+            card_edition = False
+        print(card_name, card_id, card_edition, flush=True)
+        return {"card_name": card_name, "card_id": card_id, "first_edition": card_edition}
     except Exception as e:
         return {"error": "Failed to process image", "details": str(e)}
     
@@ -77,7 +76,6 @@ async def card_ml_reader(card_img: img_str):
 
 @app.post("/submit")
 async def submit_cards(card_input: CardInput, request: Request):  # Accept card_input and request
-    # valid_rows = [row for row in card_input.cards if row.card_name.strip() and row.card_id.strip()]
     valid_rows = [row for row in card_input.cards if row.card_name.strip()]
 
     if not valid_rows:
@@ -90,7 +88,7 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
         card_data = {
             "card": row.card_name,
             "id": row.card_id,
-            "holo": row.holo,
+            "foil": row.foil,
             "reverse_holo": row.reverse_holo,
             "first_edition": row.first_edition,
             "card_count": row.card_count,
@@ -111,7 +109,7 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
     if (results['source_image'] != '').any():
         results = results[~results['img_link'].str.contains('no-image-available.png')]
         results_to_remove = ml_card_img_matcher.matching_results(results)
-        if results_to_remove is not None:
+        if results_to_remove:
             results = results[~results['img_link'].isin(results_to_remove['img_link'])].reset_index(drop=True)
     del results['source_image']
     request.app.state.results = results  # Store the results in app.state
@@ -124,17 +122,9 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
 @app.get("/results")
 async def get_results(request: Request):
     results = get_results_from_state(request)
-    # card_totals = get_card_totals_from_state(request)
 
-    # Debugging: Log the results and card_totals
-    # print("Results from get_results_from_state:", results)
-    # print("Original card_totals:", card_totals)
-
-    if results is None or len(results) == 0:
+    if not results or len(results) == 0:
         raise HTTPException(status_code=404, detail="No results found")
-
-    # print("Final card_totals to return:", totals_dict)  # Log the final totals to be returned
-    # print("Final results to return:", results)
 
     return {
         "results": results,

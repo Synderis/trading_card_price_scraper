@@ -6,3 +6,5 @@ dist/
 __pycache__
 package
 cdk.out
+.env
+google_info.json

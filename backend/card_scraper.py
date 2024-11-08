@@ -50,12 +50,12 @@ def grab_all_links(card_var, id_var, card_type, soup):
     for link in links:
         href = link.get('href')
         text = link.get_text(strip=True).lower()
-        if text == '' or href is None or 'game' not in href: 
+        if text == '' or not href or 'game' not in href: 
             continue
         if id_var == '':
             if '/magic-' not in href:
                 continue
-            if card_type == '' or card_type is None:
+            if card_type == '' or not card_type:
                 if card_var in href.split('/')[-1]:
                     bracket_text = text.replace(card_var_text, '').strip()
                     data.append({'names': bracket_text, 'links': href})  # Append to list
@@ -132,7 +132,7 @@ def card_finder(source_df):
         response = requests.get(base_url)
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        holo = source_df.iloc[i, 2]
+        foil = source_df.iloc[i, 2]
         reverse_holo = source_df.iloc[i, 3]
         first_edition = source_df.iloc[i, 4]
         card_count = source_df.iloc[i, 5]
@@ -141,7 +141,7 @@ def card_finder(source_df):
         source_image = source_df.iloc[i, 8]
         
         card_type = ''
-        card_types = {'holo': holo, 'reverse-holo': reverse_holo, '1st-edition': first_edition, 'variant': variant}
+        card_types = {'foil': foil, 'reverse-holo': reverse_holo, '1st-edition': first_edition, 'variant': variant}
         
         for type_value in card_types.keys():
             if (card_id == '' or card_id is None) and type_value == 'holo' and card_types[type_value] is True:
@@ -150,6 +150,12 @@ def card_finder(source_df):
                 card_type = variant_type
             else:
                 if card_types[type_value] is True:
+            if card_id and type_value == 'foil' and card_types[type_value]:
+                card_type = 'holo'
+            elif type_value == 'variant' and variant_type in ['', None]:
+                card_type = variant_type
+            else:
+                if card_types[type_value]:
                     card_type = type_value
         
         if 'game' in response.url:

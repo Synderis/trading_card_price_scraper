@@ -24,7 +24,7 @@ const AboutMe: React.FC = () => {
             <p>
                 This project allows users to import CSV data, manage their cards, 
                 perform data validation, and get pricing information by grade. 
-                It includes features for tracking holo, reverse holo, and first edition cards, 
+                It includes features for tracking foil, reverse holo, and first edition cards, 
                 ensuring accurate card information is pulled.
             </p>
 

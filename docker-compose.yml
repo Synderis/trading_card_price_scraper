@@ -1,0 +1,7 @@
+services:
+  backend:
+    build:
+      context: ./backend  # Path to your FastAPI backend Dockerfile
+    container_name: backend
+    ports:
+      - "8000:8000"  # Expose FastAPI on port 8000

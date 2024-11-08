@@ -3,23 +3,15 @@ from PIL import Image, ImageEnhance
 import base64
 from google.cloud import vision
 import pillow_heif
+import json
 
 # Register the HEIF opener to enable HEIC format support
 pillow_heif.register_heif_opener()
 
-# def preprocess_image_in_memory(image_path):
-#     """Process the image in memory without saving it."""
-#     # Open the image file
-#     with Image.open(image_path) as img:
-#         # Convert to grayscale
-#         img = img.convert('L')  # 'L' mode is for grayscale  # Adjust this value as needed
-
-#         # Save to a BytesIO object in memory
-#         img_byte_arr = BytesIO()
-#         img.save(img_byte_arr, format='JPEG')
-#         img_byte_arr.seek(0)  # Reset the stream's position to the beginning
-
-#     return img_byte_arr
+def read_google_credentials():
+    with open('google_info.json', 'r') as file:
+        google_credentials = json.load(file)
+    return google_credentials
 
 def decode_base64_image(base64_str):
     """Decode a base64 image string to an image file in memory."""
@@ -34,8 +26,6 @@ def decode_base64_image(base64_str):
     enhancer = ImageEnhance.Brightness(image)
     image = enhancer.enhance(1.5)
     
-    
-
     # Save the processed image to a BytesIO object
     temp_image_byte_arr = BytesIO()
     image.save(temp_image_byte_arr, format='JPEG')
@@ -43,10 +33,11 @@ def decode_base64_image(base64_str):
 
     return temp_image_byte_arr
 
+
 def detect_card_details(test_image_path):
-    # Initialize the Vision API client
-    client = vision.ImageAnnotatorClient.from_service_account_json(r"C:\Users\Dylan\Downloads\steam-canto-440401-f9-2de1c7608dd0.json")
     
+    google_credentials_info = read_google_credentials()
+    google_vision_client = vision.ImageAnnotatorClient.from_service_account_info(google_credentials_info)
     
     # Process image without saving to disk
     img_byte_arr = decode_base64_image(test_image_path)
@@ -55,7 +46,7 @@ def detect_card_details(test_image_path):
     image = vision.Image(content=img_byte_arr.read())
 
     # Perform text detection
-    response = client.document_text_detection(image=image)
+    response = google_vision_client.document_text_detection(image=image)
     texts = response.text_annotations
 
     # Check for errors in the response
@@ -76,23 +67,44 @@ def detect_card_details(test_image_path):
         # Initialize variables to hold the desired text
         card_name = None
         card_id = None
-        test_rows = []
-
-        # Iterate through the lines to find the rows you need
+        card_edition = False
+        test_id_rows_1 = []
+        test_id_rows_2 = []
+        
         for i in range(len(lines)):
             line = lines[i]
+            if '1st Edition' in line:
+                card_edition = True
             if 'HP' in line and i > 0:
-                card_name = lines[i - 1]  # The row before the one with 'HP'
-            if '/' in line:
-                test_rows.append(line)
+                card_name = lines[i - 1]
 
-        if test_rows:
-            card_id = test_rows[-1].split('/')[0].split(' ')[-1]
+        if not card_name:
+            card_name = lines[0]
+
+        for i in range(len(lines)):
+            line = lines[i]
+            if '-' in line and i > 0:
+                test_id_rows_1.append(lines[i])
+            if '/' in line and i > 0:
+                test_id_rows_2.append(lines[i])
+
+        if any('[' in item for item in lines):
+            if test_id_rows_1:
+                card_id = test_id_rows_1[-1].strip()
+            else:
+                card_id = None
+        else:
+            if test_id_rows_2:
+                card_id = test_id_rows_2[-1].split('/')[0].split(' ')[-1]
+            else:
+                card_id = None
+
         # Print or store the desired details
         print(f"Card Name: {card_name}")
         print(f"Card ID: {card_id}")
 
         details['card_name'] = card_name
         details['card_id'] = card_id
+        details['edition'] = card_edition
 
-    return {'name': card_name, 'number': card_id}
+    return {'name': card_name, 'number': card_id, 'edition': card_edition}

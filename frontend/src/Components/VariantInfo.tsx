@@ -7,7 +7,7 @@ const VariantInfo: React.FC = () => {
             <h2>Card Variations</h2>
             <h4 className='variation-header'>Basic Card Types</h4>
             <div className='variation-container'>
-                <p>holo - Traditional holofoil pattern on the artwork (Magic the Gathering cards will have this on both artwork and card body and are typically called foil instead of holo/holographic) and pokemon cards will not use this flag in the form as its purely tied to the card name and card id.</p>
+                <p>holo - Traditional holofoil pattern on the artwork this flag will only be used for magic cards as yugioh and pokemon almost always use card id to distinguish between holo and non-holo</p>
                 <div className='example-image-box'>
                     <img src="/HowToImages/holo-vaporeon.jpg" alt="Holo Card Example" style={{ width: '300px', height: 'auto' }} />
                     <img src="/HowToImages/holo-blue-eyes-white-dragon.jpg" alt="Holo Card Example" style={{ width: '300px', height: 'auto' }} />

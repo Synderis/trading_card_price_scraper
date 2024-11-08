@@ -1,12 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+// import heic2jpg from 'heic2jpg';
 import Papa from 'papaparse';
 import '../CSS Sheets/InputRows.css';
 
 type Row = {
   card_name: string;
   card_id: string;
-  holo: boolean;
+  foil: boolean;
   reverse_holo: boolean;
   first_edition: boolean;
   card_count: number | null;
@@ -14,7 +15,7 @@ type Row = {
   variant_type: string | null;
   source_image: string;
   card_name_id_invalid?: boolean;
-  holo_invalid?: boolean;
+  foil_invalid?: boolean;
   reverse_holo_invalid?: boolean;
   first_edition_invalid?: boolean;
   card_count_invalid?: boolean;
@@ -39,7 +40,7 @@ const InputRows: React.FC = () => {
   const initialRowState = Array.from({ length: 10 }, () => ({
     card_name: '',
     card_id: '',
-    holo: false,
+    foil: false,
     reverse_holo: false,
     first_edition: false,
     card_count: 1,
@@ -47,7 +48,7 @@ const InputRows: React.FC = () => {
     variant_type: '',
     source_image: '',
     card_name_id_invalid: false,
-    holo_invalid: false,
+    foil_invalid: false,
     reverse_holo_invalid: false,
     first_edition_invalid: false,
     card_count_invalid: false,
@@ -65,7 +66,7 @@ const InputRows: React.FC = () => {
   
     if (field === 'card_name' || field === 'card_id' || field === 'variant_type') {
       newRows[index][field] = value as string;
-    } else if (field === 'holo' || field === 'reverse_holo' || field === 'first_edition' || field === 'variant') {
+    } else if (field === 'foil' || field === 'reverse_holo' || field === 'first_edition' || field === 'variant') {
       newRows[index][field] = value as boolean;
     } else if (field === 'card_count') {
       newRows[index][field] = value === '' ? 1 : Number(value);
@@ -74,13 +75,13 @@ const InputRows: React.FC = () => {
     // Check and update invalid states
     const row = newRows[index];
     row.card_name_id_invalid = !magicCardChecked && row.card_name !== null && (row.card_id === null || row.card_id === '');
-    row.holo_invalid = !(row.holo === true || row.holo === false);
+    row.foil_invalid = !(row.foil === true || row.foil === false);
     row.reverse_holo_invalid = !(row.reverse_holo === true || row.reverse_holo === false);
     row.first_edition_invalid = !(row.first_edition === true || row.first_edition === false);
     row.card_count_invalid = !(row.card_count === null || row.card_count > 0);
   
     // Update isInvalid based on all invalid flags
-    row.isInvalid = row.card_name_id_invalid || row.holo_invalid || row.reverse_holo_invalid || row.first_edition_invalid || row.card_count_invalid;
+    row.isInvalid = row.card_name_id_invalid || row.foil_invalid || row.reverse_holo_invalid || row.first_edition_invalid || row.card_count_invalid;
   
     setRows(newRows);
   };
@@ -126,7 +127,7 @@ const InputRows: React.FC = () => {
       img_str: imgBase64
     };
     // Send the image data to the API for processing
-    const mlUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/submit`;
+    const mlUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/mlmodel`;
     // Local testing API URL
     // const mlUrl = `http://localhost:8000/mlmodel`;
     const response = await fetch(mlUrl, {
@@ -153,6 +154,7 @@ const InputRows: React.FC = () => {
           ...updatedRows[index],
           card_name: responseData.card_name,
           card_id: responseData.card_id,
+          first_edition: responseData.first_edition !== undefined ? responseData.first_edition : false,
         };
   
         return updatedRows;
@@ -167,7 +169,7 @@ const InputRows: React.FC = () => {
     const newRowsToAdd: Row[] = Array.from({ length: 10 }, () => ({
       card_name: '',
       card_id: '',
-      holo: false,
+      foil: false,
       reverse_holo: false,
       first_edition: false,
       card_count: 1,
@@ -175,7 +177,7 @@ const InputRows: React.FC = () => {
       variant_type: '',
       source_image: '',
       card_name_id_invalid: false,
-      holo_invalid: false,
+      foil_invalid: false,
       reverse_holo_invalid: false,
       first_edition_invalid: false,
       card_count_invalid: false,
@@ -189,7 +191,7 @@ const InputRows: React.FC = () => {
     newRows[index] = {
       card_name: '',
       card_id: '',
-      holo: false,
+      foil: false,
       reverse_holo: false,
       first_edition: false,
       card_count: 1,
@@ -197,7 +199,7 @@ const InputRows: React.FC = () => {
       variant_type: '',
       source_image: '',
       card_name_id_invalid: false,
-      holo_invalid: false,
+      foil_invalid: false,
       reverse_holo_invalid: false,
       first_edition_invalid: false,
       card_count_invalid: false,
@@ -216,6 +218,10 @@ const InputRows: React.FC = () => {
     // }
     // setImgFileNames('No file chosen');
     setCsvFileName('No file chosen');
+  };
+
+  const handleClearAllIds = () => {
+    setRows(initialRowState => initialRowState.map(row => ({ ...row, card_id: '' })));
   };
 
   const handleToggleVariants = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -255,7 +261,7 @@ const InputRows: React.FC = () => {
         cards: rows.map(row => ({
           card_name: row.card_name,
           card_id: String(row.card_id),
-          holo: row.holo,
+          foil: row.foil,
           reverse_holo: row.reverse_holo,
           first_edition: row.first_edition,
           card_count: row.card_count,
@@ -305,14 +311,14 @@ const InputRows: React.FC = () => {
         if (!prev) {
           // Run new invalid checks for each row here
           row.card_name_id_invalid = false;
-          row.holo_invalid = !(row.holo === true || row.holo === false);
+          row.foil_invalid = !(row.foil === true || row.foil === false);
           row.reverse_holo_invalid = false;
           row.first_edition_invalid = false;
           row.card_count_invalid = !(row.card_count === null || row.card_count > 0);
         } else {
           // Run old invalid checks for each row here
           row.card_name_id_invalid = (row.card_name !== null && row.card_id === null) || (row.card_name !== '' && row.card_id === '');
-          row.holo_invalid = !(row.holo === true || row.holo === false);
+          row.foil_invalid = !(row.foil === true || row.foil === false);
           row.reverse_holo_invalid = !(row.reverse_holo === true || row.reverse_holo === false);
           row.first_edition_invalid = !(row.first_edition === true || row.first_edition === false);
           row.card_count_invalid = !(row.card_count === null || row.card_count > 0);
@@ -333,19 +339,19 @@ const InputRows: React.FC = () => {
         complete: (results) => {
           const parsedRows: Row[] = results.data.map((row: any) => {
             const card_name_id_invalid = !magicCardChecked && row.card_name !== null && (row.card_id === null || row.card_id === '');
-            const holo_invalid = !((truth_values(row.holo)) || false_values(row.holo));
+            const foil_invalid = !((truth_values(row.foil)) || false_values(row.foil));
             const reverse_holo_invalid = !((truth_values(row.reverse_holo)) || false_values(row.reverse_holo));
             const first_edition_invalid = !((truth_values(row.first_edition)) || false_values(row.first_edition));
             const card_count_invalid = !(row.card_count === null || row.card_count > 0);
             const isInvalid =
-              !((truth_values(row.holo)) || false_values(row.holo)) ||
+              !((truth_values(row.foil)) || false_values(row.foil)) ||
               !((truth_values(row.reverse_holo)) || false_values(row.reverse_holo)) ||
               !((truth_values(row.first_edition)) || false_values(row.first_edition)) ||
               !(row.card_count === null || row.card_count > 0);
             
             console.log(
               card_name_id_invalid,
-              holo_invalid,
+              foil_invalid,
               reverse_holo_invalid,
               first_edition_invalid,
               card_count_invalid,
@@ -354,7 +360,7 @@ const InputRows: React.FC = () => {
             return {
               card_name: row.card_name || '',
               card_id: row.card_id || '',
-              holo: truth_values(row.holo),
+              foil: truth_values(row.foil),
               reverse_holo: truth_values(row.reverse_holo),
               first_edition: truth_values(row.first_edition),
               card_count: row.card_count === null || row.card_count === '' ? 1 : row.card_count,
@@ -362,7 +368,7 @@ const InputRows: React.FC = () => {
               variant_type: row.variant_type || '',
               source_image: row.source_image || '',
               card_name_id_invalid,
-              holo_invalid,
+              foil_invalid,
               reverse_holo_invalid,
               first_edition_invalid,
               card_count_invalid,
@@ -382,7 +388,7 @@ const InputRows: React.FC = () => {
 
   const downloadCSVTemplate = () => {
     const csvContent = "data:text/csv;charset=utf-8," + 
-      "card_name,card_id,holo,reverse_holo,first_edition,card_count,variant,variant_type\n" +
+      "card_name,card_id,foil,reverse_holo,first_edition,card_count,variant,variant_type\n" +
       ",,,,,,,"; // One empty line for a row
 
     const encodedUri = encodeURI(csvContent);
@@ -405,11 +411,13 @@ const InputRows: React.FC = () => {
           <input type="text" value={row.card_name} onChange={e => handleChange(index, 'card_name', e.target.value)} placeholder="Card Name" />
           <input type="text" value={row.card_id} onChange={e => handleChange(index, 'card_id', e.target.value)} placeholder={magicCardChecked ? 'Card ID (Optional)' : 'Card ID'} />
         </span>
-        <span className={`row ${row.holo_invalid ? 'invalid-label' : ''}`}>
-          <label>
-            {magicCardChecked ? 'Foil' : 'Holo'}:
-            <input type="checkbox" checked={row.holo} onChange={e => handleChange(index, 'holo', e.target.checked)} />
-          </label>
+        <span className={`row ${row.foil_invalid ? 'invalid-label' : ''}`}>
+          {magicCardChecked && (
+            <label>
+              Foil:
+              <input type="checkbox" checked={row.foil} onChange={e => handleChange(index, 'foil', e.target.checked)} />
+            </label>
+          )}
         </span>
         {!magicCardChecked && (
           <>
@@ -452,9 +460,9 @@ const InputRows: React.FC = () => {
               onChange={(event) => handleImageUpload(index, event)}
             />
           </label>
-        {row.source_image && (
-          <img src={row.source_image} alt={`Uploaded preview for row ${index}`} width="100" />
-        )}
+          {row.source_image && (
+            <img src={row.source_image} alt={`Uploaded preview for row ${index}`} width="100" />
+          )}
         </div>
         <button type="button" className="clear-btn" onClick={() => handleClearRow(index)}>Clear</button>
       </span>
@@ -497,6 +505,9 @@ const InputRows: React.FC = () => {
             onChange={handleMagicCardToggle}
           />
         </label>
+        {magicCardChecked && (
+            <button type="button" className="clear-all-ids-btn" onClick={handleClearAllIds}>Clear All Ids</button>
+          )}
       </div>
       {loading && (
       <>
