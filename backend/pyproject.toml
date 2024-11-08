@@ -1,0 +1,16 @@
+[tool.ruff]
+line-length = 120
+target-version = 'py312'
+[tool.ruff.lint]
+select = [
+    'E', 'F',
+    'YTT', 'COM', 'T10', 'ISC', 'G', 'PIE', 'Q', 'RSE',
+    'PLC', 'PLE',
+    'RUF', 'UP',
+]
+ignore = ['UP015']
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = 'double'
+inline-quotes = 'single'
+[tool.ruff.lint.isort]
+lines-after-imports = 1
