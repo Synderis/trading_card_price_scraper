@@ -80,7 +80,7 @@ def extract_table_to_dict(final_link, card, card_id, card_count, variant_type, s
         'card', 'id', 'source_image', 'Ungraded', 'variant_type', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4',
         'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9',
         'Grade 9.5', 'SGC 10', 'CGC 10', 'PSA 10', 'BGS 10',
-        'BGS 10 Black', 'CGC 10 Pristine', 'final_link', 'card_count', 'img_link'
+        'BGS 10 Black', 'CGC 10 Pristine', 'final_link', 'card_count', 'img_link',
     ]
     
     try:
@@ -171,7 +171,8 @@ def card_finder(source_df):
                     for index, row in matching_links.iterrows():
                         final_link = row['links']
                         card_type = row['names']
-                        df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, card_type, source_image)
+                        df_new_rows = extract_table_to_dict(
+                                final_link, card, card_id, card_count, card_type, source_image)
                         new_rows.append(df_new_rows)
                 else:
                     final_link = 'N/A'

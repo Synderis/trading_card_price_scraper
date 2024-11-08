@@ -22,8 +22,8 @@ def card_finder(source_df):
         foil = source_df.iloc[i, 2]
         foil_str = f'+is%3A{foil}' if foil else ''
         card_count = source_df.iloc[i, 3]
-        variant = source_df.iloc[i, 4]
-        variant_type = source_df.iloc[i, 5]
+        # variant = source_df.iloc[i, 4]
+        # variant_type = source_df.iloc[i, 5]
         source_image = source_df.iloc[i, 6]
 
         base_url = f'https://api.scryfall.com/cards/search?q={card_str}{card_id_str}{foil_str}&unique=prints'
@@ -48,7 +48,7 @@ def card_finder(source_df):
                                     'card_count': card_count,
                                     'source_image': source_image,
                                     'Usd': usd_amt,
-                                    # 'Usd': response_json['prices']['usd_foil'] if foil else response_json['prices']['usd'],
+                                    # 'Usd': response_json['prices']['usd_foil'] if foil else response_json['prices']['usd'], # noqa: E501
                                     'img_link': data_set['image_uris']['png'],
                                     'final_link': data_set['scryfall_uri'],
                                     }

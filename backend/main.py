@@ -1,7 +1,6 @@
 import pandas as pd
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
-from typing import List, Optional
 from fastapi.middleware.cors import CORSMiddleware
 
 import card_scraper
@@ -30,8 +29,8 @@ class RowData(BaseModel):
     first_edition: bool
     card_count: int
     variant: bool
-    variant_type: Optional[str]
-    source_image: Optional[str]
+    variant_type: str | None
+    source_image: str | None
 
 class MagicCard(BaseModel):
     card_name: str
@@ -39,11 +38,11 @@ class MagicCard(BaseModel):
     foil: bool
     card_count: int
     variant: bool
-    variant_type: Optional[str]
-    source_image: Optional[str]
+    variant_type: str | None
+    source_image: str | None
 
 class CardInput(BaseModel):
-    cards: List[RowData]
+    cards: list[RowData]
     
 class img_str(BaseModel):
     img_str: str
@@ -104,7 +103,7 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
             'card_count': row.card_count,
             'variant': row.variant,
             'variant_type': row.variant_type,
-            'source_image': row.source_image
+            'source_image': row.source_image,
         }
         data.append(card_data)
 
