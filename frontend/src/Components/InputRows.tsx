@@ -127,9 +127,9 @@ const InputRows: React.FC = () => {
       img_str: imgBase64
     };
     // Send the image data to the API for processing
-    // const mlUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/mlmodel`;
+    const mlUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/mlmodel`;
     // Local testing API URL
-    const mlUrl = `http://localhost:8000/mlmodel`;
+    // const mlUrl = `http://localhost:8000/mlmodel`;
     const response = await fetch(mlUrl, {
       method: 'POST',
       headers: {
@@ -276,10 +276,10 @@ const InputRows: React.FC = () => {
         submit_str = "magic-";
         normResult = "/magic-results";
       }
-      // const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/${submit_str}submit`;
+      const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/${submit_str}submit`;
 
       // local testing API URL
-      const apiUrl = `http://localhost:8000/${submit_str}submit`;
+      // const apiUrl = `http://localhost:8000/${submit_str}submit`;
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {

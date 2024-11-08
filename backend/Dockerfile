@@ -31,7 +31,7 @@ RUN python -m pip install --no-cache-dir --upgrade pip && \
     python -m pip install --no-cache-dir -r requirements.txt
 
 # Copy the FastAPI application code (ensure all necessary Python files are present)
-COPY main.py card_scraper.py ml_card_img_matcher.py ocr_ml_reader.py ./
+COPY main.py card_scraper.py ml_card_img_matcher.py ocr_ml_reader.py magic_card_scraper.py ./
 
 # Command to run the application using Uvicorn with the AWS Lambda Web Adapter
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

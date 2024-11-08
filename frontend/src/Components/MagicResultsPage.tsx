@@ -31,9 +31,9 @@ const MagicResultsPage: React.FC = () => {
     useEffect(() => {
         const fetchResults = async () => {
             try {
-                // const apiUrl = 'https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/magic-results';
+                const apiUrl = 'https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/results';
                 // local testing API URL
-                const apiUrl = `http://localhost:8000/results`;
+                // const apiUrl = `http://localhost:8000/results`;
                 const response = await fetch(apiUrl);
                 if (!response.ok) {
                     throw new Error('Failed to fetch results');
