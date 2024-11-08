@@ -5,6 +5,7 @@ from typing import List, Optional
 from fastapi.middleware.cors import CORSMiddleware
 
 import card_scraper
+import magic_card_scraper
 import ml_card_img_matcher
 import ocr_ml_reader
 # import reverse_holo_ml
@@ -27,6 +28,15 @@ class RowData(BaseModel):
     foil: bool
     reverse_holo: bool
     first_edition: bool
+    card_count: int
+    variant: bool
+    variant_type: Optional[str]
+    source_image: Optional[str]
+
+class MagicCard(BaseModel):
+    card_name: str
+    collector_number: str
+    foil: bool
     card_count: int
     variant: bool
     variant_type: Optional[str]
@@ -119,12 +129,43 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
 
     return {"message": "Data submitted successfully", "valid_rows": df.to_dict(orient="records")}
 
+
+@app.post("/magic-submit")
+async def submit_magic_cards(card_input: CardInput, request: Request):  # Accept card_input and request
+    valid_rows = [row for row in card_input.cards if row.card_name.strip()]
+
+    if not valid_rows:
+        raise HTTPException(status_code=400, detail="No valid rows to submit")
+    
+    data = []
+    for row in valid_rows:
+        # Create a dictionary for each valid row
+        card_data = {
+            "card": row.card_name,
+            "collector_number": row.card_id,
+            "foil": row.foil,
+            "card_count": row.card_count,
+            "variant": row.variant,
+            "variant_type": row.variant_type,
+            "source_image": row.source_image
+        }
+        data.append(card_data)
+
+    df = pd.DataFrame(data)
+    df['card_count'] = df['card_count'].astype(str)
+    
+    results = magic_card_scraper.card_finder(df)
+    request.app.state.results = results
+    
+    return {"message": "Data submitted successfully", "valid_rows": df.to_dict(orient="records")}
+
+
 @app.get("/results")
 async def get_results(request: Request):
     results = get_results_from_state(request)
 
-    if not results or len(results) == 0:
-        raise HTTPException(status_code=404, detail="No results found")
+    # if not results or len(results) == 0:
+    #     raise HTTPException(status_code=404, detail="No results found")
 
     return {
         "results": results,

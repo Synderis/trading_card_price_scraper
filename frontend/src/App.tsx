@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import InputRows from './Components/InputRows';
 import ResultsPage from './Components/ResultsPage';
+import MagicResultsPage from './Components/MagicResultsPage';
 import AboutMe from './Components/AboutMe';
 import HowTo from './Components/HowTo';
 import DarkMode from './Components/DarkMode';
@@ -36,6 +37,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<InputRows />} />
         <Route path="/results" element={<ResultsPage />} />
+        <Route path="/magic-results" element={<MagicResultsPage />} />
         <Route path="/about" element={<AboutMe />} />
         <Route path="/how-to" element={<HowTo />} />
       </Routes>

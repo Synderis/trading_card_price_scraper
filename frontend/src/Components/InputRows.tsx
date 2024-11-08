@@ -127,9 +127,9 @@ const InputRows: React.FC = () => {
       img_str: imgBase64
     };
     // Send the image data to the API for processing
-    const mlUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/mlmodel`;
+    // const mlUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/mlmodel`;
     // Local testing API URL
-    // const mlUrl = `http://localhost:8000/mlmodel`;
+    const mlUrl = `http://localhost:8000/mlmodel`;
     const response = await fetch(mlUrl, {
       method: 'POST',
       headers: {
@@ -270,11 +270,16 @@ const InputRows: React.FC = () => {
           source_image: row.source_image,
         })),
       };
-
-      const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/submit`;
+      let normResult = '/results';
+      let submit_str = "";
+      if (magicCardChecked) {
+        submit_str = "magic-";
+        normResult = "/magic-results";
+      }
+      // const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/${submit_str}submit`;
 
       // local testing API URL
-      // const apiUrl = `http://localhost:8000/submit`;
+      const apiUrl = `http://localhost:8000/${submit_str}submit`;
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -287,7 +292,7 @@ const InputRows: React.FC = () => {
         throw new Error('Failed to submit rows');
       }
 
-      navigate('/results');
+      navigate(normResult);
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -295,7 +300,6 @@ const InputRows: React.FC = () => {
       setLoadingProgress(0); // Reset progress
     }
   };
-
   const truth_values = (value: any): boolean => {
       return ['true', true, 1, 'y', 'Y', 't', 'T', 'True', 'TRUE'].includes(value);
   };
