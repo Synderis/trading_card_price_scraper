@@ -5,19 +5,19 @@ from bs4 import BeautifulSoup
 
 def find_hyperlink_text(card_var, id_var, card_type, variant, soup):
     card_var = card_var.replace(' ', '-')  # Normalize card name
-    print(f"Searching for: {card_var} with ID: {id_var}")
+    print(f'Searching for: {card_var} with ID: {id_var}')
 
     # Construct potential search texts based on conditions
     search_texts = []
     if id_var == '':
         print(card_type, type(card_type), flush=True)
         if card_type in ['', None]:
-            search_texts.append(f"{card_var}")
+            search_texts.append(f'{card_var}')
         else:
-            search_texts.append(f"{card_var}-{card_type}")
+            search_texts.append(f'{card_var}-{card_type}')
     else:
-        search_texts.append(f"{card_var}-{card_type}-{id_var}")
-        search_texts.append(f"{card_var}-{id_var}")
+        search_texts.append(f'{card_var}-{card_type}-{id_var}')
+        search_texts.append(f'{card_var}-{id_var}')
     if variant:
         result = grab_all_links(card_var, id_var, card_type, soup)
         if not result.empty:
@@ -28,7 +28,7 @@ def find_hyperlink_text(card_var, id_var, card_type, variant, soup):
             if result:
                 return result
 
-    print("No matching link text found")
+    print('No matching link text found')
     return None
 
 
@@ -37,7 +37,7 @@ def find_link(search_text, soup):
     for link in links:
         href = link.get('href')  # Use get to avoid KeyError
         if href and search_text in href.split('/')[-1]:
-            print(f"Found link text: {link.get_text()}")
+            print(f'Found link text: {link.get_text()}')
             return href
     return None
 

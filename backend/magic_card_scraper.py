@@ -5,7 +5,7 @@ import re
 
 def smart_title(text):
     # Capitalize the first letter of each word, but ignore capitalization after apostrophes.
-    return re.sub(r"\b\w+", lambda match: match.group(0).capitalize(), text)
+    return re.sub(r'\b\w+', lambda match: match.group(0).capitalize(), text)
 
 
 # Iterate through each row in the source DataFrame

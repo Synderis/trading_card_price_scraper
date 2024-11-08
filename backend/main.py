@@ -16,10 +16,10 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Replace "*" with specific origins for production
+    allow_origins=['*'],  # Replace "*" with specific origins for production
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=['*'],
+    allow_headers=['*'],
 )
 
 class RowData(BaseModel):
@@ -51,11 +51,11 @@ class img_str(BaseModel):
 def get_results_from_state(request: Request):
     return request.app.state.results
 
-@app.get("/health")
+@app.get('/health')
 async def health_check():
-    return {"status": "ok"}
+    return {'status': 'ok'}
 
-@app.post("/mlmodel")
+@app.post('/mlmodel')
 async def card_ml_reader(card_img: img_str):
     # should return an image to be ran against the ml model
     # need to pass the index too
@@ -68,9 +68,9 @@ async def card_ml_reader(card_img: img_str):
         if not isinstance(card_edition, bool):
             card_edition = False
         print(card_name, card_id, card_edition, flush=True)
-        return {"card_name": card_name, "card_id": card_id, "first_edition": card_edition}
+        return {'card_name': card_name, 'card_id': card_id, 'first_edition': card_edition}
     except Exception as e:
-        return {"error": "Failed to process image", "details": str(e)}
+        return {'error': 'Failed to process image', 'details': str(e)}
     
     # holo_status = reverse_holo_ml.reverse_holo_test(card_image)
     # if holo_status is None:
@@ -84,27 +84,27 @@ async def card_ml_reader(card_img: img_str):
     
     # return {"card_name": card_name, "card_id": card_id, "reverse_holo": holo_status}
 
-@app.post("/submit")
+@app.post('/submit')
 async def submit_cards(card_input: CardInput, request: Request):  # Accept card_input and request
     valid_rows = [row for row in card_input.cards if row.card_name.strip()]
 
     if not valid_rows:
-        raise HTTPException(status_code=400, detail="No valid rows to submit")
+        raise HTTPException(status_code=400, detail='No valid rows to submit')
 
     # Convert valid rows to a list of dictionaries
     data = []
     for row in valid_rows:
         # Create a dictionary for each valid row
         card_data = {
-            "card": row.card_name,
-            "id": row.card_id,
-            "foil": row.foil,
-            "reverse_holo": row.reverse_holo,
-            "first_edition": row.first_edition,
-            "card_count": row.card_count,
-            "variant": row.variant,
-            "variant_type": row.variant_type,
-            "source_image": row.source_image
+            'card': row.card_name,
+            'id': row.card_id,
+            'foil': row.foil,
+            'reverse_holo': row.reverse_holo,
+            'first_edition': row.first_edition,
+            'card_count': row.card_count,
+            'variant': row.variant,
+            'variant_type': row.variant_type,
+            'source_image': row.source_image
         }
         data.append(card_data)
 
@@ -127,27 +127,27 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
     # Print the DataFrame to the console
     # print(f"DataFrame:\n{df}", flush=True)
 
-    return {"message": "Data submitted successfully", "valid_rows": df.to_dict(orient="records")}
+    return {'message': 'Data submitted successfully', 'valid_rows': df.to_dict(orient='records')}
 
 
-@app.post("/magic-submit")
+@app.post('/magic-submit')
 async def submit_magic_cards(card_input: CardInput, request: Request):  # Accept card_input and request
     valid_rows = [row for row in card_input.cards if row.card_name.strip()]
 
     if not valid_rows:
-        raise HTTPException(status_code=400, detail="No valid rows to submit")
+        raise HTTPException(status_code=400, detail='No valid rows to submit')
     
     data = []
     for row in valid_rows:
         # Create a dictionary for each valid row
         card_data = {
-            "card": row.card_name,
-            "collector_number": row.card_id,
-            "foil": row.foil,
-            "card_count": row.card_count,
-            "variant": row.variant,
-            "variant_type": row.variant_type,
-            "source_image": row.source_image
+            'card': row.card_name,
+            'collector_number': row.card_id,
+            'foil': row.foil,
+            'card_count': row.card_count,
+            'variant': row.variant,
+            'variant_type': row.variant_type,
+            'source_image': row.source_image,
         }
         data.append(card_data)
 
@@ -157,18 +157,18 @@ async def submit_magic_cards(card_input: CardInput, request: Request):  # Accept
     results = magic_card_scraper.card_finder(df)
     request.app.state.results = results
     
-    return {"message": "Data submitted successfully", "valid_rows": df.to_dict(orient="records")}
+    return {'message': 'Data submitted successfully', 'valid_rows': df.to_dict(orient='records')}
 
 
-@app.get("/results")
+@app.get('/results')
 async def get_results(request: Request):
     results = get_results_from_state(request)
 
     # if not results or len(results) == 0:
-    #     raise HTTPException(status_code=404, detail="No results found")
+    #     raise HTTPException(status_code=404, detail='No results found')
 
     return {
-        "results": results,
+        'results': results,
     }
     
 

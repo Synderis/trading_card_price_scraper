@@ -9,7 +9,7 @@ pillow_heif.register_heif_opener()
 
 def load_heic_image(heic_path):
     img = Image.open(heic_path)
-    img = img.convert("RGB")  # Convert to RGB mode if needed
+    img = img.convert('RGB')  # Convert to RGB mode if needed
     open_cv_image = np.array(img)  # Convert to numpy array (RGB)
     open_cv_image = open_cv_image[:, :, ::-1].copy()  # Convert RGB to BGR for OpenCV
     return open_cv_image
@@ -55,7 +55,7 @@ def reverse_holo_test(test_image_path):
         else:
             img = cv2.imread(image_path)
         if img is None:
-            print("Error: Image not found.")
+            print('Error: Image not found.')
             return
         # Resize and normalize the image
         img = cv2.resize(img, (128, 128))
@@ -71,7 +71,7 @@ def reverse_holo_test(test_image_path):
         # Interpret the output
         class_labels = ['reverse_holo', 'not_reverse_holo']
         prediction = class_labels[predicted.item()]
-        print(f"Prediction: {prediction}")
+        print(f'Prediction: {prediction}')
 
         return prediction
 
