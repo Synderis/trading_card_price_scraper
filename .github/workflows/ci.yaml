@@ -23,10 +23,12 @@ jobs:
         cache-dependency-path: backend/requirements.txt
 
     - name: install python deps
-      run: pip3 install --quiet --requirement requirements.txt ruff
+      run: pip3 install --quiet --requirement requirements.txt ruff pytest requests-mock
 
     - name: ruff
       run: ruff check --output-format=github .
+
+    - run: pytest
 
   frontend:
     runs-on: ubuntu-latest
