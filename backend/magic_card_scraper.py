@@ -32,8 +32,8 @@ def card_finder(source_df):
         if response.status_code == 200:
             response_json = response.json()
             card_total = int(response_json['total_cards'])
-            for i in range(card_total):
-                data_set = response_json['data'][i]
+            for card_json in range(card_total):
+                data_set = response_json['data'][card_json]
                 
                 print(response_json, flush=True)
                 if foil:
