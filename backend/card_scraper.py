@@ -124,7 +124,7 @@ def extract_table_to_dict(final_link, card, card_id, card_count, variant_type, s
         return {label: 'N/A' for label in standard_labels}
 
 # Iterate through each row in the source DataFrame
-def card_finder(source_df: pd.DataFrame):
+def card_finder(source_df: pd.DataFrame) -> list[dict]:
     # Capitalize each word in the "card" column
     source_df[['card', 'id']] = source_df[['card', 'id']].apply(lambda x: x.str.strip().str.lower())
 
@@ -167,7 +167,7 @@ def card_finder(source_df: pd.DataFrame):
                 if card_types[type_value]:
                     card_type = type_value
         
-        if 'game' in response.url:
+        if '/game/' in response.url:
             final_link = response.url
             df_new_rows = extract_table_to_dict(final_link, card, card_id, card_count, card_type, source_image)
             new_rows.append(df_new_rows)
@@ -216,7 +216,4 @@ def card_finder(source_df: pd.DataFrame):
         if not variant:
             new_rows.append(df_new_rows)
 
-    # Create a DataFrame from the collected new rows
-    df_new_rows = pd.DataFrame(new_rows)
-
-    return df_new_rows
+    return new_rows

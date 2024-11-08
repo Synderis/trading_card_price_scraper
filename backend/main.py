@@ -112,7 +112,7 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
     df['card_count'] = df['card_count'].astype(str)
 
     # Call the card finder and store the results in app state
-    results = card_scraper.card_finder(df)
+    results = pd.DataFrame(card_scraper.card_finder(df))
     # print(results.columns, flush=True)
     
     if (results['source_image'] != '').any():
