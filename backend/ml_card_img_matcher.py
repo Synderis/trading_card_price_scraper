@@ -73,7 +73,7 @@ def calculate_orb_similarity(source_img, target_img):
     # Return the number of good matches (you can set a threshold if needed)
     return len(matches)
 
-def matching_results(results):
+def matching_results(results: pd.DataFrame):
     # Ensure 'source_image' column exists
     if 'source_image' not in results.columns:
         raise ValueError("The results DataFrame must contain a 'source_image' column.")

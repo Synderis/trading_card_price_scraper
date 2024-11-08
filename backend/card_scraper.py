@@ -1,40 +1,47 @@
+import typing
+
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
+@typing.overload
+def find_hyperlink_text(card_var, id_var, card_type, variant: typing.Literal[True],
+        soup: BeautifulSoup) -> pd.DataFrame | None: ...
+@typing.overload
+def find_hyperlink_text(card_var, id_var, card_type, variant: typing.Literal[False],
+        soup: BeautifulSoup) -> str | None: ...
 
 def find_hyperlink_text(card_var, id_var, card_type, variant, soup):
     card_var = card_var.replace(' ', '-')  # Normalize card name
     print(f'Searching for: {card_var} with ID: {id_var}')
 
     # Construct potential search texts based on conditions
-    search_texts = []
     if id_var == '':
         print(card_type, type(card_type), flush=True)
         if card_type in ['', None]:
-            search_texts.append(f'{card_var}')
+            search_texts = [f'{card_var}']
         else:
-            search_texts.append(f'{card_var}-{card_type}')
+            search_texts = [f'{card_var}-{card_type}']
     else:
-        search_texts.append(f'{card_var}-{card_type}-{id_var}')
-        search_texts.append(f'{card_var}-{id_var}')
+        search_texts = [
+            f'{card_var}-{card_type}-{id_var}',
+            f'{card_var}-{id_var}',
+        ]
     if variant:
         result = grab_all_links(card_var, id_var, card_type, soup)
         if not result.empty:
             return result
     else:
         for search_text in search_texts:
-            result = find_link(search_text, soup)
-            if result:
+            if result := find_link(search_text, soup):
                 return result
 
     print('No matching link text found')
     return None
 
 
-def find_link(search_text, soup):
-    links = soup.find_all('a')
-    for link in links:
+def find_link(search_text: str, soup: BeautifulSoup) -> str | None:
+    for link in soup.find_all('a'):
         href = link.get('href')  # Use get to avoid KeyError
         if href and search_text in href.split('/')[-1]:
             print(f'Found link text: {link.get_text()}')
@@ -42,7 +49,7 @@ def find_link(search_text, soup):
     return None
 
 
-def grab_all_links(card_var, id_var, card_type, soup):
+def grab_all_links(card_var, id_var, card_type, soup: BeautifulSoup):
     links = soup.find_all('a')
     data = []  # List to hold dictionary entries
     card_var_text = card_var.replace('-', ' ')
@@ -117,7 +124,7 @@ def extract_table_to_dict(final_link, card, card_id, card_count, variant_type, s
         return {label: 'N/A' for label in standard_labels}
 
 # Iterate through each row in the source DataFrame
-def card_finder(source_df):
+def card_finder(source_df: pd.DataFrame):
     # Capitalize each word in the "card" column
     source_df[['card', 'id']] = source_df[['card', 'id']].apply(lambda x: x.str.strip().str.lower())
 
@@ -136,7 +143,7 @@ def card_finder(source_df):
         reverse_holo = source_df.iloc[i, 3]
         first_edition = source_df.iloc[i, 4]
         card_count = source_df.iloc[i, 5]
-        variant = source_df.iloc[i, 6]
+        variant: bool = source_df.iloc[i, 6] # type: ignore
         variant_type = source_df.iloc[i, 7]
         source_image = source_df.iloc[i, 8]
         
@@ -144,7 +151,7 @@ def card_finder(source_df):
         card_types = {'foil': foil, 'reverse-holo': reverse_holo, '1st-edition': first_edition, 'variant': variant}
         
         for type_value in card_types.keys():
-            if (card_id == '' or not card_id) and type_value == 'holo' and card_types[type_value]:
+            if (not card_id) and type_value == 'holo' and card_types[type_value]:
                 card_type = 'foil'
             elif type_value == 'variant' and variant_type in ['', None]:
                 card_type = variant_type

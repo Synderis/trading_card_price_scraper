@@ -44,7 +44,7 @@ class MagicCard(BaseModel):
 class CardInput(BaseModel):
     cards: list[RowData]
     
-class img_str(BaseModel):
+class ImgPayload(BaseModel):
     img_str: str
 
 def get_results_from_state(request: Request):
@@ -55,7 +55,7 @@ async def health_check():
     return {'status': 'ok'}
 
 @app.post('/mlmodel')
-async def card_ml_reader(card_img: img_str):
+async def card_ml_reader(card_img: ImgPayload):
     # should return an image to be ran against the ml model
     # need to pass the index too
     img_str = str(card_img.img_str)
