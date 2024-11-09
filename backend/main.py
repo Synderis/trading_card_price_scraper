@@ -36,17 +36,6 @@ class RowData(BaseModel):
     variant_type: str | None
     source_image: str | None
 
-# class RowData(BaseModel):
-#     card_name: str 
-#     card_id: str
-#     foil: bool
-#     reverse_holo: bool
-#     first_edition: bool
-#     card_count: int
-#     variant: bool
-#     variant_type: str | None
-    
-
 class MagicCard(BaseModel):
     card_name: str
     collector_number: str

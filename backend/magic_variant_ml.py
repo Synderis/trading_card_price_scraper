@@ -36,7 +36,7 @@ class CNNModel(nn.Module):
 num_classes = 6  # Adjust based on your dataset labels
 model = CNNModel(num_classes=num_classes)
 model.load_state_dict(torch.load('trained_ml_models/magic_card_multi_label_classifier.pth',
-                                map_location=torch.device('cpu')))
+                                map_location=torch.device('cpu'), weights_only=True))
 model.eval()
 
 # Preprocessing function for the input image
