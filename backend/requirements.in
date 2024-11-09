@@ -1,0 +1,11 @@
+beautifulsoup4
+fastapi
+google-cloud-vision
+numpy
+opencv-python
+pandas
+pillow
+pillow_heif
+pydantic
+requests
+torch

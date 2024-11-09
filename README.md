@@ -1,4 +1,4 @@
-<p align="center"> Bulk tool for scraping trading card prices. Allows for csv import/export and has ML image recognition for card name and card id.<br/>
+<p align="center">Bulk tool for scraping trading card prices. Allows for csv import/export and has ML image recognition for card name and card id.<br/>
 Currently hosted with aws at https://www.synderispricechecker.com/.<br/>
 Built with FastAPI and React<br/>
 Currently supports Pokemon, Magic and Yugioh cards and most of the types of cards from each brand/format.</p>
@@ -15,3 +15,12 @@ Images can be uploaded and ran through a ML OCR image recognition to automatical
 The table will provide price data and totals adjusted for card count along with its page link. The card image can also be seen by hovering over the card name. This data can be exported to CSV in the same format as the table.
 <img src="https://i.imgur.com/gHtKHzC.png">
 After getting price data specific rows can be filtered out of the total pricing calculations.
+
+## Developing
+
+### Upgrading python dependencies
+
+```sh
+$ pip install uv
+$ uv pip compile requirements.in --output-file requirements.txt --upgrade-package name_of_package
+```
