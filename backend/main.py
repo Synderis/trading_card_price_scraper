@@ -204,7 +204,6 @@ async def submit_magic_cards(card_input: CardInput, request: Request):  # Accept
     df = pd.DataFrame(data)
     # df.drop(columns=['source_image'], inplace=True)
     
-    # print(df['card', 'collector_number', 'foil', 'etched', 'extended_art', 'full_art', 'card_count', 'variant', 'variant_type'], flush=True)
     df['card_count'] = df['card_count'].astype(str)
     
     results = magic_card_scraper.card_finder(df)

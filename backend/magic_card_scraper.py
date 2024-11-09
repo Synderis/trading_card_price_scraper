@@ -21,16 +21,16 @@ def card_finder(source_df):
         # non_foil = source_df.loc[i, 'non_foil']
         # non_foil_str = f'+is%3Anonfoil' if non_foil else ''
         foil = source_df.loc[i, 'foil']
-        foil_str = f'+is%3Afoil' if foil else ''
+        foil_str = '+is%3Afoil' if foil else ''
         source_image = source_df.loc[i, 'source_image']
         surgefoil = source_df.loc[i, 'surgefoil']
-        surgefoil_str = f'+is%3Asurgefoil' if surgefoil else ''
+        surgefoil_str = '+is%3Asurgefoil' if surgefoil else ''
         etched = source_df.loc[i, 'etched']
-        etched_str = f'+is%3Aetched' if etched else ''
+        etched_str = '+is%3Aetched' if etched else ''
         extended_art = source_df.loc[i, 'extended_art']
-        extended_art_str = f'+frame%3Aextendedart' if extended_art else ''
+        extended_art_str = '+frame%3Aextendedart' if extended_art else ''
         full_art = source_df.loc[i, 'full_art']
-        full_art_str = f'+is%3Afull+or+frame%3Afullart' if full_art else ''
+        full_art_str = '+is%3Afull+or+frame%3Afullart' if full_art else ''
 
         # base_url = f'https://api.scryfall.com/cards/search?q={card_str}{card_id_str}{non_foil_str}{foil_str}{surgefoil_str}{etched_str}{extended_art_str}{full_art_str}&unique=prints'
         base_url = f'https://api.scryfall.com/cards/search?q={card_str}{card_id_str}{foil_str}{surgefoil_str}{etched_str}{extended_art_str}{full_art_str}&unique=prints'
@@ -68,7 +68,8 @@ def card_finder(source_df):
                 new_rows.append(card_response_dict)
         else:
             df_new_rows = {label: 'N/A' for label in [
-                        'card', 'id', 'source_image', 'card_count', 'set', 'Usd', 'Usd Foil', 'Usd Etched', 'Eur', 'Eur Foil', 'Tix', 'img_link', 'final_link', 'historic_price_link']}
+                        'card', 'id', 'source_image', 'card_count', 'set', 'Usd', 'Usd Foil', 'Usd Etched', 'Eur',
+                        'Eur Foil', 'Tix', 'img_link', 'final_link', 'historic_price_link']}
             new_rows.append(df_new_rows)
     # Create a DataFrame from the collected new rows
     df_new_rows = pd.DataFrame(new_rows)

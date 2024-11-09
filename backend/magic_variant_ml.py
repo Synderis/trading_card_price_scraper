@@ -3,12 +3,12 @@ import torch
 import numpy as np
 import cv2
 from torch import nn
-from torchvision import transforms
+
 
 # Define the CNN model structure to match the one used in training
 class CNNModel(nn.Module):
     def __init__(self, num_classes):
-        super(CNNModel, self).__init__()
+        super().__init__()
         self.conv_layers = nn.Sequential(
             nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
@@ -18,13 +18,13 @@ class CNNModel(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2)
+            nn.MaxPool2d(kernel_size=2, stride=2),
         )
         self.fc_layers = nn.Sequential(
             nn.Flatten(),
             nn.Linear(128 * 16 * 16, 128),
             nn.ReLU(),
-            nn.Linear(128, num_classes)
+            nn.Linear(128, num_classes),
         )
 
     def forward(self, x):
@@ -35,7 +35,8 @@ class CNNModel(nn.Module):
 # Load the model and its weights
 num_classes = 6  # Adjust based on your dataset labels
 model = CNNModel(num_classes=num_classes)
-model.load_state_dict(torch.load('trained_ml_models/magic_card_multi_label_classifier.pth', map_location=torch.device('cpu')))
+model.load_state_dict(torch.load('trained_ml_models/magic_card_multi_label_classifier.pth',
+                                map_location=torch.device('cpu')))
 model.eval()
 
 # Preprocessing function for the input image
