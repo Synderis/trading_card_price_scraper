@@ -5,10 +5,14 @@ import { motion } from 'framer-motion';
 interface ResultData {
     card: string;
     id: string;
+    set: string;
     card_count: string;
-    Usd: string;
+    prices: {
+        [key: string]: string;
+    };
     final_link: string;
     img_link: string;
+    historic_price_link: string;
     estimatedGrades?: string[];
     isAdvanced?: boolean;
     variant_type?: string;
@@ -31,9 +35,8 @@ const MagicResultsPage: React.FC = () => {
     useEffect(() => {
         const fetchResults = async () => {
             try {
-                const apiUrl = 'https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/results';
-                // local testing API URL
-                // const apiUrl = `http://localhost:8000/results`;
+                const apiUrl = window.location.host === 'localhost:3000'? 'http://localhost:8000/results' : 'https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/results';
+                // const apiUrl = 'https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/results';
                 const response = await fetch(apiUrl);
                 if (!response.ok) {
                     throw new Error('Failed to fetch results');
@@ -44,13 +47,22 @@ const MagicResultsPage: React.FC = () => {
                 const length = Object.keys(data.results.card).length;
 
                 for (let i = 0; i < length; i++) {
+                    const prices: { [key: string]: string } = {};
+                    const priceKeys = [
+                        'Usd', 'Usd Foil', 'Usd Etched', 'Eur', 'Eur Foil', 'Tix'
+                    ];
+                    priceKeys.forEach(key => {
+                        prices[key] = data.results[key][i];
+                    });
                     formattedResults.push({
                         card: data.results.card[i],
                         id: data.results.id[i],
+                        set: data.results.set[i],
                         card_count: data.results.card_count[i],
-                        Usd: data.results.Usd[i],
+                        prices,
                         final_link: data.results.final_link[i],
                         img_link: data.results.img_link[i],
+                        historic_price_link: data.results.historic_price_link[i],
                         estimatedGrades: data.results.estimatedGrades ? data.results.estimatedGrades[i].split(',') : undefined,
                         isAdvanced: data.results.isAdvanced ? data.results.isAdvanced[i] : undefined,
                         // cardVariants: data.results.cardVariants ? data.results.cardVariants[i] : undefined,
@@ -85,7 +97,7 @@ const MagicResultsPage: React.FC = () => {
             'Card',
             'ID',
             'Card Count',
-            'Usd',
+            ...Object.keys(data[0].prices),
             'Final Link',
         ].join(',');
 
@@ -93,7 +105,7 @@ const MagicResultsPage: React.FC = () => {
             item.card,
             item.id,
             item.card_count,
-            item.Usd,
+            ...Object.values(item.prices),
             item.final_link,
         ].join(',')).join('\n');
 
@@ -125,7 +137,12 @@ const MagicResultsPage: React.FC = () => {
     const calculateTotals = (results: ResultData[]): Totals => {
         const initialTotals: Totals = {
             card_count: 0,
-            Usd: 0,
+            'Usd': 0,
+            'Usd Foil': 0,
+            'Usd Etched': 0,
+            'Eur': 0,
+            'Eur Foil': 0,
+            'Tix': 0,
         };
 
         return results
@@ -135,8 +152,8 @@ const MagicResultsPage: React.FC = () => {
                 totals.card_count += count;
 
                 Object.keys(totals).forEach(key => {
-                    if (key !== 'card_count') {
-                        totals[key] += (parseFloat(item.Usd.replace(/[^0-9.-]+/g, '')) || 0) * count;
+                    if (key !== 'card_count'&& key in item.prices) {
+                        totals[key] += (parseFloat(item.prices[key]?.replace(/[^0-9.-]+/g, '')) || 0) * count;
                     }
                 });
 
@@ -212,9 +229,13 @@ const MagicResultsPage: React.FC = () => {
                         <tr>
                             <th>Card</th>
                             <th>ID</th>
+                            <th>Set</th>
                             <th>Card Count</th>
-                            <th>Usd</th>
+                            {Object.keys(results[0]?.prices || {}).map((price, index) => (
+                                <th key={index}>{price}</th>
+                            ))}
                             <th>Page Link</th>
+                            <th>Historic Prices</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -236,10 +257,16 @@ const MagicResultsPage: React.FC = () => {
                                         <a className='img-hover-link' href={item.img_link} target="_blank" rel="noopener noreferrer">{item.card}</a>
                                     </td>
                                     <td>{item.id}</td>
+                                    <td>{item.set}</td>
                                     <td>{item.card_count}</td>
-                                    <td>${item.Usd}</td>
+                                    {Object.values(item.prices).map((priceValue, gradeIndex) => (
+                                        <td key={gradeIndex}>{priceValue}</td>
+                                    ))}
                                     <td>
                                         <a href={item.final_link} target="_blank" rel="noopener noreferrer">{item.variant_type || 'View'}</a>
+                                    </td>
+                                    <td>
+                                        <a href={item.historic_price_link} target="_blank" rel="noopener noreferrer">{item.variant_type || 'View'}</a>
                                     </td>
                                 </tr>
                                 {hoveredIndex === index && (
@@ -267,11 +294,12 @@ const MagicResultsPage: React.FC = () => {
                             </React.Fragment>
                         ))}
                         <tr className="totals-row">
-                            <td colSpan={2}><strong>Totals:</strong></td>
+                            <td colSpan={3}><strong>Totals:</strong></td>
                             <td>{totals.card_count}</td>
                             {Object.keys(totals).filter(key => key !== 'card_count').map((key, index) => (
                                 <td key={index}>${totals[key].toFixed(2)}</td>
                             ))}
+                            <td></td>
                             <td></td>
                         </tr>
                     </tbody>

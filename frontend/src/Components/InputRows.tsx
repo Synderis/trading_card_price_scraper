@@ -7,7 +7,6 @@ import '../CSS Sheets/InputRows.css';
 type Row = {
   card_name: string;
   card_id: string;
-  foil: boolean;
   reverse_holo: boolean;
   first_edition: boolean;
   card_count: number | null;
@@ -15,7 +14,18 @@ type Row = {
   variant_type: string | null;
   source_image: string;
   card_name_id_invalid?: boolean;
+  foil: boolean;
+  non_foil?: boolean;
+  surgefoil?: boolean,
+  etched?: boolean,
+  extended_art?: boolean,
+  full_art?: boolean,
+  non_foil_invalid?: boolean;
   foil_invalid?: boolean;
+  surgefoil_invalid?: boolean;
+  etched_invalid?: boolean;
+  extended_art_invalid?: boolean;
+  full_art_invalid?: boolean;
   reverse_holo_invalid?: boolean;
   first_edition_invalid?: boolean;
   card_count_invalid?: boolean;
@@ -41,6 +51,11 @@ const InputRows: React.FC = () => {
     card_name: '',
     card_id: '',
     foil: false,
+    non_foil: false,
+    surgefoil: false,
+    etched: false,
+    extended_art: false,
+    full_art: false,
     reverse_holo: false,
     first_edition: false,
     card_count: 1,
@@ -48,7 +63,12 @@ const InputRows: React.FC = () => {
     variant_type: '',
     source_image: '',
     card_name_id_invalid: false,
+    non_foil_invalid: false,
     foil_invalid: false,
+    surgefoil_invalid: false,
+    etched_invalid: false,
+    extended_art_invalid: false,
+    full_art_invalid: false,
     reverse_holo_invalid: false,
     first_edition_invalid: false,
     card_count_invalid: false,
@@ -66,7 +86,7 @@ const InputRows: React.FC = () => {
   
     if (field === 'card_name' || field === 'card_id' || field === 'variant_type') {
       newRows[index][field] = value as string;
-    } else if (field === 'foil' || field === 'reverse_holo' || field === 'first_edition' || field === 'variant') {
+    } else if (field === 'foil' || field === 'reverse_holo' || field === 'first_edition' || field === 'variant' || field === 'non_foil' || field === 'surgefoil' || field === 'etched' || field === 'extended_art' || field === 'full_art') {
       newRows[index][field] = value as boolean;
     } else if (field === 'card_count') {
       newRows[index][field] = value === '' ? 1 : Number(value);
@@ -76,6 +96,10 @@ const InputRows: React.FC = () => {
     const row = newRows[index];
     row.card_name_id_invalid = !magicCardChecked && row.card_name !== null && (row.card_id === null || row.card_id === '');
     row.foil_invalid = !(row.foil === true || row.foil === false);
+    row.surgefoil_invalid = !(row.surgefoil === true || row.surgefoil === false);
+    row.etched_invalid = !(row.etched === true || row.etched === false);
+    row.extended_art_invalid = !(row.extended_art === true || row.extended_art === false);
+    row.full_art_invalid = !(row.full_art === true || row.full_art === false);
     row.reverse_holo_invalid = !(row.reverse_holo === true || row.reverse_holo === false);
     row.first_edition_invalid = !(row.first_edition === true || row.first_edition === false);
     row.card_count_invalid = !(row.card_count === null || row.card_count > 0);
@@ -126,10 +150,13 @@ const InputRows: React.FC = () => {
     const img_payload = {
       img_str: imgBase64
     };
+    let model_str = ''
+    if (magicCardChecked) {
+      model_str = "magic-";
+    }
+    const mlUrl = window.location.host === 'localhost:3000'? `http://localhost:8000/${model_str}mlmodel` : `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/${model_str}mlmodel`;
     // Send the image data to the API for processing
-    const mlUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/mlmodel`;
-    // Local testing API URL
-    // const mlUrl = `http://localhost:8000/mlmodel`;
+    // const mlUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/${model_str}mlmodel`
     const response = await fetch(mlUrl, {
       method: 'POST',
       headers: {
@@ -155,6 +182,11 @@ const InputRows: React.FC = () => {
           card_name: responseData.card_name,
           card_id: responseData.card_id,
           first_edition: responseData.first_edition !== undefined ? responseData.first_edition : false,
+          foil: responseData.foil,
+          surgefoil: responseData.surgefoil,
+          etched: responseData.etched,
+          extended_art: responseData.extended_art,
+          full_art: responseData.full_art,
         };
   
         return updatedRows;
@@ -169,7 +201,6 @@ const InputRows: React.FC = () => {
     const newRowsToAdd: Row[] = Array.from({ length: 10 }, () => ({
       card_name: '',
       card_id: '',
-      foil: false,
       reverse_holo: false,
       first_edition: false,
       card_count: 1,
@@ -177,7 +208,18 @@ const InputRows: React.FC = () => {
       variant_type: '',
       source_image: '',
       card_name_id_invalid: false,
+      foil: false,
+      non_foil: false,
+      surgefoil: false,
+      etched: false,
+      extended_art: false,
+      full_art: false,
+      non_foil_invalid: false,
       foil_invalid: false,
+      surgefoil_invalid: false,
+      etched_invalid: false,
+      extended_art_invalid: false,
+      full_art_invalid: false,
       reverse_holo_invalid: false,
       first_edition_invalid: false,
       card_count_invalid: false,
@@ -191,7 +233,6 @@ const InputRows: React.FC = () => {
     newRows[index] = {
       card_name: '',
       card_id: '',
-      foil: false,
       reverse_holo: false,
       first_edition: false,
       card_count: 1,
@@ -199,7 +240,18 @@ const InputRows: React.FC = () => {
       variant_type: '',
       source_image: '',
       card_name_id_invalid: false,
+      non_foil: false,
+      foil: false,
+      surgefoil: false,
+      etched: false,
+      extended_art: false,
+      full_art: false,
+      non_foil_invalid: false,
       foil_invalid: false,
+      surgefoil_invalid: false,
+      etched_invalid: false,
+      extended_art_invalid: false,
+      full_art_invalid: false,
       reverse_holo_invalid: false,
       first_edition_invalid: false,
       card_count_invalid: false,
@@ -233,12 +285,12 @@ const InputRows: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const invalidRows = rows.some(row => row.isInvalid);
+    // const invalidRows = rows.some(row => row.isInvalid);
     
-    if (invalidRows) {
-      alert('Please fix the invalid rows before submitting.');
-      return;
-    }
+    // if (invalidRows) {
+    //   alert('Please fix the invalid rows before submitting.');
+    //   return;
+    // }
 
     const totalCards = rows.reduce((acc, row) => acc + (row.card_count || 0), 0);
     const estimatedTime = 550 * totalCards + 250;
@@ -261,13 +313,19 @@ const InputRows: React.FC = () => {
         cards: rows.map(row => ({
           card_name: row.card_name,
           card_id: String(row.card_id),
+          non_foil: row.non_foil,
           foil: row.foil,
+          surgefoil: row.surgefoil,
+          etched: row.etched,
+          extended_art: row.extended_art,
+          full_art: row.full_art,
           reverse_holo: row.reverse_holo,
           first_edition: row.first_edition,
           card_count: row.card_count,
           variant: row.variant,
           variant_type: row.variant_type,
           source_image: row.source_image,
+
         })),
       };
       let normResult = '/results';
@@ -276,10 +334,9 @@ const InputRows: React.FC = () => {
         submit_str = "magic-";
         normResult = "/magic-results";
       }
-      const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/${submit_str}submit`;
 
-      // local testing API URL
-      // const apiUrl = `http://localhost:8000/${submit_str}submit`;
+      const apiUrl = window.location.host === 'localhost:3000'? `http://localhost:8000/${submit_str}submit` : `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/${submit_str}submit`;
+      // const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/${submit_str}submit`;
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -318,11 +375,19 @@ const InputRows: React.FC = () => {
           row.foil_invalid = !(row.foil === true || row.foil === false);
           row.reverse_holo_invalid = false;
           row.first_edition_invalid = false;
+          row.surgefoil_invalid = !(row.surgefoil === true || row.surgefoil === false);
+          row.etched_invalid = !(row.etched === true || row.etched === false);
+          row.extended_art_invalid = !(row.extended_art === true || row.extended_art === false);
+          row.full_art_invalid = !(row.full_art === true || row.full_art === false);
           row.card_count_invalid = !(row.card_count === null || row.card_count > 0);
         } else {
           // Run old invalid checks for each row here
           row.card_name_id_invalid = (row.card_name !== null && row.card_id === null) || (row.card_name !== '' && row.card_id === '');
           row.foil_invalid = !(row.foil === true || row.foil === false);
+          row.surgefoil_invalid = !(row.surgefoil === true || row.surgefoil === false);
+          row.etched_invalid = !(row.etched === true || row.etched === false);
+          row.extended_art_invalid = !(row.extended_art === true || row.extended_art === false);
+          row.full_art_invalid = !(row.full_art === true || row.full_art === false);
           row.reverse_holo_invalid = !(row.reverse_holo === true || row.reverse_holo === false);
           row.first_edition_invalid = !(row.first_edition === true || row.first_edition === false);
           row.card_count_invalid = !(row.card_count === null || row.card_count > 0);
@@ -415,14 +480,42 @@ const InputRows: React.FC = () => {
           <input type="text" value={row.card_name} onChange={e => handleChange(index, 'card_name', e.target.value)} placeholder="Card Name" />
           <input type="text" value={row.card_id} onChange={e => handleChange(index, 'card_id', e.target.value)} placeholder={magicCardChecked ? 'Card ID (Optional)' : 'Card ID'} />
         </span>
-        <span className={`row ${row.foil_invalid ? 'invalid-label' : ''}`}>
+        {/* <span className={`row ${row.foil_invalid ? 'invalid-label' : ''}`}> */}
           {magicCardChecked && (
-            <label>
-              Foil:
-              <input type="checkbox" checked={row.foil} onChange={e => handleChange(index, 'foil', e.target.checked)} />
-            </label>
+            <>
+              <span className={`row ${row.foil_invalid ? 'invalid-label' : ''}`}>
+                <label>
+                  Foil:
+                  <input type="checkbox" checked={row.foil} onChange={e => handleChange(index, 'foil', e.target.checked)} />
+                </label>
+              </span>
+              <span className={`row ${row.surgefoil_invalid ? 'invalid-label' : ''}`}>
+                <label>
+                  Surgefoil:
+                  <input type="checkbox" checked={row.surgefoil} onChange={e => handleChange(index, 'surgefoil', e.target.checked)} />
+                </label>
+              </span>
+              <span className={`row ${row.etched_invalid ? 'invalid-label' : ''}`}>
+                <label>
+                  Etched:
+                  <input type="checkbox" checked={row.etched} onChange={e => handleChange(index, 'etched', e.target.checked)} />
+                </label>
+              </span>
+              <span className={`row ${row.extended_art_invalid ? 'invalid-label' : ''}`}>
+                <label>
+                  Extended Art:
+                  <input type="checkbox" checked={row.extended_art} onChange={e => handleChange(index, 'extended_art', e.target.checked)} />
+                </label>
+              </span>
+              <span className={`row ${row.full_art_invalid ? 'invalid-label' : ''}`}>
+                <label>
+                  Full Art:
+                  <input type="checkbox" checked={row.full_art} onChange={e => handleChange(index, 'full_art', e.target.checked)} />
+                </label>
+              </span>
+            </>
           )}
-        </span>
+        {/* </span> */}
         {!magicCardChecked && (
           <>
             <span className={`row ${row.reverse_holo_invalid ? 'invalid-label' : ''}`}>

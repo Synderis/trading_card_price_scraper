@@ -126,42 +126,32 @@ def extract_table_to_dict(final_link, card, card_id, card_count, variant_type, s
 # Iterate through each row in the source DataFrame
 def card_finder(source_df: pd.DataFrame) -> list[dict]:
     # Capitalize each word in the "card" column
-    source_df[['card', 'id']] = source_df[['card', 'id']].apply(lambda x: x.str.strip().str.lower())
+    source_df[['card_name', 'card_id']] = source_df[['card_name', 'card_id']].apply(lambda x: x.str.strip().str.lower())
 
     # Create a list to hold new rows
     new_rows = []
 
     for i in range(len(source_df)):
-        card = source_df.iloc[i, 0]
-        card_id = source_df.iloc[i, 1]
+        print(source_df, flush=True)
+        card = source_df.loc[i, 'card_name']
+        card_id = source_df.loc[i, 'card_id']
         base_url = f'https://www.pricecharting.com/search-products?q={card}+{card_id}&type=prices'
         
         response = requests.get(base_url)
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        foil = source_df.iloc[i, 2]
-        reverse_holo = source_df.iloc[i, 3]
-        first_edition = source_df.iloc[i, 4]
-        card_count = source_df.iloc[i, 5]
-        variant: bool = source_df.iloc[i, 6] # type: ignore
-        variant_type = source_df.iloc[i, 7]
-        source_image = source_df.iloc[i, 8]
+        reverse_holo = source_df.loc[i, 'reverse_holo']
+        first_edition = source_df.loc[i, 'first_edition']
+        card_count = source_df.loc[i, 'card_count']
+        variant: bool = source_df.loc[i, 'variant'] # type: ignore
+        variant_type = source_df.loc[i, 'variant_type']
+        source_image = source_df.loc[i, 'source_image']
         
         card_type = ''
-        card_types = {'foil': foil, 'reverse-holo': reverse_holo, '1st-edition': first_edition, 'variant': variant}
+        card_types = {'reverse-holo': reverse_holo, '1st-edition': first_edition, 'variant': variant}
         
         for type_value in card_types.keys():
-            if (not card_id) and type_value == 'holo' and card_types[type_value]:
-                card_type = 'foil'
-            elif type_value == 'variant' and variant_type in ['', None]:
-                card_type = variant_type
-            else:
-                if card_types[type_value]:
-                    card_type = type_value
-
-            if card_id and type_value == 'foil' and card_types[type_value]:
-                card_type = 'holo'
-            elif type_value == 'variant' and variant_type in ['', None]:
+            if type_value == 'variant' and variant_type in ['', None]:
                 card_type = variant_type
             else:
                 if card_types[type_value]:
