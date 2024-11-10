@@ -8,7 +8,7 @@ import magic_card_scraper
 import ml_card_img_matcher
 import ocr_ml_reader
 import magic_variant_ml
-# import reverse_holo_ml
+import reverse_holo_detector
 
 # Uvicorn start command for production: uvicorn main:app --reload
 
@@ -71,21 +71,14 @@ async def card_ml_reader(card_img: ImgPayload):
         if not isinstance(card_edition, bool):
             card_edition = False
         print(card_name, card_id, card_edition, flush=True)
-        return {'card_name': card_name, 'card_id': card_id, 'first_edition': card_edition}
+        holo_status = reverse_holo_detector.predict(img_str)
+        if holo_status == 'reverse_holo':
+            holo_status = True
+        else:
+            holo_status = False
+        return {'card_name': card_name, 'card_id': card_id, 'first_edition': card_edition, 'holo_status': holo_status}
     except Exception as e:
         return {'error': 'Failed to process image', 'details': str(e)}
-    
-    # holo_status = reverse_holo_ml.reverse_holo_test(card_image)
-    # if holo_status is None:
-    #     holo_status = 0
-    # elif holo_status == 'reverse_holo':
-    #     holo_status = 1
-    # elif holo_status == 'not_reverse_holo':
-    #     holo_status = 0
-    # else:
-    #     holo_status = 0
-    
-    # return {"card_name": card_name, "card_id": card_id, "reverse_holo": holo_status}
     
 @app.post('/magic-mlmodel')
 async def magic_card_ml_reader(card_img: ImgPayload):

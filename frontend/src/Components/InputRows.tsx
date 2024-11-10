@@ -181,6 +181,7 @@ const InputRows: React.FC = () => {
           ...updatedRows[index],
           card_name: responseData.card_name,
           card_id: responseData.card_id,
+          reverse_holo: responseData.reverse_holo !== undefined ? responseData.reverse_holo : false,
           first_edition: responseData.first_edition !== undefined ? responseData.first_edition : false,
           foil: responseData.foil,
           surgefoil: responseData.surgefoil,
