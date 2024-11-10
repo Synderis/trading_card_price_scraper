@@ -6,7 +6,6 @@ const GradedExamples: React.FC = () => {
         grade: number;
         images: string[];
         description: string;
-        // image?: string;
     }
 
     const [grades, setGrades] = useState<Grade[]>([]);
@@ -27,7 +26,7 @@ const GradedExamples: React.FC = () => {
                     <h2 style={{ marginLeft: '10px'}}>Grade: {item.grade}</h2>
                     <p style={{ fontStyle: 'italic'}}>{item.description}</p>
                     {item.images.map((img, index) => (
-                        <img className='grade-image' key={index} src={'/HowToImages/' + img} alt={item.description} style={{ width: '300px', height: 'auto' }}/>
+                        <img className='grade-image' key={index} src={'/HowToImages/' + img} alt={item.description} style={{ width: '250px', height: 'auto' }}/>
                     ))}
                 </div>
             ))}

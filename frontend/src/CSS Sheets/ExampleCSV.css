@@ -34,3 +34,34 @@
     color: red;
     margin-left: 20px;
 }
+
+.img-hover-link {
+    cursor: pointer;
+    color: #2196f3;
+    overflow: visible; 
+    overflow-clip-margin: 0;
+}
+
+.card-image {
+    display: none;
+    position: absolute;
+    width: 300px;
+    height: auto;
+    border: none;
+    /* border-radius: 40px; */
+}
+
+/* .card-image img {
+    width: 100%;
+    height: auto;
+    border: 1px solid #ccc;
+    border-radius: 40px;
+    overflow: hidden;
+} */
+
+.img-hover-link:hover + .card-image {
+    display: block;
+    border: 1px solid #ccc;
+    border-radius: 40px;
+}
+

@@ -8,19 +8,21 @@
 }
 
 .grades-section {
-    padding: 20px; /* Adjust padding as necessary */
+    padding: 0px 20px 0px 20px; /* Adjust padding as necessary */
+    margin-left: 60px;
+    margin-right: 60px;
 }
 
 .grade-info-row {
     display: flex;
     justify-content: space-between; /* Distributes space between elements */
     flex-wrap: wrap; /* Allows items to wrap on smaller screens */
+    gap: 10px; /* Space between grade info and image */
 }
 
 .grader-description {
     font-style: italic;
     font-size: 1rem;
-    margin: 0px 0px 0px 60px;
     padding: 10px;
 }
 

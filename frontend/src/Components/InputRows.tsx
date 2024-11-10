@@ -105,6 +105,7 @@ const InputRows: React.FC = () => {
   
     // Update isInvalid based on all invalid flags
     row.isInvalid = row.card_name_id_invalid || row.foil_invalid || row.reverse_holo_invalid || row.first_edition_invalid || row.card_count_invalid;
+    
   
     setRows(newRows);
   };
@@ -281,12 +282,12 @@ const InputRows: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // const invalidRows = rows.some(row => row.isInvalid);
+    const invalidRows = rows.some(row => row.isInvalid);
     
-    // if (invalidRows) {
-    //   alert('Please fix the invalid rows before submitting.');
-    //   return;
-    // }
+    if (invalidRows) {
+      alert('Please fix the invalid rows before submitting.');
+      return;
+    }
 
     const totalCards = rows.reduce((acc, row) => acc + (row.card_count || 0), 0);
     const estimatedTime = 550 * totalCards + 250;
@@ -394,6 +395,28 @@ const InputRows: React.FC = () => {
     });
   };
 
+  const handleValidCSV = (row: Row) => {
+    let isInvalid = false; // Initialize to false by default
+    if (magicCardChecked) {
+      isInvalid = !(
+        (truth_values(row.foil) || false_values(row.foil)) &&
+        (truth_values(row.surgefoil) || false_values(row.surgefoil)) &&
+        (truth_values(row.etched) || false_values(row.etched)) &&
+        (truth_values(row.extended_art) || false_values(row.extended_art)) &&
+        (truth_values(row.full_art) || false_values(row.full_art)) &&
+        (row.card_count === null || row.card_count > 0)
+      );
+    } else {
+      isInvalid = !(
+        (row.card_name !== null && (row.card_id !== null && row.card_id !== '')) &&
+        (truth_values(row.reverse_holo) || false_values(row.reverse_holo)) &&
+        (truth_values(row.first_edition) || false_values(row.first_edition)) &&
+        (row.card_count === null || row.card_count > 0)
+      );
+    }
+    return isInvalid;
+  };
+
   const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -412,15 +435,8 @@ const InputRows: React.FC = () => {
             const extended_art_invalid = !((truth_values(row.extended_art)) || false_values(row.extended_art));
             const full_art_invalid = !((truth_values(row.full_art)) || false_values(row.full_art));
             const card_count_invalid = !(row.card_count === null || row.card_count > 0);
-            const isInvalid =
-              !((truth_values(row.foil)) || false_values(row.foil)) ||
-              !((truth_values(row.reverse_holo)) || false_values(row.reverse_holo)) ||
-              !((truth_values(row.first_edition)) || false_values(row.first_edition)) ||
-              !((truth_values(row.surgefoil)) || false_values(row.surgefoil)) ||
-              !((truth_values(row.etched)) || false_values(row.etched)) ||
-              !((truth_values(row.extended_art)) || false_values(row.extended_art)) ||
-              !((truth_values(row.full_art)) || false_values(row.full_art)) ||
-              !(row.card_count === null || row.card_count > 0);
+
+            const isInvalid = handleValidCSV(row);
             
             console.log(
               card_name_id_invalid,

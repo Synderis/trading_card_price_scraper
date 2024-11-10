@@ -18,6 +18,8 @@ const AboutMe: React.FC = () => {
                 <li>FastAPI for backend API development.</li>
                 <li>Requests and BeautifulSoup for web scraping.</li>
                 <li>Papa Parse for CSV data handling in the browser.</li>
+                <li>Pytorch and Google Cloud Vision for image processing.</li>
+                <li>Hosted on AWS Lambda</li>
             </ul>
 
             <h2>What This Project Offers</h2>

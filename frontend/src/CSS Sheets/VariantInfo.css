@@ -1,5 +1,7 @@
 .variations-section {
-    margin: 90px;
+    /* margin-top: 0px; */
+    margin-left: 150px;
+    margin-right: 150px;
 }
 
 .variation-container {
@@ -24,13 +26,6 @@
     padding: 10px;
 }
 
-/* .example-image-box {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-} */
-
-
 .example-image-box {
     display: flex;
     justify-content: space-evenly;
@@ -43,4 +38,25 @@
     /* Optional: add a border or shadow for distinction */
     border: 1px solid #ddd;
     border-radius: 4px;
+}
+
+.magic-example-image-box {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 1rem 0;
+}
+
+.magic-example-image-box img {
+    width: 200px;
+    height: auto;
+    /* Optional: add a border or shadow for distinction */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.example-image-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
