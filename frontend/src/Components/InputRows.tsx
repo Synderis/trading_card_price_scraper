@@ -1,20 +1,19 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import heic2jpg from 'heic2jpg';
 import Papa from 'papaparse';
 import '../CSS Sheets/InputRows.css';
 
 type Row = {
   card_name: string;
   card_id: string;
-  reverse_holo: boolean;
+  reverse_holo?: boolean;
   first_edition: boolean;
   card_count: number | null;
   variant: boolean;
   variant_type: string | null;
   source_image: string;
   card_name_id_invalid?: boolean;
-  foil: boolean;
+  foil?: boolean;
   non_foil?: boolean;
   surgefoil?: boolean,
   etched?: boolean,
@@ -181,7 +180,7 @@ const InputRows: React.FC = () => {
           ...updatedRows[index],
           card_name: responseData.card_name,
           card_id: responseData.card_id,
-          reverse_holo: responseData.reverse_holo !== undefined ? responseData.reverse_holo : false,
+          reverse_holo: responseData.reverse_holo,
           first_edition: responseData.first_edition !== undefined ? responseData.first_edition : false,
           foil: responseData.foil,
           surgefoil: responseData.surgefoil,
@@ -266,10 +265,6 @@ const InputRows: React.FC = () => {
     if (csvInputRef.current) {
       csvInputRef.current.value = '';
     }
-    // if (imageInputRef.current) {
-    //   imageInputRef.current.value = '';
-    // }
-    // setImgFileNames('No file chosen');
     setCsvFileName('No file chosen');
   };
 
@@ -412,16 +407,28 @@ const InputRows: React.FC = () => {
             const foil_invalid = !((truth_values(row.foil)) || false_values(row.foil));
             const reverse_holo_invalid = !((truth_values(row.reverse_holo)) || false_values(row.reverse_holo));
             const first_edition_invalid = !((truth_values(row.first_edition)) || false_values(row.first_edition));
+            const surgefoil_invalid = !((truth_values(row.surgefoil)) || false_values(row.surgefoil));
+            const etched_invalid = !((truth_values(row.etched)) || false_values(row.etched));
+            const extended_art_invalid = !((truth_values(row.extended_art)) || false_values(row.extended_art));
+            const full_art_invalid = !((truth_values(row.full_art)) || false_values(row.full_art));
             const card_count_invalid = !(row.card_count === null || row.card_count > 0);
             const isInvalid =
               !((truth_values(row.foil)) || false_values(row.foil)) ||
               !((truth_values(row.reverse_holo)) || false_values(row.reverse_holo)) ||
               !((truth_values(row.first_edition)) || false_values(row.first_edition)) ||
+              !((truth_values(row.surgefoil)) || false_values(row.surgefoil)) ||
+              !((truth_values(row.etched)) || false_values(row.etched)) ||
+              !((truth_values(row.extended_art)) || false_values(row.extended_art)) ||
+              !((truth_values(row.full_art)) || false_values(row.full_art)) ||
               !(row.card_count === null || row.card_count > 0);
             
             console.log(
               card_name_id_invalid,
               foil_invalid,
+              surgefoil_invalid,
+              etched_invalid,
+              extended_art_invalid,
+              full_art_invalid,
               reverse_holo_invalid,
               first_edition_invalid,
               card_count_invalid,
@@ -431,6 +438,10 @@ const InputRows: React.FC = () => {
               card_name: row.card_name || '',
               card_id: row.card_id || '',
               foil: truth_values(row.foil),
+              surgefoil: truth_values(row.surgefoil),
+              etched: truth_values(row.etched),
+              extended_art: truth_values(row.extended_art),
+              full_art: truth_values(row.full_art),
               reverse_holo: truth_values(row.reverse_holo),
               first_edition: truth_values(row.first_edition),
               card_count: row.card_count === null || row.card_count === '' ? 1 : row.card_count,
@@ -439,6 +450,10 @@ const InputRows: React.FC = () => {
               source_image: row.source_image || '',
               card_name_id_invalid,
               foil_invalid,
+              surgefoil_invalid,
+              etched_invalid,
+              extended_art_invalid,
+              full_art_invalid,
               reverse_holo_invalid,
               first_edition_invalid,
               card_count_invalid,
@@ -458,8 +473,9 @@ const InputRows: React.FC = () => {
 
   const downloadCSVTemplate = () => {
     const csvContent = "data:text/csv;charset=utf-8," + 
-      "card_name,card_id,foil,reverse_holo,first_edition,card_count,variant,variant_type\n" +
-      ",,,,,,,"; // One empty line for a row
+      "card_name,card_id,card_count,variant,variant_type,reverse_holo,first_edition,foil,surgefoil,etched,extended_art,full_art\n" +
+      ",,,,,,,,,,\n";
+
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
@@ -481,7 +497,6 @@ const InputRows: React.FC = () => {
           <input type="text" value={row.card_name} onChange={e => handleChange(index, 'card_name', e.target.value)} placeholder="Card Name" />
           <input type="text" value={row.card_id} onChange={e => handleChange(index, 'card_id', e.target.value)} placeholder={magicCardChecked ? 'Card ID (Optional)' : 'Card ID'} />
         </span>
-        {/* <span className={`row ${row.foil_invalid ? 'invalid-label' : ''}`}> */}
           {magicCardChecked && (
             <>
               <span className={`row ${row.foil_invalid ? 'invalid-label' : ''}`}>

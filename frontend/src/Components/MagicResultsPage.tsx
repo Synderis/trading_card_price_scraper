@@ -99,6 +99,7 @@ const MagicResultsPage: React.FC = () => {
             'Card Count',
             ...Object.keys(data[0].prices),
             'Final Link',
+            'Historic Price Link',
         ].join(',');
 
         const rows = data.map(item => [
@@ -107,6 +108,7 @@ const MagicResultsPage: React.FC = () => {
             item.card_count,
             ...Object.values(item.prices),
             item.final_link,
+            item.historic_price_link
         ].join(',')).join('\n');
 
         // Add totals row

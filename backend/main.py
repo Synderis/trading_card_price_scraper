@@ -35,11 +35,15 @@ class RowData(BaseModel):
     variant: bool
     variant_type: str | None
     source_image: str | None
-
-class MagicCard(BaseModel):
-    card_name: str
-    collector_number: str
+    
+class MagicRowData(BaseModel):
+    card_name: str 
+    card_id: str
     foil: bool
+    surgefoil: bool
+    etched: bool
+    extended_art: bool
+    full_art: bool
     card_count: int
     variant: bool
     variant_type: str | None
@@ -47,6 +51,9 @@ class MagicCard(BaseModel):
 
 class CardInput(BaseModel):
     cards: list[RowData]
+    
+class MagicCardInput(BaseModel):
+    cards: list[MagicRowData]
     
 class ImgPayload(BaseModel):
     img_str: str
@@ -70,13 +77,9 @@ async def card_ml_reader(card_img: ImgPayload):
         card_edition = card_info.get('edition', False)
         if not isinstance(card_edition, bool):
             card_edition = False
-        print(card_name, card_id, card_edition, flush=True)
         holo_status = reverse_holo_detector.predict(img_str)
-        if holo_status == 'reverse_holo':
-            holo_status = True
-        else:
-            holo_status = False
-        return {'card_name': card_name, 'card_id': card_id, 'first_edition': card_edition, 'holo_status': holo_status}
+        print(card_name, card_id, card_edition, holo_status, flush=True)
+        return {'card_name': card_name, 'card_id': card_id, 'first_edition': card_edition, 'reverse_holo': holo_status}
     except Exception as e:
         return {'error': 'Failed to process image', 'details': str(e)}
     
@@ -159,7 +162,7 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
 
 
 @app.post('/magic-submit')
-async def submit_magic_cards(card_input: CardInput, request: Request):  # Accept card_input and request
+async def submit_magic_cards(card_input: MagicCardInput, request: Request):  # Accept card_input and request
     valid_rows = [row for row in card_input.cards if row.card_name.strip()]
 
     if not valid_rows:
