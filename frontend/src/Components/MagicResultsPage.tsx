@@ -35,8 +35,8 @@ const MagicResultsPage: React.FC = () => {
     useEffect(() => {
         const fetchResults = async () => {
             try {
-                const apiUrl = window.location.host === 'localhost:3000'? 'http://localhost:8000/results' : 'https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/results';
-                // const apiUrl = 'https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/results';
+                const apiUrl = window.location.host === 'localhost:3000'? 'http://localhost:8000/results' : 'https://api.synderispricechecker.com/results';
+                // const apiUrl = 'https://api.synderispricechecker.com/results';
                 const response = await fetch(apiUrl);
                 if (!response.ok) {
                     throw new Error('Failed to fetch results');

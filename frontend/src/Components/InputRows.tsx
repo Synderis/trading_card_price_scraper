@@ -154,9 +154,9 @@ const InputRows: React.FC = () => {
     if (magicCardChecked) {
       model_str = "magic-";
     }
-    const mlUrl = window.location.host === 'localhost:3000'? `http://localhost:8000/${model_str}mlmodel` : `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/${model_str}mlmodel`;
+    const mlUrl = window.location.host === 'localhost:3000'? `http://localhost:8000/${model_str}mlmodel` : `https://api.synderispricechecker.com/${model_str}mlmodel`;
     // Send the image data to the API for processing
-    // const mlUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/${model_str}mlmodel`
+    // const mlUrl = `https://api.synderispricechecker.com/${model_str}mlmodel`
     const response = await fetch(mlUrl, {
       method: 'POST',
       headers: {
@@ -325,15 +325,15 @@ const InputRows: React.FC = () => {
 
         })),
       };
-      let normResult = '/results';
+      let normResult = '/results-page';
       let submit_str = "";
       if (magicCardChecked) {
         submit_str = "magic-";
-        normResult = "/magic-results";
+        normResult = "/magic-results-page";
       }
 
-      const apiUrl = window.location.host === 'localhost:3000'? `http://localhost:8000/${submit_str}submit` : `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/${submit_str}submit`;
-      // const apiUrl = `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/${submit_str}submit`;
+      const apiUrl = window.location.host === 'localhost:3000'? `http://localhost:8000/${submit_str}submit` : `https://api.synderispricechecker.com/${submit_str}submit`;
+      // const apiUrl = `https://api.synderispricechecker.com/${submit_str}submit`;
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {

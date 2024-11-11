@@ -36,8 +36,8 @@ const App: React.FC = () => {
 
       <Routes>
         <Route path="/" element={<InputRows />} />
-        <Route path="/results" element={<ResultsPage />} />
-        <Route path="/magic-results" element={<MagicResultsPage />} />
+        <Route path="/results-page" element={<ResultsPage />} />
+        <Route path="/magic-results-page" element={<MagicResultsPage />} />
         <Route path="/about" element={<AboutMe />} />
         <Route path="/how-to" element={<HowTo />} />
       </Routes>
