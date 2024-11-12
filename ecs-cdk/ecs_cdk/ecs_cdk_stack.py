@@ -1,15 +1,15 @@
-from aws_cdk import (
+from aws_cdk import ( # type: ignore
     App,
     Stack,
     Duration,
     CfnOutput
 )
-import aws_cdk.aws_ecs as ecs
-import aws_cdk.aws_ec2 as ec2
-import aws_cdk.aws_ecr as ecr
-import aws_cdk.aws_elasticloadbalancingv2 as elb
-import aws_cdk.aws_certificatemanager as acm
-from constructs import Construct
+import aws_cdk.aws_ecs as ecs # type: ignore
+import aws_cdk.aws_ec2 as ec2 # type: ignore
+import aws_cdk.aws_ecr as ecr # type: ignore
+import aws_cdk.aws_elasticloadbalancingv2 as elb # type: ignore
+import aws_cdk.aws_certificatemanager as acm # type: ignore
+from constructs import Construct # type: ignore
 
 
 class EcsCdkStack(Stack):
