@@ -21,6 +21,7 @@ WORKDIR /var/task
 # Copy necessary application files to the container
 COPY google_info.json /var/task/google_info.json
 COPY trained_ml_models /var/task/trained_ml_models
+COPY assets /var/task/assets
 
 # Copy the requirements file first for better caching
 COPY requirements.txt ./

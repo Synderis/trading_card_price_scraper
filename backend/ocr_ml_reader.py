@@ -17,7 +17,6 @@ def read_google_credentials() -> dict:
 
 def decode_base64_image(base64_str: str) -> bytes:
     """Decode a base64 image string to an image file in memory."""
-    base64_str = base64_str.split(',')[1]  # Remove the base64 prefix
     # Decode the base64 string
     image_data = base64.b64decode(base64_str)
     image: Image.Image = Image.open(BytesIO(image_data))

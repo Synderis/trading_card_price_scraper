@@ -42,7 +42,6 @@ model.eval()
 # Preprocessing function for the input image
 def preprocess_image(base64_img_str):
     # Decode the base64 string
-    base64_img_str = base64_img_str.split(',')[1]
     img_data = base64.b64decode(base64_img_str)
     np_arr = np.frombuffer(img_data, np.uint8)
     image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)

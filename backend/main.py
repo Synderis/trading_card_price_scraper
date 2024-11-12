@@ -9,6 +9,8 @@ import ml_card_img_matcher
 import ocr_ml_reader
 import magic_variant_ml
 import reverse_holo_detector
+import background_remover
+import first_edition_detect
 
 # Uvicorn start command for production: uvicorn main:app --reload
 
@@ -71,13 +73,16 @@ async def card_ml_reader(card_img: ImgPayload):
     # need to pass the index too
     img_str = str(card_img.img_str)
     try:
-        card_info = ocr_ml_reader.detect_card_details(img_str)
+        img_str = img_str.split(',')[1]
+        cropped_img = background_remover.process_image(img_str)
+        card_info = ocr_ml_reader.detect_card_details(cropped_img)
         card_name = card_info.get('name', '')
         card_id = card_info.get('number', '')
         card_edition = card_info.get('edition', False)
-        if not isinstance(card_edition, bool):
-            card_edition = False
-        holo_status = reverse_holo_detector.predict(img_str)
+        print(f'card edition pre check: {card_edition}', flush=True)
+        card_edition = first_edition_detect.process_images_and_match(cropped_img)      
+        print(f'card edition post check: {card_edition}', flush=True)
+        holo_status = reverse_holo_detector.predict(cropped_img)
         print(card_name, card_id, card_edition, holo_status, flush=True)
         return {'card_name': card_name, 'card_id': card_id, 'first_edition': card_edition, 'reverse_holo': holo_status}
     except Exception as e:
@@ -89,10 +94,12 @@ async def magic_card_ml_reader(card_img: ImgPayload):
     # need to pass the index too
     img_str = str(card_img.img_str)
     try:
-        card_info = ocr_ml_reader.detect_card_details(img_str)
+        img_str = img_str.split(',')[1]
+        cropped_img = background_remover.process_image(img_str)
+        card_info = ocr_ml_reader.detect_card_details(cropped_img)
         card_name = card_info.get('name', '')
         card_id = card_info.get('number', '')
-        card_variants = magic_variant_ml.predict(img_str).tolist()
+        card_variants = magic_variant_ml.predict(cropped_img).tolist()
         variants_dict = {'foil': card_variants[1],
                     'surgefoil': card_variants[2],
                     'etched': card_variants[3],

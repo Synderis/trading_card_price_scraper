@@ -33,7 +33,7 @@ class CNNModel(nn.Module):
 
 # Load the model and its weights
 model = CNNModel()
-model.load_state_dict(torch.load('trained_ml_models/pokemon_card_classifier.pth', map_location=torch.device('cpu')))
+model.load_state_dict(torch.load('trained_ml_models/pokemon_card_classifier.pth', map_location=torch.device('cpu'), weights_only=True))
 model.eval()
 
 def remove_background(image):
@@ -53,7 +53,6 @@ def remove_background(image):
 
 # Preprocess function for the base64 input image with brightness adjustment
 def preprocess_image(base64_img_str):
-    base64_img_str = base64_img_str.split(',')[1]
     img_data = base64.b64decode(base64_img_str)
     np_arr = np.frombuffer(img_data, np.uint8)
     image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)

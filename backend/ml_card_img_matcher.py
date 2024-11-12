@@ -6,8 +6,6 @@ import requests
 
 def decode_base64_image(base64_str):
     """Decode a base64 image string to a NumPy array."""
-    base64_str = base64_str.split(',')[1]
-    
     # Decode the base64 string
     image_data = base64.b64decode(base64_str)
     
