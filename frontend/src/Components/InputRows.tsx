@@ -523,13 +523,13 @@ const InputRows: React.FC = () => {
           </>
         )}
         <div className={`row-container ${row.source_image ? 'uploaded-image-container' : 'img-upload-container'}`}>
-          <label className="img-upload-btn">
+          <label className="img-upload-button">
             <img src="/img_icon_white.png" alt="Upload" className="upload-icon"/>
             <input
               type="file"
               // accept="image/*"
-              style={{ display: 'none' }}
-              onChange={(event) => singleUploadAssign(index, event)}
+              // style={{ display: 'none' }}
+              onChange={(event) => singleUploadAssign(index, event)} hidden
             />
           </label>
           {row.source_image && (

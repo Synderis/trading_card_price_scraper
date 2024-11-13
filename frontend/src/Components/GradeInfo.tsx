@@ -30,7 +30,7 @@ const GradeInfo: React.FC = () => {
                         <img src="/HowToImages/cgc-charizard-non-subgrade.jpg" alt="CGC Graded Card" style={{ width: '225px', height: 'auto' }} />
                         <img src="/HowToImages/cgc-charizard.jpg" alt="CGC Graded Card" style={{ width: '225px', height: 'auto' }} />
                     </div>
-                    <p className='grader-description'>Note: CGC grading quality is close to if not on par with BGS, offering subgrades and half point grades up to 9.5 and due to these subgrades the overall grades are a lot less subjective. </p>
+                    <p className='grader-description'>Note: CGC grading quality used to be close to if not on par with BGS, offering subgrades and half point grades up to 9.5 and due to these subgrades the overall grades are a lot less subjective. CGC NO LONGER OFFERS SUBGRADES SADGE </p>
                 </div>
             </div>
             <div className='grade-info-row'>

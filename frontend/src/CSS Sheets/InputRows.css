@@ -15,8 +15,8 @@
 
 .row input[type="text"],
 .row label {
-  margin-right: 5px;/* Adjust this to match input and button heights */
-  margin-left: 5px;
+  padding-left: 5px;/* Adjust this to match input and button heights */
+  padding-right: 5px;
 }
 
 .button-group {
@@ -141,9 +141,7 @@
 }
 
 .img-upload-button {
-  margin-left: 10px;
-  margin-bottom: 10px;
-  padding: 4px 15px;
+  margin: 0px;
   border-radius: 4px; /* Rounded corners */
   background-color: #333;
   color: white;
