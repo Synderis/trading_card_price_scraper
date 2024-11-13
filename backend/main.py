@@ -83,18 +83,24 @@ async def card_ml_reader(card_img: ImgPayload):
         cropped_img = background_remover.process_image(image_data)
         cropped_img_decoded = base64.b64decode(cropped_img)
         cropped_img = Image.open(BytesIO(cropped_img_decoded))
+        use_alternate = False
         
         # runs ocr model on the cropped image
-        card_info = ocr_ml_reader.detect_card_details(cropped_img)
+        try:
+            card_info = ocr_ml_reader.detect_card_details(cropped_img)
+        except:
+            use_alternate = True
+            img = Image.open(BytesIO(image_data))
+            card_info = ocr_ml_reader.detect_card_details(img)
         card_name, card_id, card_edition = card_info.get('name', ''), card_info.get('number', ''), card_info.get('edition', False)
-        print(f'card edition pre check: {card_edition}', flush=True)
         
-        # runs ml image recognition on the cropped image for first edition
-        card_edition = first_edition_detect.process_images_and_match(cropped_img)      
-        print(f'card edition post check: {card_edition}', flush=True)
-        
-        # runs ml image recognition on the cropped image for reverse holo
-        holo_status = reverse_holo_detector.predict(cropped_img_decoded)
+        # runs ml image recognition on the cropped image for first edition and reverse holo
+        if use_alternate:
+            card_edition = first_edition_detect.process_images_and_match(img)
+            holo_status = reverse_holo_detector.predict(image_data)
+        else:
+            card_edition = first_edition_detect.process_images_and_match(cropped_img)
+            holo_status = reverse_holo_detector.predict(cropped_img_decoded)      
         print(card_name, card_id, card_edition, holo_status, flush=True)
         
         return {'card_name': card_name, 'card_id': card_id, 'first_edition': card_edition, 'reverse_holo': holo_status}
@@ -114,14 +120,25 @@ async def magic_card_ml_reader(card_img: ImgPayload):
         cropped_img = background_remover.process_image(image_data)
         cropped_img_decoded = base64.b64decode(cropped_img)
         cropped_img = Image.open(BytesIO(cropped_img_decoded))
-        
+        use_alternate = False
         # runs ocr model on the cropped image
-        card_info = ocr_ml_reader.detect_card_details(cropped_img)
+        try:
+            card_info = ocr_ml_reader.detect_card_details(cropped_img)
+        except:
+            use_alternate = True
+            img = Image.open(BytesIO(image_data))
+            card_info = ocr_ml_reader.detect_card_details(img)
+        print(card_info, flush=True)
         card_name = card_info.get('name', '')
+        print(card_name, flush=True)
         card_id = card_info.get('number', '')
+        print(card_id, flush=True)
         
         # runs ml image recognition on the cropped image for various labels
-        card_variants = magic_variant_ml.predict(cropped_img_decoded).tolist()
+        if use_alternate:
+            card_variants = magic_variant_ml.predict(image_data).tolist()
+        else:
+            card_variants = magic_variant_ml.predict(cropped_img_decoded).tolist()
         variants_dict = {'foil': card_variants[1],
                     'surgefoil': card_variants[2],
                     'etched': card_variants[3],
