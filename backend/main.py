@@ -2,11 +2,9 @@ import pandas as pd
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-import numpy as np
-import cv2
 import base64
 from io import BytesIO
-from PIL import Image, ImageEnhance
+from PIL import Image
 
 import card_scraper
 import magic_card_scraper
@@ -75,25 +73,30 @@ async def health_check():
 @app.post('/mlmodel')
 async def card_ml_reader(card_img: ImgPayload):
     # should return an image to be ran against the ml model
-    # need to pass the index too
-    img_str = str(card_img.img_str)
+    # need to pass the index too nvm? frontend handles this i guess
     try:
-        base64_str = img_str.split(',')[1]
+        # reformats and decodes the image
+        base64_str = str(card_img.img_str).split(',')[1]
         image_data = base64.b64decode(base64_str)
-        # np_array = np.frombuffer(image_data, np.uint8)
-        # img = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
+        
+        # crops and opens the image for ml models
         cropped_img = background_remover.process_image(image_data)
         cropped_img_decoded = base64.b64decode(cropped_img)
         cropped_img = Image.open(BytesIO(cropped_img_decoded))
+        
+        # runs ocr model on the cropped image
         card_info = ocr_ml_reader.detect_card_details(cropped_img)
-        card_name = card_info.get('name', '')
-        card_id = card_info.get('number', '')
-        card_edition = card_info.get('edition', False)
+        card_name, card_id, card_edition = card_info.get('name', ''), card_info.get('number', ''), card_info.get('edition', False)
         print(f'card edition pre check: {card_edition}', flush=True)
+        
+        # runs ml image recognition on the cropped image for first edition
         card_edition = first_edition_detect.process_images_and_match(cropped_img)      
         print(f'card edition post check: {card_edition}', flush=True)
+        
+        # runs ml image recognition on the cropped image for reverse holo
         holo_status = reverse_holo_detector.predict(cropped_img_decoded)
         print(card_name, card_id, card_edition, holo_status, flush=True)
+        
         return {'card_name': card_name, 'card_id': card_id, 'first_edition': card_edition, 'reverse_holo': holo_status}
     except Exception as e:
         return {'error': 'Failed to process image', 'details': str(e)}
@@ -101,17 +104,23 @@ async def card_ml_reader(card_img: ImgPayload):
 @app.post('/magic-mlmodel')
 async def magic_card_ml_reader(card_img: ImgPayload):
     # should return an image to be ran against the ml model
-    # need to pass the index too
-    img_str = str(card_img.img_str)
+    # need to pass the index too nvm? frontend handles this i guess
     try:
-        base64_str = img_str.split(',')[1]
+        # reformats and decodes the image
+        base64_str = str(card_img.img_str).split(',')[1]
         image_data = base64.b64decode(base64_str)
+        
+        # crops and opens the image for ml models
         cropped_img = background_remover.process_image(image_data)
         cropped_img_decoded = base64.b64decode(cropped_img)
         cropped_img = Image.open(BytesIO(cropped_img_decoded))
+        
+        # runs ocr model on the cropped image
         card_info = ocr_ml_reader.detect_card_details(cropped_img)
         card_name = card_info.get('name', '')
         card_id = card_info.get('number', '')
+        
+        # runs ml image recognition on the cropped image for various labels
         card_variants = magic_variant_ml.predict(cropped_img_decoded).tolist()
         variants_dict = {'foil': card_variants[1],
                     'surgefoil': card_variants[2],

@@ -56,32 +56,7 @@ const InputRows: React.FC = () => {
     setRows(newRows);
   };
 
-  const handleMultipleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-  
-    if (files) {
-      const readers = Array.from(files).map((file) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const index = readers.indexOf(reader);
-          setRows((prevRows) => {
-            const updatedRows = [...prevRows];
-            updatedRows[index] = {
-              ...updatedRows[index],
-              source_image: reader.result as string, // Store the Base64 string in the row
-            };
-            return updatedRows;
-          });
-        };
-        reader.readAsDataURL(file);
-        return reader;
-      });
-    }
-  };
-
-  const handleImageUpload = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-  
+  const handleImageUpload = (index: number, file: File) => {
     if (file) {
       const reader = new FileReader();
   
@@ -111,10 +86,10 @@ const InputRows: React.FC = () => {
       reader.readAsDataURL(file); // Read the file as a data URL (Base64 string)
     }
   };
-  
+
   const img_data = async (imgBase64: string, index: number) => {
     // Prepare the payload with the Base64 image data
-    console.log(imgBase64);
+    // console.log(imgBase64);
     console.log(rows);
     const img_payload = {
       img_str: imgBase64
@@ -165,7 +140,30 @@ const InputRows: React.FC = () => {
       console.error("Unexpected response data:", responseData);
     }
   };
+
+  const multiUploadAssign = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fileInput = event.target as HTMLInputElement;
+    const files = fileInput.files;
+    if (files) {
+      const startIndex = rows.findIndex((row, index) => {
+        return !row.card_name || !row.card_id || !row.source_image;
+      });
+      if (startIndex === -1) {
+        console.log('All rows have card name, ID, and image. Adding more rows.');
+        handleAddRows();
+      }
+      Array.from(files).forEach((file, index) => {
+        handleImageUpload(startIndex + index, file);
+      });
+    }
+  }
   
+  const singleUploadAssign = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      handleImageUpload(index, file);
+    }
+  };
 
   const handleAddRows = () => {
     const newRowsToAdd: Row[] = Array.from({ length: 10 }, () => ({
@@ -362,7 +360,6 @@ const InputRows: React.FC = () => {
     return validateCSVRow(row, magicCardChecked);
   };
 
-
   const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -449,7 +446,7 @@ const InputRows: React.FC = () => {
   };
 
   const renderRow = (row: Row, index: number) => {
-    console.log('index', index)
+    // console.log('index', index)
     return (
       <span key={index} className={`row ${row.isInvalid ? 'invalid-row' : ''}`}>
         <span className={`row ${row.card_name_id_invalid ? 'invalid-label' : ''}`}>
@@ -532,7 +529,7 @@ const InputRows: React.FC = () => {
               type="file"
               // accept="image/*"
               style={{ display: 'none' }}
-              onChange={(event) => handleImageUpload(index, event)}
+              onChange={(event) => singleUploadAssign(index, event)}
             />
           </label>
           {row.source_image && (
@@ -557,7 +554,7 @@ const InputRows: React.FC = () => {
         <h4 >Enter the data for each row or upload a CSV file. Rows with potentially invalid CSV data will be marked red.</h4>
         <label className='bulk-upload-btn'>
               <img src="/img_icon_white.png" alt="Upload" className="upload-icon"/>
-              <input id="bulk-img-upload" type="file" multiple onChange={handleMultipleImageUpload} hidden/>
+              <input id="bulk-img-upload" type="file" multiple onChange={(event) => multiUploadAssign(event)} hidden/>
         </label>
       </div>
       <form onSubmit={handleSubmit}>
