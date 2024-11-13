@@ -1,0 +1,16 @@
+.drop-zone {
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    width: 100px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: #ccc;
+}
+
+.drop-zone:hover {
+    border-color: #aaa;
+}

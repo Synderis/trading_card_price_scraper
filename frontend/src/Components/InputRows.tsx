@@ -6,6 +6,8 @@ import { validateCSVRow } from './ValidatorCSV';
 import { Row } from './types';
 import { initialRowState } from './initialRowState';
 import { truth_values, false_values } from './utils';
+import DropZone from './DropZone';
+// import { useDropzone } from 'react-dropzone';
 
 
 const InputRows: React.FC = () => {
@@ -156,6 +158,19 @@ const InputRows: React.FC = () => {
         handleImageUpload(startIndex + index, file);
       });
     }
+  }
+
+  const multiDropAssign = (acceptedFiles: File[]) => {
+    const startIndex = rows.findIndex((row, index) => {
+      return !row.card_name || !row.card_id || !row.source_image;
+    });
+    if (startIndex === -1) {
+      console.log('All rows have card name, ID, and image. Adding more rows.');
+      handleAddRows();
+    }
+    acceptedFiles.forEach((file, index) => {
+      handleImageUpload(startIndex + index, file);
+    });
   }
   
   const singleUploadAssign = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
@@ -553,9 +568,16 @@ const InputRows: React.FC = () => {
       <div className='upload-instructions' style={{ display: 'flex', alignItems: 'center', flexDirection: 'row'}}>
         <h4 >Enter the data for each row or upload a CSV file. Rows with potentially invalid CSV data will be marked red.</h4>
         <label className='bulk-upload-btn'>
-              <img src="/img_icon_white.png" alt="Upload" className="upload-icon"/>
-              <input id="bulk-img-upload" type="file" multiple onChange={(event) => multiUploadAssign(event)} hidden/>
+          <img src="/img_icon_white.png" alt="Upload" className="upload-icon"/>
+          <input id="bulk-img-upload" type="file" multiple onChange={(event) => multiUploadAssign(event)} hidden/>
         </label>
+        <DropZone onDrop={multiDropAssign}/>
+        {/* <div {...getRootProps()} className="drop-zone">
+        <input {...getInputProps()} />
+        {
+            isDragActive ? <p>Drop the images here ...</p> : <p>Drag and Drop</p>
+        }
+        </div> */}
       </div>
       <form onSubmit={handleSubmit}>
         {rows.map(renderRow)}
