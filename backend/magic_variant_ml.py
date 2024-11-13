@@ -40,9 +40,7 @@ model.load_state_dict(torch.load('trained_ml_models/magic_card_multi_label_class
 model.eval()
 
 # Preprocessing function for the input image
-def preprocess_image(base64_img_str):
-    # Decode the base64 string
-    img_data = base64.b64decode(base64_img_str)
+def preprocess_image(img_data):
     np_arr = np.frombuffer(img_data, np.uint8)
     image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
     
@@ -54,8 +52,8 @@ def preprocess_image(base64_img_str):
     return image_tensor
 
 # Prediction function
-def predict(base64_img_str):
-    image_tensor = preprocess_image(base64_img_str)
+def predict(img_data):
+    image_tensor = preprocess_image(img_data)
     with torch.no_grad():
         output = model(image_tensor)
         predictions = torch.sigmoid(output) >= 0.5  # Thresholding at 0.5

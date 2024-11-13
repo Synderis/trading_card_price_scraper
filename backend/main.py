@@ -2,6 +2,11 @@ import pandas as pd
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+import numpy as np
+import cv2
+import base64
+from io import BytesIO
+from PIL import Image, ImageEnhance
 
 import card_scraper
 import magic_card_scraper
@@ -73,8 +78,13 @@ async def card_ml_reader(card_img: ImgPayload):
     # need to pass the index too
     img_str = str(card_img.img_str)
     try:
-        img_str = img_str.split(',')[1]
-        cropped_img = background_remover.process_image(img_str)
+        base64_str = img_str.split(',')[1]
+        image_data = base64.b64decode(base64_str)
+        # np_array = np.frombuffer(image_data, np.uint8)
+        # img = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
+        cropped_img = background_remover.process_image(image_data)
+        cropped_img_decoded = base64.b64decode(cropped_img)
+        cropped_img = Image.open(BytesIO(cropped_img_decoded))
         card_info = ocr_ml_reader.detect_card_details(cropped_img)
         card_name = card_info.get('name', '')
         card_id = card_info.get('number', '')
@@ -82,7 +92,7 @@ async def card_ml_reader(card_img: ImgPayload):
         print(f'card edition pre check: {card_edition}', flush=True)
         card_edition = first_edition_detect.process_images_and_match(cropped_img)      
         print(f'card edition post check: {card_edition}', flush=True)
-        holo_status = reverse_holo_detector.predict(cropped_img)
+        holo_status = reverse_holo_detector.predict(cropped_img_decoded)
         print(card_name, card_id, card_edition, holo_status, flush=True)
         return {'card_name': card_name, 'card_id': card_id, 'first_edition': card_edition, 'reverse_holo': holo_status}
     except Exception as e:
@@ -94,12 +104,15 @@ async def magic_card_ml_reader(card_img: ImgPayload):
     # need to pass the index too
     img_str = str(card_img.img_str)
     try:
-        img_str = img_str.split(',')[1]
-        cropped_img = background_remover.process_image(img_str)
+        base64_str = img_str.split(',')[1]
+        image_data = base64.b64decode(base64_str)
+        cropped_img = background_remover.process_image(image_data)
+        cropped_img_decoded = base64.b64decode(cropped_img)
+        cropped_img = Image.open(BytesIO(cropped_img_decoded))
         card_info = ocr_ml_reader.detect_card_details(cropped_img)
         card_name = card_info.get('name', '')
         card_id = card_info.get('number', '')
-        card_variants = magic_variant_ml.predict(cropped_img).tolist()
+        card_variants = magic_variant_ml.predict(cropped_img_decoded).tolist()
         variants_dict = {'foil': card_variants[1],
                     'surgefoil': card_variants[2],
                     'etched': card_variants[3],

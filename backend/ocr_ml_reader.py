@@ -15,11 +15,9 @@ def read_google_credentials() -> dict:
         google_credentials = json.load(file)
     return google_credentials
 
-def decode_base64_image(base64_str: str) -> bytes:
-    """Decode a base64 image string to an image file in memory."""
-    # Decode the base64 string
-    image_data = base64.b64decode(base64_str)
-    image: Image.Image = Image.open(BytesIO(image_data))
+# def decode_base64_image(base64_str: str) -> bytes:
+# def decode_base64_image(base64_str) -> bytes:
+def preprocess_image(image):
     image = image.convert('L')
 
     # Enhance brightness (1.0 = original)
@@ -32,12 +30,13 @@ def decode_base64_image(base64_str: str) -> bytes:
     return temp_image_byte_arr.getvalue()
 
 
-def detect_card_details(test_image_base64: str) -> dict[str, str | bool | None]:
+# def detect_card_details(test_image_base64: str) -> dict[str, str | bool | None]:
+def detect_card_details(test_image_data) -> dict[str, str | bool | None]:
     google_credentials_info = read_google_credentials()
     google_vision_client = vision.ImageAnnotatorClient.from_service_account_info(google_credentials_info)
     
     # Process image without saving to disk
-    img_byte_arr = decode_base64_image(test_image_base64)
+    img_byte_arr = preprocess_image(test_image_data)
     
     # Create an Image object for Vision API from the byte stream
     image = vision.Image(content=img_byte_arr)

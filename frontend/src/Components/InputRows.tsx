@@ -2,34 +2,11 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
 import '../CSS Sheets/InputRows.css';
+import { validateCSVRow } from './ValidatorCSV';
+import { Row } from './types';
+import { initialRowState } from './initialRowState';
+import { truth_values, false_values } from './utils';
 
-type Row = {
-  card_name: string;
-  card_id: string;
-  reverse_holo?: boolean;
-  first_edition: boolean;
-  card_count: number | null;
-  variant: boolean;
-  variant_type: string | null;
-  source_image: string;
-  card_name_id_invalid?: boolean;
-  foil?: boolean;
-  non_foil?: boolean;
-  surgefoil?: boolean,
-  etched?: boolean,
-  extended_art?: boolean,
-  full_art?: boolean,
-  non_foil_invalid?: boolean;
-  foil_invalid?: boolean;
-  surgefoil_invalid?: boolean;
-  etched_invalid?: boolean;
-  extended_art_invalid?: boolean;
-  full_art_invalid?: boolean;
-  reverse_holo_invalid?: boolean;
-  first_edition_invalid?: boolean;
-  card_count_invalid?: boolean;
-  isInvalid?: boolean;
-};
 
 const InputRows: React.FC = () => {
   const navigate = useNavigate();
@@ -43,37 +20,6 @@ const InputRows: React.FC = () => {
   const [csvFileName, setCsvFileName] = useState('No file chosen');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [imgFileNames, setImgFileNames] = useState<string[]>(Array(10).fill('No file chosen'));
-
-
-
-  const initialRowState = Array.from({ length: 10 }, () => ({
-    card_name: '',
-    card_id: '',
-    foil: false,
-    non_foil: false,
-    surgefoil: false,
-    etched: false,
-    extended_art: false,
-    full_art: false,
-    reverse_holo: false,
-    first_edition: false,
-    card_count: 1,
-    variant: true,
-    variant_type: '',
-    source_image: '',
-    card_name_id_invalid: false,
-    non_foil_invalid: false,
-    foil_invalid: false,
-    surgefoil_invalid: false,
-    etched_invalid: false,
-    extended_art_invalid: false,
-    full_art_invalid: false,
-    reverse_holo_invalid: false,
-    first_edition_invalid: false,
-    card_count_invalid: false,
-    isInvalid: false,
-  }));
-
   const [rows, setRows] = useState<Row[]>(initialRowState);
 
   const toggleAdvancedFields = () => {
@@ -108,6 +54,29 @@ const InputRows: React.FC = () => {
     
   
     setRows(newRows);
+  };
+
+  const handleMultipleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+  
+    if (files) {
+      const readers = Array.from(files).map((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const index = readers.indexOf(reader);
+          setRows((prevRows) => {
+            const updatedRows = [...prevRows];
+            updatedRows[index] = {
+              ...updatedRows[index],
+              source_image: reader.result as string, // Store the Base64 string in the row
+            };
+            return updatedRows;
+          });
+        };
+        reader.readAsDataURL(file);
+        return reader;
+      });
+    }
   };
 
   const handleImageUpload = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
@@ -354,13 +323,6 @@ const InputRows: React.FC = () => {
       setLoadingProgress(0); // Reset progress
     }
   };
-  const truth_values = (value: any): boolean => {
-      return ['true', true, 1, 'y', 'Y', 't', 'T', 'True', 'TRUE'].includes(value);
-  };
-
-  const false_values = (value: any): boolean => {
-      return ['false', false, 0, 'n', 'N', 'f', 'F', 'False', 'FALSE', null].includes(value);
-  };
 
   const handleMagicCardToggle = () => {
     setMagicCardChecked(prev => {
@@ -395,27 +357,11 @@ const InputRows: React.FC = () => {
     });
   };
 
+
   const handleValidCSV = (row: Row) => {
-    let isInvalid = false; // Initialize to false by default
-    if (magicCardChecked) {
-      isInvalid = !(
-        (truth_values(row.foil) || false_values(row.foil)) &&
-        (truth_values(row.surgefoil) || false_values(row.surgefoil)) &&
-        (truth_values(row.etched) || false_values(row.etched)) &&
-        (truth_values(row.extended_art) || false_values(row.extended_art)) &&
-        (truth_values(row.full_art) || false_values(row.full_art)) &&
-        (row.card_count === null || row.card_count > 0)
-      );
-    } else {
-      isInvalid = !(
-        (row.card_name !== null && (row.card_id !== null && row.card_id !== '')) &&
-        (truth_values(row.reverse_holo) || false_values(row.reverse_holo)) &&
-        (truth_values(row.first_edition) || false_values(row.first_edition)) &&
-        (row.card_count === null || row.card_count > 0)
-      );
-    }
-    return isInvalid;
+    return validateCSVRow(row, magicCardChecked);
   };
+
 
   const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -607,13 +553,20 @@ const InputRows: React.FC = () => {
         <label htmlFor="csv-file-upload" className='upload-btn'>Upload CSV File</label>
         <span id="file-chosen" style={{marginTop: '10px'}}>{csvFileName}</span>
       </div>
-      <h4>Enter the data for each row or upload a CSV file. Rows with potentially invalid CSV data will be marked red.</h4>
+      <div className='upload-instructions' style={{ display: 'flex', alignItems: 'center', flexDirection: 'row'}}>
+        <h4 >Enter the data for each row or upload a CSV file. Rows with potentially invalid CSV data will be marked red.</h4>
+        <label className='bulk-upload-btn'>
+              <img src="/img_icon_white.png" alt="Upload" className="upload-icon"/>
+              <input id="bulk-img-upload" type="file" multiple onChange={handleMultipleImageUpload} hidden/>
+        </label>
+      </div>
       <form onSubmit={handleSubmit}>
         {rows.map(renderRow)}
         <div className="button-group">
           <button type="button" onClick={handleAddRows}>Add 10 Rows</button>
           <button type="button" className="clear-all-btn" onClick={handleClearAllRows}>Clear All Rows</button>
           <button type="submit" className="submit-btn">Submit</button>
+          
         </div>
       </form>
       <div style={{ marginTop: '10px' }}>

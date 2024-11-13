@@ -4,16 +4,9 @@ import base64
 from io import BytesIO
 from PIL import Image
 
-def decode_base64_image(base64_str):
-    """Decode a base64 image string to a NumPy array."""
-    # Decode the base64 string
-    image_data = base64.b64decode(base64_str)
-    img = Image.open(BytesIO(image_data))
-    return np.array(img)
 
-
-def process_images_and_match(base64_image):
-    image = decode_base64_image(base64_image)
+def process_images_and_match(img_data):
+    image = np.array(img_data)
 
     template = cv2.imread(r"assets/first_edition_logo_fire.png")  # Symbol to match
 

@@ -8,3 +8,4 @@ package
 cdk.out
 .env
 google_info.json
+build_and_push.ps1

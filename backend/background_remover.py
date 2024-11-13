@@ -3,10 +3,6 @@ from rembg import remove
 from PIL import Image, ImageChops
 from io import BytesIO
 
-def decode_base64_image(base64_str):
-    """Decode a base64 image string to a PIL Image object."""
-    img_data = base64.b64decode(base64_str)
-    return Image.open(BytesIO(img_data))
 
 def encode_image_to_base64(image):
     """Encode a PIL Image object to a base64 string."""
@@ -14,10 +10,10 @@ def encode_image_to_base64(image):
     image.save(buffered, format="JPEG")
     return base64.b64encode(buffered.getvalue()).decode('utf-8')
 
-def process_image(base64_image):
+def process_image(img_data):
     """Remove the background from the image and return it as a base64 string."""
     # Decode the base64 image to a PIL Image object
-    input_image = decode_base64_image(base64_image)
+    input_image = Image.open(BytesIO(img_data))
 
     # Removing the background from the image
     output = remove(input_image)
@@ -45,3 +41,4 @@ def process_image(base64_image):
 
     # Convert the processed image to a base64 string and return it
     return encode_image_to_base64(output)
+    # return output
