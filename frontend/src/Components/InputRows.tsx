@@ -42,11 +42,11 @@ const InputRows: React.FC = () => {
     // Check and update invalid states
     const row = newRows[index];
     row.card_name_id_invalid = !magicCardChecked && row.card_name !== null && (row.card_id === null || row.card_id === '');
-    row.foil_invalid = !(row.foil === true || row.foil === false);
-    row.surgefoil_invalid = !(row.surgefoil === true || row.surgefoil === false);
-    row.etched_invalid = !(row.etched === true || row.etched === false);
-    row.extended_art_invalid = !(row.extended_art === true || row.extended_art === false);
-    row.full_art_invalid = !(row.full_art === true || row.full_art === false);
+    row.foil_invalid = !magicCardChecked && !(row.foil === true || row.foil === false);
+    row.surgefoil_invalid = !magicCardChecked && !(row.surgefoil === true || row.surgefoil === false);
+    row.etched_invalid = !magicCardChecked && !(row.etched === true || row.etched === false);
+    row.extended_art_invalid = !magicCardChecked && !(row.extended_art === true || row.extended_art === false);
+    row.full_art_invalid = !magicCardChecked && !(row.full_art === true || row.full_art === false);
     row.reverse_holo_invalid = !(row.reverse_holo === true || row.reverse_holo === false);
     row.first_edition_invalid = !(row.first_edition === true || row.first_edition === false);
     row.card_count_invalid = !(row.card_count === null || row.card_count > 0);
@@ -129,11 +129,11 @@ const InputRows: React.FC = () => {
           card_id: responseData.card_id,
           reverse_holo: responseData.reverse_holo,
           first_edition: responseData.first_edition !== undefined ? responseData.first_edition : false,
-          foil: responseData.foil,
-          surgefoil: responseData.surgefoil,
-          etched: responseData.etched,
-          extended_art: responseData.extended_art,
-          full_art: responseData.full_art,
+          foil: responseData.foil !== undefined ? responseData.foil : false,
+          surgefoil: responseData.surgefoil !== undefined ? responseData.surgefoil : false,
+          etched: responseData.etched !== undefined ? responseData.etched : false,
+          extended_art: responseData.extended_art !== undefined ? responseData.extended_art : false,
+          full_art: responseData.full_art !== undefined ? responseData.full_art : false,
         };
   
         return updatedRows;
@@ -264,12 +264,21 @@ const InputRows: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const invalidRows = rows.some(row => row.isInvalid);
-    
-    if (invalidRows) {
-      alert('Please fix the invalid rows before submitting.');
-      return;
-    }
+    // const invalidRows = rows.some(row => row.isInvalid);
+    // const card_name_id_invalid = rows.some(row => row.card_name_id_invalid);
+    // const foil_invalid = rows.some(row => row.foil_invalid);
+    // const reverse_holo_invalid = rows.some(row => row.reverse_holo_invalid);
+    // const first_edition_invalid = rows.some(row => row.first_edition_invalid);
+    // const surgefoil_invalid = rows.some(row => row.surgefoil_invalid);
+    // const etched_invalid = rows.some(row => row.etched_invalid);
+    // const extended_art_invalid = rows.some(row => row.extended_art_invalid);
+    // const full_art_invalid = rows.some(row => row.full_art_invalid);
+    // const card_count_invalid = rows.some(row => row.card_count_invalid);
+    // console.log(card_name_id_invalid, foil_invalid, surgefoil_invalid, etched_invalid, extended_art_invalid, full_art_invalid, reverse_holo_invalid, first_edition_invalid, card_count_invalid);
+    // if (invalidRows) {
+    //   alert('Please fix the invalid rows before submitting.');
+    //   return;
+    // }
 
     const totalCards = rows.reduce((acc, row) => acc + (row.card_count || 0), 0);
     const estimatedTime = 550 * totalCards + 250;

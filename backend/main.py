@@ -181,6 +181,7 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
     # Call the card finder and store the results in app state
     results = pd.DataFrame(card_scraper.card_finder(df))
     # print(results.columns, flush=True)
+    print(results, flush=True)
     
     if (results['source_image'] != '').any():
         results = results[~results['img_link'].str.contains('no-image-available.png')]

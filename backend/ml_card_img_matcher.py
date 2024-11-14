@@ -27,6 +27,7 @@ def decode_base64_image(base64_str):
 def read_image_rgb(img_path):
     """Read an image in RGB mode."""
     if img_path.startswith('data:'):
+        img_path = str(img_path).split(',')[1]
         img = decode_base64_image(img_path)
     elif img_path.startswith(('http://', 'https://')):
         # If img_path is a URL, fetch the image
