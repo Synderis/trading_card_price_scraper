@@ -14,12 +14,3 @@ Images can be uploaded and ran through an OCR model for image text recognition t
 The table will provide price data and totals adjusted for card count along with its page link. The card image can also be seen by hovering over the card name. This data can be exported to CSV in the same format as the table.
 <img src="https://i.imgur.com/gHtKHzC.png">
 After getting price data specific rows can be filtered out of the total pricing calculations the results are also ran through an orb similarity matching algorithm to further optimize the result pool.
-
-## Developing
-
-### Upgrading python dependencies
-
-```sh
-$ pip install uv
-$ uv pip compile requirements.in --output-file requirements.txt --upgrade-package name_of_package
-```
