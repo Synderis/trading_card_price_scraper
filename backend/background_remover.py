@@ -6,6 +6,8 @@ from io import BytesIO
 
 def encode_image_to_base64(image):
     """Encode a PIL Image object to a base64 string."""
+    if image.mode == 'RGBA':
+        image = image.convert('RGB')
     buffered = BytesIO()
     image.save(buffered, format="JPEG")
     return base64.b64encode(buffered.getvalue()).decode('utf-8')
@@ -35,9 +37,37 @@ def process_image(img_data):
         if bbox:
             return image.crop(bbox)
         return image  # Return original if no cropping is needed
-
-    # Trim the image to remove white space around it
-    output = trim_image(output)
+    
+    def corner_check(image, offset_ratio=0.05, tolerance=50):
+        width, height = image.size
+        # Calculate the offset as a percentage of the image size
+        offset_x = int(width * offset_ratio)
+        offset_y = int(height * offset_ratio)
+        
+        # List of relative corner coordinates
+        corners = [
+            (offset_x, offset_y),  # top-left
+            (width - offset_x - 1, offset_y),  # top-right
+            (offset_x, height - offset_y - 1),  # bottom-left
+            (width - offset_x - 1, height - offset_y - 1)  # bottom-right
+        ]
+        # print(corners)
+        
+        # Check each inward corner pixel
+        any_white = False
+        for x, y in corners:
+            pixel = image.getpixel((x, y))
+            # print(f"Checking pixel at ({x}, {y}) with RGB values: {pixel}")
+            if all(abs(channel - 255) <= tolerance for channel in pixel):  # Check if pixel is close to white
+                any_white = True
+        return any_white
+        
+    if corner_check(output):
+        print('Background removal likely uneccessary using source image', flush=True)
+        output = input_image
+    else:
+        output = trim_image(output)
+        print('Background removed successfully', flush=True)
 
     # Convert the processed image to a base64 string and return it
     return encode_image_to_base64(output)

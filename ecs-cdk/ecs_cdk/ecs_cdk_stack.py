@@ -30,8 +30,8 @@ class EcsCdkStack(Stack):
 
         # Create the ECS Fargate Task Definition with increased memory and CPU
         task_definition = ecs.FargateTaskDefinition(self, "TaskDef", 
-                                                    memory_limit_mib=8192,  # 8 GB
-                                                    cpu=4096)               # 4 vCPU
+                                                    memory_limit_mib=4096,  # 4 GB
+                                                    cpu=2048)               # 2 vCPU
 
         # Add the Docker image container to the ECS task definition
         task_definition.add_container("FastApiContainer",

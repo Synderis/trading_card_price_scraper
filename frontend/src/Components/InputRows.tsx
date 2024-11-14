@@ -548,7 +548,12 @@ const InputRows: React.FC = () => {
             />
           </label>
           {row.source_image && (
-            <img src={row.source_image} alt={`Uploaded preview for row ${index}`} width="100" />
+            <div className="image-container">
+              <img src={row.source_image} alt={`Uploaded preview for row ${index}`} width="100" />
+              <div className="image-hover">
+                <img src={row.source_image} alt={`Uploaded preview for row ${index}`} width="300" />
+              </div>
+            </div>
           )}
         </div>
         <button type="button" className="clear-btn" onClick={() => handleClearRow(index)}>Clear</button>

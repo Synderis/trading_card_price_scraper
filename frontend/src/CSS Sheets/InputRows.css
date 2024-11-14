@@ -195,4 +195,27 @@ input[type="number"] {
   transition: width 0.1s ease-in-out;
 }
 
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.image-hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px; /* set the width of the hover box */
+  height: 140px; /* set the height of the hover box */
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.5s;
+  background-size: cover;
+  background-position: center;
+  transform: translateX(220px) translateY(-200px);
+}
+
+.image-container:hover .image-hover {
+  opacity: 1;
+}
+
 
