@@ -37,22 +37,12 @@ def find_hyperlink_text(card_var, id_var, card_type, soup):
 
     # Construct potential search texts based on conditions
     result = grab_all_links(card_var, id_var, card_type, soup)
-    print(result, flush=True)
+    # print(result, flush=True)
     if not result.empty:
         return result
 
     print('No matching link text found')
     return None
-
-
-def find_link(search_text: str, soup: BeautifulSoup) -> str | None:
-    for link in soup.find_all('a'):
-        href = link.get('href')  # Use get to avoid KeyError
-        if href and search_text in href.split('/')[-1]:
-            print(f'Found link text: {link.get_text()}')
-            return href
-    return None
-
 
 # Function to extract table data and convert it to a dictionary
 def extract_table_to_dict(final_link, card, card_id, card_count, card_type, source_image):
