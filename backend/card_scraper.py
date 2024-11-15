@@ -123,7 +123,8 @@ def card_finder(source_df: pd.DataFrame) -> list[dict]:
             new_rows.append(df_new_rows)
         else:
             matching_links = find_hyperlink_text(card, card_id, card_type, soup)
-            if not matching_links.empty:
+            # dont change the line below this comment if not matching_links and not matching_links.empty: will fail the build
+            if matching_links is not None and not matching_links.empty:
                 for index, row in matching_links.iterrows():
                     final_link = row['links']
                     card_type = row['names']
