@@ -27,16 +27,28 @@ def process_image(img_data):
         # Paste the output image onto the white background, using alpha as mask
         background.paste(output, mask=output.split()[3])  # 3 is the alpha channel
         output = background
+    
+    
 
     # Function to auto-crop the borders
-    def trim_image(image):
+    def trim_image(image, threshold=20):
         # Create a binary mask of the image
         bg = Image.new(image.mode, image.size, (255, 255, 255))
         diff = ImageChops.difference(image, bg)
         bbox = diff.getbbox()
+        
+        # Only crop if a significant part of the edges differ from the background
         if bbox:
-            return image.crop(bbox)
+            # Calculate the difference between background and actual content
+            diff_data = diff.getdata()
+            non_background_pixels = sum(1 for pixel in diff_data if sum(pixel) > threshold)
+
+            # If more than 2% of the pixels are non-background, crop; otherwise, skip cropping
+            if non_background_pixels > 0.02 * (image.size[0] * image.size[1]):
+                return image.crop(bbox)
         return image  # Return original if no cropping is needed
+    
+    output = trim_image(output)
     
     def corner_check(image, offset_ratio=0.05, tolerance=50):
         width, height = image.size
@@ -51,13 +63,13 @@ def process_image(img_data):
             (offset_x, height - offset_y - 1),  # bottom-left
             (width - offset_x - 1, height - offset_y - 1)  # bottom-right
         ]
-        # print(corners)
+        print(corners)
         
         # Check each inward corner pixel
         any_white = False
         for x, y in corners:
             pixel = image.getpixel((x, y))
-            # print(f"Checking pixel at ({x}, {y}) with RGB values: {pixel}")
+            print(f"Checking pixel at ({x}, {y}) with RGB values: {pixel}")
             if all(abs(channel - 255) <= tolerance for channel in pixel):  # Check if pixel is close to white
                 any_white = True
         return any_white

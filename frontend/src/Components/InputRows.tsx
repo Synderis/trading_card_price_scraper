@@ -558,9 +558,9 @@ const InputRows: React.FC = () => {
           </label>
           {row.source_image && (
             <div className="image-container">
-              <img src={row.source_image} alt={`Uploaded preview for row ${index}`} width="100" />
+              <img src={row.source_image} alt={`Uploaded preview for row ${index}`} width="100" style={{ borderRadius: '5px', marginTop: '4px' }} />
               <div className="image-hover">
-                <img src={row.source_image} alt={`Uploaded preview for row ${index}`} width="300" />
+                <img src={row.source_image} alt={`Uploaded preview for row ${index}`} width="300" style={{ borderRadius: '15px' }} />
               </div>
             </div>
           )}
@@ -586,12 +586,6 @@ const InputRows: React.FC = () => {
           <input id="bulk-img-upload" type="file" multiple onChange={(event) => multiUploadAssign(event)} hidden/>
         </label>
         <DropZone onDrop={multiDropAssign}/>
-        {/* <div {...getRootProps()} className="drop-zone">
-        <input {...getInputProps()} />
-        {
-            isDragActive ? <p>Drop the images here ...</p> : <p>Drag and Drop</p>
-        }
-        </div> */}
       </div>
       <form onSubmit={handleSubmit}>
         {rows.map(renderRow)}

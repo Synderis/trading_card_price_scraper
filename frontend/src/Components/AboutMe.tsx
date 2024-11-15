@@ -9,7 +9,7 @@ const AboutMe: React.FC = () => {
                 Welcome to my bulk card pricing tool. I go by Synderis online and my background is in Data Engineering/Software Engineering primarily in Python and SQL.
                 I had a lot of cards I wanted to look up and the tools and the APIs currently available were lackluster at best.
                 There wasn't an easy way to get to the exact card pages I wanted without clicking on hundreds of links,
-                so I decided to create my own. In that process I figured some of my friends might want to use it too so I created a front end for the project.
+                so I decided to create my own. In that process I figured some of my friends might want to use it too so I created a frontend for the project.
             </p>
 
             <h2>Technologies Used</h2>
@@ -31,7 +31,7 @@ const AboutMe: React.FC = () => {
             </p>
 
             <p>
-                Feel free to explore the app and upload your own card collections. Thank you for stopping by!
+                Feel free to explore the site and upload your own card collections. Thank you for stopping by!
             </p>
         </div>
     );

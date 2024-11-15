@@ -107,7 +107,7 @@ const ResultsPage: React.FC = () => {
             item.card,
             item.id,
             item.card_count,
-            ...Object.values(item.grades),
+            ...Object.values(item.grades).map(value => value.replace('$', '').replace(',', '')),
             item.final_link,
         ].join(',')).join('\n');
 
@@ -116,7 +116,7 @@ const ResultsPage: React.FC = () => {
             'Totals:',
             '',
             totals.card_count,
-            ...Object.keys(totals).filter(key => key !== 'card_count').map(key => `$${totals[key].toFixed(2)}`),
+            ...Object.keys(totals).filter(key => key !== 'card_count').map(key => `${totals[key].toFixed(2)}`),
             '',
         ].join(',');
 
@@ -159,20 +159,23 @@ const ResultsPage: React.FC = () => {
         };
 
         return results
-            .filter(item => !item.isExcluded) // Only include non-excluded items
-            .reduce((totals, item) => {
-                const count = parseInt(item.card_count) || 0;
-                totals.card_count += count;
+    .filter(item => !item.isExcluded) // Only include non-excluded items
+    .reduce((totals, item) => {
+        const count = parseInt(item.card_count) || 0;
+        totals.card_count += count;
 
-                Object.keys(totals).forEach(key => {
-                    if (key !== 'card_count' && key in item.grades) {
-                        totals[key] += (parseFloat(item.grades[key]?.replace(/[^0-9.-]+/g, '')) || 0) * count;
-                    }
-                });
-
-                return totals;
-            }, initialTotals);
-    };
+    Object.keys(totals).forEach(key => {
+        if (key !== 'card_count' && key in item.grades) {
+          const amount = (parseFloat(item.grades[key]?.replace(/[^0-9.-]+/g, '')) || 0) * count;
+            totals[key] += amount;
+            if (totals[key] > 1) {
+                totals[key] = Math.floor(totals[key]);
+            }
+        }
+    });
+        return totals;
+    }, initialTotals);
+};
 
     const totals = calculateTotals(results);
 
@@ -291,9 +294,9 @@ const ResultsPage: React.FC = () => {
                                             style={{
                                                 width: '200px',
                                                 border: '1px solid #ccc',
-                                                backgroundColor: '#fff',
+                                                backgroundColor: '#ffffff68',
                                                 padding: '5px',
-                                                borderRadius: '4px',
+                                                borderRadius: '16px',
                                             }}
                                         />
                                     </div>
@@ -304,7 +307,7 @@ const ResultsPage: React.FC = () => {
                             <td colSpan={2}><strong>Totals:</strong></td>
                             <td>{totals.card_count}</td>
                             {Object.keys(totals).filter(key => key !== 'card_count').map((key, index) => (
-                                <td key={index}>${totals[key].toFixed(2)}</td>
+                                <td key={index}>${Number(totals[key].toFixed(0)).toLocaleString()}</td>
                             ))}
                             <td></td>
                         </tr>

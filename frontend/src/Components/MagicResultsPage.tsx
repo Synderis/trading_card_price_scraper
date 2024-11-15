@@ -262,7 +262,9 @@ const MagicResultsPage: React.FC = () => {
                                     <td>{item.set}</td>
                                     <td>{item.card_count}</td>
                                     {Object.values(item.prices).map((priceValue, gradeIndex) => (
-                                        <td key={gradeIndex}>{priceValue}</td>
+                                        <td key={gradeIndex}>
+                                            {Object.keys(item.prices)[gradeIndex].includes('Usd') ? '$' : Object.keys(item.prices)[gradeIndex].includes('Eur') ? '€' : ''}{priceValue}
+                                        </td>
                                     ))}
                                     <td>
                                         <a href={item.final_link} target="_blank" rel="noopener noreferrer">{item.variant_type || 'View'}</a>
@@ -286,7 +288,7 @@ const MagicResultsPage: React.FC = () => {
                                             style={{
                                                 width: '200px',
                                                 border: '1px solid #ccc',
-                                                backgroundColor: '#fff',
+                                                backgroundColor: '#ffffff68',
                                                 padding: '5px',
                                                 borderRadius: '4px',
                                             }}
@@ -299,7 +301,9 @@ const MagicResultsPage: React.FC = () => {
                             <td colSpan={3}><strong>Totals:</strong></td>
                             <td>{totals.card_count}</td>
                             {Object.keys(totals).filter(key => key !== 'card_count').map((key, index) => (
-                                <td key={index}>${totals[key].toFixed(2)}</td>
+                                <td key={index}>
+                                    {key.includes('Usd') ? '$' : key.includes('Eur') ? '€' : ''}{totals[key].toFixed(2)}
+                                </td>
                             ))}
                             <td></td>
                             <td></td>

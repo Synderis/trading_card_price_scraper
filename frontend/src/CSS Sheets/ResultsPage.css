@@ -68,6 +68,10 @@ th:last-child, td:last-child {
     overflow-clip-margin: 0;
 }
 
+.img-hover-link image {
+    background-color: transparent;
+}
+
 .selected-grade {
     background-color: #e3f2fd;
     font-weight: bold;

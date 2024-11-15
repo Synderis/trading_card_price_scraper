@@ -135,6 +135,9 @@ def detect_card_details(test_image_data) -> dict[str, str | bool | None]:
         if 'Wizards of the Coast, Inc.' in full_text:
             partial = full_text.split('/')[0]
             card_id = partial.split('Wizards of the Coast, Inc. ')[1].strip()
+            
+        if card_name == 'BASIC':
+            card_name = lines[0]
 
         # Print or store the desired details
         print(f'Card Name: {card_name}')

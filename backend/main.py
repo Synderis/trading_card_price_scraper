@@ -189,6 +189,12 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
         if not results_to_remove.empty:
             results = results[~results['img_link'].isin(results_to_remove['img_link'])].reset_index(drop=True)
     del results['source_image']
+    price_cols = ['Ungraded','Grade 1', 'Grade 2', 'Grade 3', 'Grade 4',
+                    'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9',
+                    'Grade 9.5', 'SGC 10', 'CGC 10', 'PSA 10', 'BGS 10',
+                    'BGS 10 Black', 'CGC 10 Pristine']
+    for col in price_cols:
+        results[col] = results[col].apply(lambda x: x.split('.')[0] if float(x.replace(',', '').replace('$', '').replace('-', '0')) >= 1 else x)
     request.app.state.results = results  # Store the results in app.state
     
     # Print the DataFrame to the console
