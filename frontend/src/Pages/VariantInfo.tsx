@@ -50,7 +50,6 @@ const VariantInfo: React.FC = () => {
             <h4 className='variation-header'>Magic Only Card Types</h4>
             <p className='variation-description'>These are only for input into the Magic card section.</p>
             <div className='variation-container'>
-                {/* <p>Magic Only Card Types</p> */}
                 <div className='magic-example-image-box'>
                     <div className='example-image-header'>Surgefoil
                         <img src="/HowToImages/magic_surgefoil_ex.jpg" alt="Card Example" style={{ width: '200px', height: 'auto' }} />

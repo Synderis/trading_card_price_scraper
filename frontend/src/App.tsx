@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import InputRows from './Components/InputRows';
-import ResultsPage from './Components/ResultsPage';
-import MagicResultsPage from './Components/MagicResultsPage';
-import AboutMe from './Components/AboutMe';
-import HowTo from './Components/HowTo';
+import InputRows from './Pages/InputRows';
+import ResultsPage from './Pages/ResultsPage';
+import MagicResultsPage from './Pages/MagicResultsPage';
+import AboutMe from './Pages/AboutMe';
+import HowTo from './Pages/HowTo';
 import DarkMode from './Components/DarkMode';
 
 const App: React.FC = () => {

@@ -42,7 +42,6 @@ class RowData(BaseModel):
     extended_art: bool
     full_art: bool
     card_count: int
-    variant: bool
     variant_type: str | None
     source_image: str | None
     
@@ -55,7 +54,6 @@ class MagicRowData(BaseModel):
     extended_art: bool
     full_art: bool
     card_count: int
-    variant: bool
     variant_type: str | None
     source_image: str | None
 
@@ -168,7 +166,6 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
             'reverse_holo': row.reverse_holo,
             'first_edition': row.first_edition,
             'card_count': row.card_count,
-            'variant': row.variant,
             'variant_type': row.variant_type,
             'source_image': row.source_image,
         }
@@ -194,7 +191,7 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
                     'Grade 9.5', 'SGC 10', 'CGC 10', 'PSA 10', 'BGS 10',
                     'BGS 10 Black', 'CGC 10 Pristine']
     for col in price_cols:
-        results[col] = results[col].apply(lambda x: x.split('.')[0] if float(x.replace(',', '').replace('$', '').replace('-', '0')) >= 1 else x)
+        results[col] = results[col].apply(lambda x: x.split('.')[0] if x != 'N/A' and float(x.replace(',', '').replace('$', '').replace('-', '0')) >= 1 else x)
     request.app.state.results = results  # Store the results in app.state
     
     # Print the DataFrame to the console
@@ -222,7 +219,6 @@ async def submit_magic_cards(card_input: MagicCardInput, request: Request):  # A
             'extended_art': row.extended_art,
             'full_art': row.full_art,
             'card_count': row.card_count,
-            'variant': row.variant,
             'variant_type': row.variant_type,
             'source_image': row.source_image,
         }

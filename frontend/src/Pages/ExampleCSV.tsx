@@ -7,11 +7,11 @@ const ExampleCSV: React.FC = () => {
     const [mousePosition, setMousePosition] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
 
     const cardData = [
-        { card_name: "Pikachu", card_id: 58, card_count: 3, variant: "", variant_type: "", reverse_holo: "", first_edition: "", foil: "", surgefoil: "", etched: "", extended_art: "", full_art: "", link: "https://www.pricecharting.com/game/pokemon-base-set/pikachu-1st-edition-58", img: "/HowToImages/pikachu_howto.jpg" },
-        { card_name: "Gengar", card_id: 94, card_count: 1, variant: "", variant_type: "", reverse_holo: 1, first_edition: "", foil: "", surgefoil: "", etched: "", extended_art: "", full_art: "", link: "https://www.pricecharting.com/game/pokemon-scarlet-&-violet-151/gengar-reverse-holo-94", img: "/HowToImages/gengar_howto.jpg" },
-        { card_name: "Charizard", card_id: 4, card_count: 1, variant: 1, variant_type: "shadowless", reverse_holo: "", first_edition: "", foil: "", surgefoil: "", etched: "", extended_art: "", full_art: "", link: "https://www.pricecharting.com/game/pokemon-base-set/charizard-shadowless-4", img: "/HowToImages/charizard_howto.jpg" },
-        { card_name: "Blue-Eyes White Dragon", card_count: 1, card_id: 'LOB-001', variant: "", variant_type: "", reverse_holo: "", first_edition: 1, foil: "", surgefoil: "", etched: "", extended_art: "", full_art: "", link: "https://www.pricecharting.com/game/yugioh-legend-of-blue-eyes-white-dragon/blue-eyes-white-dragon-1st-edition-lob-001", img: "/HowToImages/blue-eyes-white-dragon_howto.jpg" },
-        { card_name: "Alien Rhino", card_id: '35', card_count: 1, variant: "", variant_type: "", reverse_holo: "", first_edition: "", foil: "", surgefoil: 1, etched: "", extended_art: "", full_art: 1, link: "https://scryfall.com/card/twho/35/alien-rhino", img: "/HowToImages/alien-rhino_howto.jpg" },
+        { card_name: "Pikachu", card_id: 58, card_count: 3, variant_type: "", reverse_holo: "", first_edition: "", foil: "", surgefoil: "", etched: "", extended_art: "", full_art: "", link: "https://www.pricecharting.com/game/pokemon-base-set/pikachu-1st-edition-58", img: "/HowToImages/pikachu_howto.jpg" },
+        { card_name: "Gengar", card_id: 94, card_count: 1, variant_type: "", reverse_holo: 1, first_edition: "", foil: "", surgefoil: "", etched: "", extended_art: "", full_art: "", link: "https://www.pricecharting.com/game/pokemon-scarlet-&-violet-151/gengar-reverse-holo-94", img: "/HowToImages/gengar_howto.jpg" },
+        { card_name: "Charizard", card_id: 4, card_count: 1, variant_type: "shadowless", reverse_holo: "", first_edition: "", foil: "", surgefoil: "", etched: "", extended_art: "", full_art: "", link: "https://www.pricecharting.com/game/pokemon-base-set/charizard-shadowless-4", img: "/HowToImages/charizard_howto.jpg" },
+        { card_name: "Blue-Eyes White Dragon", card_count: 1, card_id: 'LOB-001', variant_type: "", reverse_holo: "", first_edition: 1, foil: "", surgefoil: "", etched: "", extended_art: "", full_art: "", link: "https://www.pricecharting.com/game/yugioh-legend-of-blue-eyes-white-dragon/blue-eyes-white-dragon-1st-edition-lob-001", img: "/HowToImages/blue-eyes-white-dragon_howto.jpg" },
+        { card_name: "Alien Rhino", card_id: '35', card_count: 1, variant_type: "", reverse_holo: "", first_edition: "", foil: "", surgefoil: 1, etched: "", extended_art: "", full_art: 1, link: "https://scryfall.com/card/twho/35/alien-rhino", img: "/HowToImages/alien-rhino_howto.jpg" },
     ];
 
     const headers = Object.keys(cardData[0]).filter(key => key !== 'link'&& key !== 'img');
@@ -128,12 +128,6 @@ const ExampleCSV: React.FC = () => {
                         <li className='valid-inputs'>numbers greater than 0</li>
                         <li className='valid-inputs'>empty/blank(assumed to be false)</li>
                         <li className='invalid-inputs'>letters, numbers less than 0, special characters</li>
-                    </label>
-                    <label className='input-label'>variant: 
-                        <li className='valid-inputs'>true, 1, y, Y, t, T, True, TRUE</li>
-                        <li className='valid-inputs'>false, 0, n, N, f, F, False, FALSE</li>
-                        <li className='valid-inputs'>empty/blank(assumed to be false)</li>
-                        <li className='invalid-inputs'>letters, numbers that arent 0 or 1, special characters</li>
                     </label>
                     <label className='input-label'>variant_type: 
                         <li className='valid-inputs'>basically anything this is essentially a wildcard field expected to be something like shadowless etc</li>
