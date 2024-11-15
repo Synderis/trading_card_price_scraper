@@ -28,7 +28,7 @@ def grab_all_links(card_var, id_var, card_type, soup: BeautifulSoup):
                 data.append({'names': bracket_text, 'links': href})  # Append to list
     # Convert list of dictionaries to DataFrame if data is not empty
     # print(data)
-    return pd.DataFrame(data)
+    return data
 
 
 def find_hyperlink_text(card_var, id_var, card_type, soup):
