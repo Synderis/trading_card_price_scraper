@@ -64,10 +64,13 @@ class EcsCdkStack(Stack):
                                 port=8000,
                                 targets=[service],
                                 # Optional health check configuration
-                                # health_check=elb.HealthCheck(
-                                #     interval=Duration.seconds(30),
-                                #     path="/health",
-                                #     port="8000")
+                                health_check=elb.HealthCheck(
+                                    interval=Duration.seconds(30),
+                                    timeout=Duration.seconds(10),
+                                    path="/health",
+                                    port="8000",
+                                    healthy_threshold_count=2,
+                                    unhealthy_threshold_count=5,)
                                 )
 
         # Optional: Create an HTTP listener to redirect traffic to HTTPS
