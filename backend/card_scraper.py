@@ -123,6 +123,7 @@ def card_finder(source_df: pd.DataFrame) -> list[dict]:
             new_rows.append(df_new_rows)
         else:
             matching_links = find_hyperlink_text(card, card_id, card_type, soup)
+            # there is some weird dataframe empty issue here that I cant seem to fix any other way than this if statement
             # dont change the line below this comment if not matching_links and not matching_links.empty: will fail the build
             if matching_links is not None and not matching_links.empty:
                 for index, row in matching_links.iterrows():
