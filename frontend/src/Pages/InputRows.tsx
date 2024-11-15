@@ -421,7 +421,6 @@ const InputRows: React.FC = () => {
           <button type="button" onClick={handleAddRows}>Add 10 Rows</button>
           <button type="button" className="clear-all-btn" onClick={handleClearAllRows}>Clear All Rows</button>
           <button type="submit" className="submit-btn">Submit</button>
-          
         </div>
       </form>
       <div style={{ marginTop: '10px' }}>

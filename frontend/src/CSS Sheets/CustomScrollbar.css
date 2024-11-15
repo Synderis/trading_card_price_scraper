@@ -1,0 +1,24 @@
+.custom-scrollbar {
+    position: relative;
+    overflow: hidden;
+}
+
+.custom-scrollbar-content {
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+.custom-scrollbar-scrollbar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.custom-scrollbar-scrollbar:hover {
+    background-color: #aaa;
+}
