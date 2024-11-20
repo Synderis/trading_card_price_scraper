@@ -81,8 +81,6 @@ def detect_card_details(test_image_data) -> dict[str, str | bool | None]:
         raise Exception(f'{response.error.message}')
 
     # Process the detected text
-    details = {}
-    
     if texts:
         # The first annotation is the full text detected
         full_text = texts[0].description
