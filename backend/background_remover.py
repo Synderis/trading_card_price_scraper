@@ -9,7 +9,7 @@ def encode_image_to_base64(image):
     if image.mode == 'RGBA':
         image = image.convert('RGB')
     buffered = BytesIO()
-    image.save(buffered, format="JPEG")
+    image.save(buffered, format='JPEG')
     return base64.b64encode(buffered.getvalue()).decode('utf-8')
 
 def process_image(img_data):
@@ -23,7 +23,7 @@ def process_image(img_data):
     # Convert to RGB with white background if it's in RGBA mode
     if output.mode == 'RGBA':
         # Create a white background image
-        background = Image.new("RGB", output.size, (255, 255, 255))
+        background = Image.new('RGB', output.size, (255, 255, 255))
         # Paste the output image onto the white background, using alpha as mask
         background.paste(output, mask=output.split()[3])  # 3 is the alpha channel
         output = background
@@ -61,7 +61,7 @@ def process_image(img_data):
             (offset_x, offset_y),  # top-left
             (width - offset_x - 1, offset_y),  # top-right
             (offset_x, height - offset_y - 1),  # bottom-left
-            (width - offset_x - 1, height - offset_y - 1)  # bottom-right
+            (width - offset_x - 1, height - offset_y - 1),  # bottom-right
         ]
         print(corners)
         
@@ -69,7 +69,7 @@ def process_image(img_data):
         any_white = False
         for x, y in corners:
             pixel = image.getpixel((x, y))
-            print(f"Checking pixel at ({x}, {y}) with RGB values: {pixel}")
+            print(f'Checking pixel at ({x}, {y}) with RGB values: {pixel}')
             if all(abs(channel - 255) <= tolerance for channel in pixel):  # Check if pixel is close to white
                 any_white = True
         return any_white

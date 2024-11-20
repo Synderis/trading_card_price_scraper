@@ -26,7 +26,7 @@ app.add_middleware(
         'https://www.synderispricechecker.com',
         'https://www.synderispricechecker.com/*',
         'http://localhost:3000',
-        'http://localhost:3000/*',],
+        'http://localhost:3000/*'],
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],

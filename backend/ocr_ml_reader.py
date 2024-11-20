@@ -1,7 +1,6 @@
 import functools
 from io import BytesIO
-from PIL import Image, ImageEnhance
-import base64
+from PIL import ImageEnhance
 from google.cloud import vision
 import pillow_heif
 import json

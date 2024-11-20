@@ -1,14 +1,11 @@
 import cv2
 import numpy as np
-import base64
-from io import BytesIO
-from PIL import Image
 
 
 def process_images_and_match(img_data):
     image = np.array(img_data)
 
-    template = cv2.imread(r"assets/first_edition_logo_fire.png")  # Symbol to match
+    template = cv2.imread(r'assets/first_edition_logo_fire.png')  # Symbol to match
 
     # Define target dimensions for source image
     image_width = 322
@@ -32,8 +29,8 @@ def process_images_and_match(img_data):
 
     # Return True if a match is found, False otherwise
     if len(locations[0]) > 0:
-        print("First Edition symbol detected", flush=True)
+        print('First Edition symbol detected', flush=True)
         return True
     else:
-        print("First Edition NOT symbol detected", flush=True)
+        print('First Edition NOT symbol detected', flush=True)
         return False
