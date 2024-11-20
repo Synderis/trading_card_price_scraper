@@ -6,7 +6,7 @@ from torch import nn
 # Define the CNN model structure
 class CNNModel(nn.Module):
     def __init__(self):
-        super(CNNModel, self).__init__()
+        super().__init__()
         self.conv_layers = nn.Sequential(
             nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),

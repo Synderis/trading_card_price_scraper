@@ -17,7 +17,6 @@ const CustomScrollbar: React.FC<CustomScrollbarProps> = ({
     const contentRef = useRef<HTMLDivElement>(null);
 
     const handleScroll = () => {
-        const scrollbarHeight = scrollbarRef.current?.offsetHeight || 0;
         const contentHeight = contentRef.current?.offsetHeight || 0;
         const scrollPosition = (contentRef.current?.scrollTop || 0) / (contentHeight - height);
         setScrollPosition(scrollPosition);
