@@ -1,4 +1,3 @@
-import base64
 import torch
 import numpy as np
 import cv2
