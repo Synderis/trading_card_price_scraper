@@ -53,3 +53,46 @@ export const defaultRows: Row = {
     card_count_invalid: false,
     isInvalid: false,
 };
+
+export interface ResultData {
+    card: string;
+    id: string;
+    card_count: string;
+    Ungraded: string;
+    grades: {
+        [key: string]: string;
+    };
+    final_link: string;
+    img_link: string;
+    estimatedGrades?: string[];
+    isAdvanced?: boolean;
+    variant_type?: string;
+    isExcluded?: boolean;
+}
+
+export interface MagicResultData {
+    card: string;
+    id: string;
+    set: string;
+    card_count: string;
+    prices: {
+        [key: string]: string;
+    };
+    final_link: string;
+    img_link: string;
+    historic_price_link: string;
+    estimatedGrades?: string[];
+    isAdvanced?: boolean;
+    variant_type?: string;
+    isExcluded?: boolean;
+}
+
+export interface Grade {
+        grade: number;
+        images: string[];
+        description: string;
+    }
+
+export interface Totals {
+    [key: string]: number;
+}

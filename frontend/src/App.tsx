@@ -6,6 +6,7 @@ import MagicResultsPage from './Pages/MagicResultsPage';
 import AboutMe from './Pages/AboutMe';
 import HowTo from './Pages/HowTo';
 import DarkMode from './Components/DarkMode';
+import Success from './Pages/SuccessPage';
 
 const App: React.FC = () => {
   const location = useLocation(); // Get the current location
@@ -36,6 +37,7 @@ const App: React.FC = () => {
 
       <Routes>
         <Route path="/" element={<InputRows />} />
+        <Route path="?success=true" element={<Success />} />
         <Route path="/results-page" element={<ResultsPage />} />
         <Route path="/magic-results-page" element={<MagicResultsPage />} />
         <Route path="/about" element={<AboutMe />} />

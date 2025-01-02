@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 @typing.overload
 def find_hyperlink_text(card_var, id_var, card_type,
-        soup: BeautifulSoup) -> pd.DataFrame | None: ...
+        soup: BeautifulSoup) -> list | None: ...
 @typing.overload
 def find_hyperlink_text(card_var, id_var, card_type,
         soup: BeautifulSoup) -> str | None: ...
@@ -126,6 +126,7 @@ def card_finder(source_df: pd.DataFrame) -> list[dict]:
             # there is some weird dataframe empty issue here that I cant seem to fix any other way than this if statement
             # dont change the line below this comment if not matching_links and not matching_links.empty: will fail the build
             if matching_links is not None and not matching_links.empty:
+                # df_new_rows = matching_links.apply(lambda row: extract_table_to_dict(row['links'], card, card_id, card_count, card_type, source_image), axis=1)
                 for index, row in matching_links.iterrows():
                     final_link = row['links']
                     card_type = row['names']

@@ -1,21 +1,6 @@
-interface ResultData {
-    card: string;
-    id: string;
-    set: string;
-    card_count: string;
-    prices: {
-        [key: string]: string;
-    };
-    final_link: string;
-    img_link: string;
-    historic_price_link: string;
-    estimatedGrades?: string[];
-    isAdvanced?: boolean;
-    variant_type?: string;
-    isExcluded?: boolean;
-}
+import { MagicResultData } from "../Utils/types";
 
-const convertToCSV = (data: ResultData[], totals: any) => {
+const convertToCSV = (data: MagicResultData[], totals: any) => {
     const header = [
         'Card',
         'ID',
@@ -55,7 +40,7 @@ const convertToCSV = (data: ResultData[], totals: any) => {
     return `${header}\n${rows}\n${totalsRow}`;
 };
 
-export const downloadCSV = (results: ResultData[], calculateTotals: (results: ResultData[]) => any) => {
+export const downloadCSV = (results: MagicResultData[], calculateTotals: (results: MagicResultData[]) => any) => {
     const nonExcludedResults = results.filter(item => !item.isExcluded);
     const totals = calculateTotals(results);
     const csvData = convertToCSV(nonExcludedResults, totals);

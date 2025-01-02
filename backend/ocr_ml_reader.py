@@ -102,6 +102,7 @@ def detect_card_details(test_image_data) -> dict[str, str | bool | None]:
                 card_edition = True
             if 'HP' in line and i > 0:
                 card_name = lines[i - 1]
+            
 
         if not card_name:
             card_name = lines[0]
@@ -112,6 +113,7 @@ def detect_card_details(test_image_data) -> dict[str, str | bool | None]:
                 test_id_rows_1.append(lines[i])
             if '/' in line and i > 0:
                 test_id_rows_2.append(lines[i])
+            
 
         if any('[' in item for item in lines):
             if test_id_rows_1:

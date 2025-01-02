@@ -101,6 +101,7 @@ const ExampleCSV: React.FC = () => {
                     ))}
                 </ul>
             </div>
+            <div className="dual-col" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
                 <div className="example-block">
                     <h3>General Inputs</h3>
                     <h4>Valid/Invalid Inputs for Each Field</h4>
@@ -166,6 +167,7 @@ const ExampleCSV: React.FC = () => {
                         <li className='valid-inputs'>empty/blank(assumed to be false)</li>
                         <li className='invalid-inputs'>letters, numbers that arent 0 or 1, special characters</li>
                     </label>
+                </div>
                 </div>
             </div>
     );

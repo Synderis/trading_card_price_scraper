@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import '../CSS Sheets/GradedExamples.css';
+import { Grade } from '../Utils/types';
 
 const GradedExamples: React.FC = () => {
-    interface Grade {
-        grade: number;
-        images: string[];
-        description: string;
-    }
-
+    
     const [grades, setGrades] = useState<Grade[]>([]);
 
         useEffect(() => {

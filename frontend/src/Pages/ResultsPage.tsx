@@ -2,27 +2,9 @@ import React, { useEffect, useState } from 'react';
 import '../CSS Sheets/ResultsPage.css';
 import { motion } from 'framer-motion';
 import { downloadCSV } from '../Utils/utilsCSV';
-
-interface ResultData {
-    card: string;
-    id: string;
-    card_count: string;
-    Ungraded: string;
-    grades: {
-        [key: string]: string;
-    };
-    final_link: string;
-    img_link: string;
-    estimatedGrades?: string[];
-    isAdvanced?: boolean;
-    variant_type?: string;
-    isExcluded?: boolean;
-}
+import { ResultData, Totals } from '../Utils/types';
 
 
-interface Totals {
-    [key: string]: number;
-}
 
 const ResultsPage: React.FC = () => {
     const [results, setResults] = useState<ResultData[]>([]);

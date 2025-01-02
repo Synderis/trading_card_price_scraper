@@ -2,28 +2,8 @@ import React, { useEffect, useState } from 'react';
 import '../CSS Sheets/MagicResultsPage.css';
 import { motion } from 'framer-motion';
 import { downloadCSV } from '../Utils/utilsMagicCSV';
+import { MagicResultData, Totals } from '../Utils/types';
 
-interface MagicResultData {
-    card: string;
-    id: string;
-    set: string;
-    card_count: string;
-    prices: {
-        [key: string]: string;
-    };
-    final_link: string;
-    img_link: string;
-    historic_price_link: string;
-    estimatedGrades?: string[];
-    isAdvanced?: boolean;
-    variant_type?: string;
-    isExcluded?: boolean;
-}
-
-
-interface Totals {
-    [key: string]: number;
-}
 
 const MagicResultsPage: React.FC = () => {
     const [results, setResults] = useState<MagicResultData[]>([]);

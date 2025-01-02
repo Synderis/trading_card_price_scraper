@@ -82,6 +82,7 @@ def matching_results(results: pd.DataFrame):
     
     # Group results by 'card_name' and 'card_id'
     # print(results.head(2), flush=True)
+    # score_set = get_similarity_scores(results)
     grouped_results = results.groupby(['card', 'id'])
 
     scores_list = []
@@ -132,3 +133,8 @@ def matching_results(results: pd.DataFrame):
 
     # Return the filtered DataFrame with scores
     return filtered_scores_df[['card', 'id', 'img_link', 'similarity_score']]
+
+
+
+
+

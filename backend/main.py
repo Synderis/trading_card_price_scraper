@@ -165,7 +165,7 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
             'foil': row.foil,
             'reverse_holo': row.reverse_holo,
             'first_edition': row.first_edition,
-            'card_count': row.card_count,
+            'card_count': str(row.card_count),
             'variant_type': row.variant_type,
             'source_image': row.source_image,
         }
@@ -173,14 +173,14 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
 
     # Create a DataFrame
     df = pd.DataFrame(data)
-    df['card_count'] = df['card_count'].astype(str)
 
     # Call the card finder and store the results in app state
-    results = pd.DataFrame(card_scraper.card_finder(df))
+    results = pd.DataFrame(card_scraper.card_finder(data))
     # print(results.columns, flush=True)
     print(results, flush=True)
-    
+
     if (results['source_image'] != '').any():
+        results = [result for result in results if 'no-image-available.png' not in result['img_link']]
         results = results[~results['img_link'].str.contains('no-image-available.png')]
         results_to_remove = ml_card_img_matcher.matching_results(results)
         if not results_to_remove.empty:
@@ -223,7 +223,7 @@ async def submit_magic_cards(card_input: MagicCardInput, request: Request):  # A
             'source_image': row.source_image,
         }
         data.append(card_data)
-    
+
     df = pd.DataFrame(data)
     # df.drop(columns=['source_image'], inplace=True)
     

@@ -1,18 +1,4 @@
-interface ResultData {
-    card: string;
-    id: string;
-    card_count: string;
-    Ungraded: string;
-    grades: {
-        [key: string]: string;
-    };
-    final_link: string;
-    img_link: string;
-    estimatedGrades?: string[];
-    isAdvanced?: boolean;
-    variant_type?: string;
-    isExcluded?: boolean;
-}
+import { ResultData } from "../Utils/types";
 
 export const downloadTemplateCSV = () => {
     const csvContent = "data:text/csv;charset=utf-8," + 
