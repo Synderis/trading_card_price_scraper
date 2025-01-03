@@ -131,11 +131,11 @@ async def magic_card_ml_reader(card_img: ImgPayload):
                     'etched': card_variants[3],
                     'extended_art': card_variants[4],
                     'full_art': card_variants[5]}
-        for variant in variants_dict:
-            if variants_dict[variant] == 1:
-                variants_dict[variant] = True
+        for variant, value in variants_dict.items():
+            if value == 1:
+                value = True
             else:
-                variants_dict[variant] = False
+                value = False
         # print(card_name, card_id, card_edition, flush=True)
         return {'card_name': card_name,
                 'card_id': card_id,

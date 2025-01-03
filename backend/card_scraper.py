@@ -113,9 +113,9 @@ def card_finder(source_df: pd.DataFrame) -> list[dict]:
         card_type = ''
         card_types = {'reverse-holo': reverse_holo, '1st-edition': first_edition}
         
-        for type_value in card_types.keys():
-            if card_types[type_value]:
-                    card_type = type_value
+        for type_value, value in card_types.items():
+            if value:
+                card_type = type_value
         
         if '/game/' in response.url:
             final_link = response.url
